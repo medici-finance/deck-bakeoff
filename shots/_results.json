@@ -1,0 +1,722 @@
+[
+  {
+    "design": "algorithmic-art",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "algorithmic-art",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "canvas-design",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 28,
+    "total": 28,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 28,
+    "total": 28,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 28,
+    "total": 28,
+    "notes": ""
+  },
+  {
+    "design": "html-ppt",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 28,
+    "total": 28,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 28,
+    "total": 28,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 28,
+    "total": 28,
+    "notes": ""
+  },
+  {
+    "design": "impeccable-polish",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "impeccable",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "brand",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "brand",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "brand",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "free",
+    "messaging": "pitch-deck-mastery",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "free",
+    "messaging": "presentation-writing",
+    "type": "explainer",
+    "status": "ok",
+    "count": 8,
+    "total": 8,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "deck",
+    "status": "ok",
+    "count": 14,
+    "total": 14,
+    "notes": ""
+  },
+  {
+    "design": "visual-explainer",
+    "mode": "free",
+    "messaging": "staging",
+    "type": "explainer",
+    "status": "ok",
+    "count": 9,
+    "total": 9,
+    "notes": ""
+  }
+]

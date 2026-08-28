@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Deck Bake-Off — Report</title>
+<style>
+@font-face{font-family:"YoungSerif";src:url("{{FONT:YoungSerif-Regular.ttf}}") format("truetype");font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:"Lora";src:url("{{FONT:Lora-Regular.ttf}}") format("truetype");font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:"Lora";src:url("{{FONT:Lora-Italic.ttf}}") format("truetype");font-weight:400;font-style:italic;font-display:block}
+@font-face{font-family:"Lora";src:url("{{FONT:Lora-Bold.ttf}}") format("truetype");font-weight:700;font-style:normal;font-display:block}
+@font-face{font-family:"GeistMono";src:url("{{FONT:GeistMono-Regular.ttf}}") format("truetype");font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:"GeistMono";src:url("{{FONT:GeistMono-Bold.ttf}}") format("truetype");font-weight:700;font-style:normal;font-display:block}
+
+:root{
+  --paper:#FFFFFF;
+  --ink:#1B1A17;
+  --grey:#5F5B51;
+  --rule:#D2CCBF;
+  --faint:#EFEAE0;
+  --oxide:#8A3324;
+}
+
+@page{ size:A4; margin:17mm 20mm 15mm 20mm; }
+
+*{box-sizing:border-box}
+html{font-size:10.2pt;background:#FFFFFF}
+body{
+  margin:0; padding:0;
+  background:#FFFFFF; color:var(--ink);
+  font-family:"Lora",Georgia,"Times New Roman",serif;
+  font-size:1rem; line-height:1.56;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  text-rendering:geometricPrecision;
+}
+
+/* ---------- apparatus ---------- */
+.m{font-family:"GeistMono",ui-monospace,Menlo,monospace}
+.src{
+  font-family:"GeistMono",ui-monospace,Menlo,monospace;
+  font-size:.735rem; line-height:1.45; color:var(--grey);
+  letter-spacing:.005em; margin:.5rem 0 1.15rem 0; max-width:168mm;
+}
+.src b{font-weight:700;color:var(--grey)}
+.lbl{
+  font-family:"GeistMono",ui-monospace,Menlo,monospace;
+  font-size:.70rem; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--grey);
+}
+
+/* ---------- structure ---------- */
+.sheet{max-width:170mm}
+p{max-width:134mm; margin:0 0 .78rem 0; hyphens:auto}
+p.wide{max-width:168mm}
+em{font-style:italic}
+strong{font-weight:700}
+a{color:inherit;text-decoration:none}
+
+.section{break-before:page;}
+.section:first-of-type{break-before:auto}
+.sechead{display:flex;align-items:flex-end;gap:7mm;border-bottom:.9pt solid var(--ink);padding-bottom:2.5mm;margin:0 0 6mm 0;max-width:170mm;break-inside:avoid;break-after:avoid}
+.secno{font-family:"YoungSerif",Georgia,serif;font-size:3.05rem;line-height:.82;color:var(--rule)}
+.sectitle{font-family:"YoungSerif",Georgia,serif;font-size:1.42rem;line-height:1.1;flex:1}
+.claim{
+  font-family:"YoungSerif",Georgia,serif;
+  font-size:1.14rem; line-height:1.3; max-width:150mm;
+  margin:0 0 5mm 0;
+}
+h3{
+  font-family:"GeistMono",ui-monospace,Menlo,monospace;
+  font-size:.775rem; font-weight:700; letter-spacing:.115em; text-transform:uppercase;
+  color:var(--ink); margin:7mm 0 2.2mm 0; padding-bottom:1.2mm;
+  border-bottom:.4pt solid var(--rule); max-width:170mm;
+  break-after:avoid;
+}
+h4{
+  font-family:"YoungSerif",Georgia,serif; font-size:1.02rem; font-weight:400;
+  margin:5.5mm 0 1.4mm 0; break-after:avoid;
+}
+h4 .tag{font-family:"GeistMono",monospace;font-size:.68rem;letter-spacing:.1em;color:var(--grey);margin-left:2.5mm;vertical-align:.12em}
+
+/* ---------- tables ---------- */
+table{
+  border-collapse:collapse; width:100%; max-width:170mm;
+  margin:1mm 0 1.5mm 0; font-size:.815rem; line-height:1.34;
+}
+thead th{
+  font-family:"GeistMono",ui-monospace,Menlo,monospace;
+  font-size:.68rem; font-weight:700; letter-spacing:.075em; text-transform:uppercase;
+  text-align:left; color:var(--ink);
+  border-top:.9pt solid var(--ink); border-bottom:.4pt solid var(--ink);
+  padding:1.7mm 2.4mm 1.5mm 0; vertical-align:bottom;
+}
+tbody td{
+  padding:1.5mm 2.4mm 1.5mm 0; vertical-align:top;
+  border-bottom:.35pt solid var(--rule);
+}
+tbody tr:last-child td{border-bottom:.9pt solid var(--ink)}
+td.n,th.n{text-align:right;padding-right:3.2mm;font-family:"GeistMono",monospace;font-size:.78rem;font-variant-numeric:tabular-nums}
+td.c,th.c{text-align:center;font-family:"GeistMono",monospace;font-size:.78rem;font-variant-numeric:tabular-nums}
+td.mono{font-family:"GeistMono",monospace;font-size:.72rem;line-height:1.38;word-break:normal;overflow-wrap:break-word;hyphens:none}
+.first{color:var(--oxide);font-weight:700}
+.rs{font-weight:700}
+tr,td,th{break-inside:avoid}
+table.tight tbody td{padding-top:1.1mm;padding-bottom:1.1mm}
+
+/* ---------- plates ---------- */
+.plates{display:grid;grid-template-columns:1fr 1fr;gap:4mm 5mm;margin:3mm 0 2mm 0;max-width:170mm;break-inside:avoid}
+figure{margin:0;break-inside:avoid}
+figure img{display:block;width:100%;height:auto;border:.35pt solid var(--rule)}
+figcaption{
+  font-family:"GeistMono",ui-monospace,Menlo,monospace;
+  font-size:.665rem; line-height:1.4; color:var(--grey);
+  margin-top:1.4mm; letter-spacing:.005em;
+}
+figcaption b{color:var(--ink);font-weight:700}
+.scenes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4mm;max-width:170mm}
+
+/* ---------- devices ---------- */
+.rule{border:0;border-top:.4pt solid var(--rule);margin:6mm 0;max-width:170mm}
+.rule.hard{border-top:.9pt solid var(--ink)}
+blockquote{
+  margin:2.5mm 0 3.5mm 0; padding:0 0 0 5mm; max-width:140mm;
+  border-left:.9pt solid var(--oxide); font-style:italic; color:var(--ink);
+}
+blockquote p{max-width:none;margin-bottom:.4rem}
+ul,ol{max-width:134mm;margin:0 0 .8rem 0;padding-left:5.5mm}
+li{margin-bottom:.28rem}
+ul.wide,ol.wide{max-width:168mm}
+.callout{
+  border-top:.9pt solid var(--oxide); border-bottom:.9pt solid var(--oxide);
+  padding:3.5mm 0 3mm 0; margin:5mm 0; max-width:158mm; break-inside:avoid;
+}
+.callout .lbl{color:var(--oxide)}
+.callout p{font-family:"YoungSerif",Georgia,serif;font-size:1.06rem;line-height:1.32;max-width:150mm;margin:1.6mm 0 0 0}
+.note{font-size:.83rem;color:var(--grey);max-width:150mm;font-style:italic}
+.kv{display:grid;grid-template-columns:32mm 1fr;gap:.9mm 4mm;max-width:160mm;font-size:.845rem;margin:2mm 0 3mm 0}
+.kv dt{font-family:"GeistMono",monospace;font-size:.685rem;letter-spacing:.09em;text-transform:uppercase;color:var(--grey);padding-top:.55mm}
+.kv dd{margin:0}
+.avoid{break-inside:avoid}
+
+/* ---------- cover ---------- */
+.cover{height:252mm;display:flex;flex-direction:column;break-after:page}
+.cover-top{flex:0 0 auto}
+.cover-mid{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center}
+.cover h1{
+  font-family:"YoungSerif",Georgia,serif; font-weight:400;
+  font-size:3.35rem; line-height:1.02; margin:0 0 6mm 0; max-width:160mm;
+}
+.cover .deck{font-family:"Lora",serif;font-style:italic;font-size:1.22rem;line-height:1.45;max-width:132mm;margin:0 0 9mm 0}
+.cover-bot{flex:0 0 auto;border-top:.9pt solid var(--ink);padding-top:3mm;display:flex;justify-content:space-between;gap:8mm}
+.field{margin:0 0 9mm 0}
+.field svg{display:block}
+</style>
+</head>
+<body>
+
+<!-- ============================== COVER ============================== -->
+<div class="cover">
+  <div class="cover-top">
+    <div class="lbl">A comparative plate &middot; twelve track-modes &middot; one brief &middot; 2026&ndash;08&ndash;27</div>
+  </div>
+
+  <div class="cover-mid">
+    <h1>The Deck<br>Bake&ndash;Off</h1>
+    <p class="deck">Six design tools rendered one product pitch twice each &mdash; once under a
+      pinned house brand, once with no brand limits. Four messaging methods staged the argument
+      they rendered. Nine review rubrics graded the result. This is what they found.</p>
+
+    <div class="field">
+      <svg width="530" height="112" viewBox="0 0 530 112" aria-label="Twelve track-modes; the consensus winner marked">
+        <g font-family="GeistMono" font-size="9" fill="#5F5B51" letter-spacing="0.8">
+          <text x="0" y="23">BRAND</text>
+          <text x="0" y="71">FREE</text>
+        </g>
+        <g>
+          <rect x="62" y="4" width="68" height="30" fill="#8A3324" stroke="none" stroke-width="0.7"/>
+          <rect x="62" y="52" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+          <rect x="140" y="4" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+          <rect x="140" y="52" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+          <rect x="218" y="4" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+          <rect x="218" y="52" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+          <rect x="296" y="4" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+          <rect x="296" y="52" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+          <rect x="374" y="4" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+          <rect x="374" y="52" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+          <rect x="452" y="4" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+          <rect x="452" y="52" width="68" height="30" fill="none" stroke="#1B1A17" stroke-width="0.7"/>
+        </g>
+        <line x1="62" y1="92" x2="452" y2="92" stroke="#D2CCBF" stroke-width="0.7"/>
+        <g font-family="GeistMono" font-size="8.4" fill="#5F5B51" letter-spacing="0.4">
+          <text x="62" y="103">canvas</text>
+          <text x="140" y="103">algo</text>
+          <text x="218" y="103">impec</text>
+          <text x="296" y="103">polish</text>
+          <text x="374" y="103">vis-exp</text>
+          <text x="452" y="103">html-ppt</text>
+        </g>
+      </svg>
+      <div class="lbl" style="margin-top:2.5mm">Filled &mdash; the only cell on which every rubric agreed</div>
+    </div>
+  </div>
+
+  <div class="cover-bot">
+    <div class="lbl">Subject &middot; one product pitch<br>Media &middot; slide deck + animated explainer<br>Judges &middot; nine rubrics, then Ian</div>
+    <div class="lbl" style="text-align:right">36 decks &middot; 36 explainers<br>12 track&ndash;modes &middot; 4 messaging contracts<br>Report built by the winning stack</div>
+  </div>
+</div>
+
+<!-- ============================== CONTENTS ============================== -->
+<div class="sheet">
+  <div class="lbl" style="border-bottom:.9pt solid #1B1A17;padding-bottom:2mm;margin-bottom:4mm">Contents</div>
+  <table class="tight">
+    <tbody>
+      <tr><td class="n" style="width:14mm">1</td><td style="width:62mm">What the bake-off was</td><td>The brief, the matrix, the two media, the two brand modes, and how it ran</td></tr>
+      <tr><td class="n">2</td><td>Who contended</td><td>Every skill, tool and rubric, with its origin URL, version and licence</td></tr>
+      <tr><td class="n">3</td><td>The messaging leg</td><td>Four methods, one story; the cross-review matrix; the verdict</td></tr>
+      <tr><td class="n">4</td><td>The design leg</td><td>Six tools, twelve track-modes, twenty-four frames; two matrices; the verdicts</td></tr>
+      <tr><td class="n">5</td><td>What it cost</td><td>The issues the reviews found, stated without softening</td></tr>
+      <tr><td class="n">6</td><td>The recommended pipeline</td><td>What the house should run, and the two checks this run proved missing</td></tr>
+      <tr><td class="n">7</td><td>The winning explainer</td><td>Nine frames and the full talk track</td></tr>
+      <tr><td class="n">8</td><td>Appendix</td><td>The six human rulings still open, and a pointer to every file</td></tr>
+    </tbody>
+  </table>
+  <p class="src" style="margin-top:6mm"><b>How to read this document.</b> Every figure prints the file it came from, in this
+  typeface, immediately beneath the claim it supports &mdash; the house content gate requires a reader to be able to
+  re-derive any number without leaving the page. Scores quoted are the model judges&rsquo; scores, formed before Ian&rsquo;s
+  and independent of them. Where two reviewers measured the same thing and disagreed, both numbers are printed.</p>
+</div>
+
+<!-- ============================== 1 ============================== -->
+<section class="section sheet">
+  <div class="sechead"><div class="secno">1</div><div class="sectitle">What the bake&ndash;off was</div></div>
+  <p class="claim">One brief, two media, two brand modes, thirty&ndash;six artifact pairs, judged twice.</p>
+
+  <p>On 27 August 2026 a fleet of Claude Code agents was asked to settle an argument by building
+  rather than by discussing it: which AI presentation&ndash;design skill, and which messaging method,
+  should the house adopt as its default? The argument was settled the only way a tooling argument can
+  be &mdash; by giving every candidate the same source material, the same audience, the same deadline
+  and the same two deliverables, then having independent reviewers grade what came out.</p>
+
+  <p>The subject was a product pitch for <em>Medici for RWA tokens</em>: a collateral&ndash;splitting
+  primitive for tokenized real&ndash;world assets. The pitch had to teach three things &mdash; what the
+  product is in one repeatable sentence, why a tokenized&ndash;asset holder cares, and how the basic
+  mechanism works, in one diagram the audience could redraw. Every contender read the same corpus and
+  every contender was forbidden to invent a number.</p>
+  <p class="src"><b>SRC</b> &middot; BRIEF.md &sect;&ldquo;The product story&rdquo; and &sect;&ldquo;Audience + the three educational goals&rdquo; &middot; README.md</p>
+
+  <h3>The matrix</h3>
+  <p>The nominal design space is <strong>2 &times; 6 &times; 4</strong> &mdash; two brand modes, six design
+  tools, four messaging skills. It did not render as forty&ndash;eight, and the reason is worth stating
+  plainly. The messaging leg ran first, because the design layer consumes its output. Three messaging
+  contenders finished in time to feed stage two; the fourth &mdash; the house messaging method &mdash;
+  was added afterwards, at Ian&rsquo;s instruction, and was <em>reviewed but never rendered</em>. So the
+  design layer is a complete 2 &times; 6 &times; 3, and the messaging layer is a complete 4 &times; 4
+  cross&ndash;review. Where this report says &ldquo;track&ndash;mode&rdquo; it means one design tool in one
+  brand mode &mdash; twelve of them.</p>
+
+  <table class="tight">
+    <thead><tr><th style="width:44mm">Axis</th><th class="c" style="width:14mm">N</th><th>Values</th></tr></thead>
+    <tbody>
+      <tr><td>Brand mode</td><td class="c">2</td><td><span class="m">brand</span> &mdash; the pinned house brand guide, its colour, type, motion and surface rules, and a mandated footer on every slide. <span class="m">free</span> &mdash; no brand limits at all; the tool&rsquo;s own aesthetic judgment, any palette, any type. Only the footer string and the facts are fixed.</td></tr>
+      <tr><td>Design tool</td><td class="c">6</td><td><span class="m">canvas-design &middot; algorithmic-art &middot; impeccable &middot; impeccable-polish &middot; visual-explainer &middot; html-ppt</span></td></tr>
+      <tr><td>Messaging skill</td><td class="c">4</td><td><span class="m">staging &middot; presentation-writing &middot; pitch-deck-mastery &middot; house-guide</span> &mdash; the first three fed the design layer; the fourth arrived after it</td></tr>
+      <tr><td>Medium</td><td class="c">2</td><td>a slide deck and an animated explainer film, both from the same argument</td></tr>
+      <tr><td class="rs">Rendered</td><td class="c rs">36</td><td class="rs">6 tools &times; 2 modes &times; 3 messaging contracts, each delivered as a deck <em>and</em> an explainer &mdash; 36 decks and 36 explainers</td></tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; README.md &sect;Layout and &sect;&ldquo;How it ran&rdquo; &middot; bakeoff/PROTOCOL.md &sect;Contenders &middot; BRIEF.md &sect;&ldquo;Two brand modes&rdquo;</p>
+
+  <h3>The two media</h3>
+  <div class="kv">
+    <dt>Deck</dt>
+    <dd><span class="m">index.html</span> &mdash; self&ndash;contained, a fixed 1280&times;720 stage, keyboard&ndash;navigable,
+      printing one slide per page. Ten to fourteen slides, about ten minutes spoken. No remote assets
+      except web fonts, and only in free mode.</dd>
+    <dt>Explainer</dt>
+    <dd><span class="m">explainer.html</span> plus a <span class="m">SCRIPT.md</span> talk track &mdash; a
+      self&ndash;contained animated film at 1920&times;1080, meant to be screen&ndash;recorded. Scenes advance
+      on a timeline; each scene&rsquo;s duration equals the narration budget in the script. Ninety to a
+      hundred and fifty seconds. No text&ndash;to&ndash;speech, no mp4, no external media: Ian renders.
+      <strong>Motion had to carry meaning</strong> &mdash; the split, the payoff at maturity &mdash; and
+      decoration&ndash;only animation was out of bounds.</dd>
+  </div>
+  <p class="src"><b>SRC</b> &middot; BRIEF.md &sect;&ldquo;Two media&rdquo; &middot; DESIGN-TASK.md</p>
+
+  <h3>The contract between the two legs</h3>
+  <p>The bake&ndash;off is not two independent competitions bolted together. Each messaging contender emitted a
+  <strong>staging contract</strong> &mdash; a machine&ndash;readable file (a <span class="m">staging.yaml</span>)
+  that fixes what is said and in what order: one function and one headline claim per slot, one designated
+  <strong>bold moment</strong> (the single beat the whole argument is built to arrive at), and, for film, a
+  per&ndash;scene motion role and word budget. Design contenders consumed that contract verbatim: never reorder
+  a slot, never rewrite a headline claim, and log any slot you cannot render rather than dropping it
+  silently. That is what makes the twelve track&ndash;modes comparable at all &mdash; they are twelve renderings
+  of the same argument, not twelve different arguments.</p>
+  <p class="src"><b>SRC</b> &middot; BRIEF.md &sect;&ldquo;Messaging layer&rdquo; &middot; skills/messaging/staging/SKILL.md &sect;&ldquo;The composition contract (hard)&rdquo;</p>
+
+  <h3>How it ran</h3>
+  <table class="tight">
+    <thead><tr><th class="c" style="width:14mm">Stage</th><th style="width:34mm">What</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td class="c">1</td><td>Messaging</td><td>Four agents in parallel, each emitting its own native artifact plus the normalized staging contract.</td></tr>
+      <tr><td class="c">2</td><td>Design</td><td>Ten agents &mdash; five tools &times; two brand modes &mdash; each rendering all three original contracts as a deck and an explainer, six artifacts apiece. <span class="m">impeccable-polish</span> ran afterwards as a refine&ndash;only pass over the <span class="m">html-ppt</span> baseline: it was forbidden to redesign anything.</td></tr>
+      <tr><td class="c">3</td><td>Review</td><td>Each messaging skill reviewed every messaging output, its own included. Four independent design rubrics plus the four messaging rubrics reviewed every rendered track. Two model judges wrote verdicts before Ian formed his.</td></tr>
+      <tr><td class="c">4</td><td>Report</td><td>Built with the winning messaging method and the winning design tool &mdash; this document.</td></tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; README.md &sect;&ldquo;How it ran&rdquo; &middot; bakeoff/PROTOCOL.md &sect;Rules and &sect;Judging</p>
+
+  <h3>The originating prompt</h3>
+  <blockquote>
+    <p>&ldquo;I want to conduct a bake off on deck design tools. for 2 purposes. 1. creative presentation
+    design 2. video presentations. &hellip; for each skill, I want 2 outputs. 1. with the brand design for
+    medici. 2. with no brand &lsquo;limits&rsquo;. &hellip; so 2 x 5 x 3 decks. (one for a deck, the other for a
+    animated &lsquo;explainer&rsquo; html that would get embedded into a video). for the video. don&rsquo;t do
+    voice/mp4 generation.. just the html file that would be embedded into it. fanout for this&rdquo;</p>
+  </blockquote>
+  <p>Six follow&ndash;up instructions shaped the run after it started: add the house messaging method and
+  have the messaging tools review each other; produce this report using the systems that won; produce
+  a video of the bake&ndash;off using the winning solution with a generated talk track; anonymise all
+  personal names throughout; include the winning explainer and its talk track in the report; and name
+  every skill in the report with its URL.</p>
+  <p class="src"><b>SRC</b> &middot; README.md &sect;&ldquo;The prompt&rdquo; (verbatim) and the follow&ndash;up list beneath it</p>
+</section>
+
+<!-- ============================== 2 ============================== -->
+<section class="section sheet">
+  <div class="sechead"><div class="secno">2</div><div class="sectitle">Who contended</div></div>
+  <p class="claim">Every contender is a named, versioned, licensed artifact with a printed origin.</p>
+
+  <p>Ten skills competed and four independent rubrics graded them, plus the four messaging skills
+  turned back on the design layer as rubrics of their own. Every URL below is printed in full rather
+  than hidden behind a link, because this document is meant to survive printing. Third&ndash;party skills
+  keep their own licences; one ships none at all, and that fact was recorded by the skill itself
+  during the run.</p>
+
+  <h3>Messaging skills &mdash; four</h3>
+  <table>
+    <thead><tr><th style="width:26mm">id</th><th style="width:41mm">What it is</th><th style="width:21mm">Version</th><th style="width:21mm">Licence</th><th>Origin</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="m">staging</td>
+        <td>House skill. Genre &rarr; audience &rarr; arc, emitting the staging contract as its native deliverable.</td>
+        <td class="m">v2<br>2026-08-18</td><td class="m">house</td>
+        <td class="mono">house skill; packaged from the previous house bake-off, 2026-08-18</td>
+      </tr>
+      <tr>
+        <td class="m">house-guide</td>
+        <td>House method. Comprehension diagnosis &rarr; a thirty-second version &rarr; analogies with their honest breaks &rarr; a glossary rule &rarr; a trace-every-number gate.</td>
+        <td class="m">v0.1<br>2026-07-17</td><td class="m">house</td>
+        <td class="mono">house methodology doc, docs/<wbr>messaging-guide.md</td>
+      </tr>
+      <tr>
+        <td class="m">pitch-deck-mastery</td>
+        <td>A twelve-slide fundraise framework with a must-pass checklist.</td>
+        <td class="m">2026-08-16</td><td class="m">MIT</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>Stevekaplanai/<wbr>pitch-deck-mastery-skill</td>
+      </tr>
+      <tr>
+        <td class="m">presentation-writing</td>
+        <td>Persuasive slide-by-slide narrative outlines &mdash; &ldquo;argument, not design&rdquo;.</td>
+        <td class="m">2026-08</td><td class="m first">no<br>LICENSE</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>marcusnelson/<wbr>presentation-writing-claude-skill</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/CONTENDERS.md &sect;&ldquo;Messaging skills (4)&rdquo; &middot; bakeoff/PROTOCOL.md &sect;Contenders. The
+  missing licence was self-reported: messaging/presentation-writing/NOTES.md &sect;5.</p>
+
+  <h3>Design tools &mdash; six</h3>
+  <table>
+    <thead><tr><th style="width:26mm">id</th><th style="width:41mm">What it is</th><th style="width:21mm">Version</th><th style="width:21mm">Licence</th><th>Origin</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="m">canvas-design</td>
+        <td>Anthropic skill. Write a design philosophy as a manifesto, then express it visually. Its native output is a single-page PDF or PNG.</td>
+        <td class="m">main branch,<br>2026-08-27</td><td class="m">Apache-2.0</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>anthropics/<wbr>skills/<wbr>tree/<wbr>main/<wbr>skills/<wbr>canvas-design</td>
+      </tr>
+      <tr>
+        <td class="m">algorithmic-art</td>
+        <td>Anthropic skill. Seeded generative art in p5.js.</td>
+        <td class="m">main branch,<br>2026-08-27</td><td class="m">Apache-2.0</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>anthropics/<wbr>skills/<wbr>tree/<wbr>main/<wbr>skills/<wbr>algorithmic-art</td>
+      </tr>
+      <tr>
+        <td class="m">impeccable</td>
+        <td>A frontend design-craft playbook: new-work mode, a craft floor of banned patterns, and a static detector.</td>
+        <td class="m">4.0.4</td><td class="m">Apache-2.0</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>pbakaus/<wbr>impeccable</td>
+      </tr>
+      <tr>
+        <td class="m">impeccable-polish</td>
+        <td>The same skill&rsquo;s <span class="m">polish</span> and <span class="m">animate</span> commands, applied on top of the html-ppt baseline as the &ldquo;baseline + finish&rdquo; contender.</td>
+        <td class="m">4.0.4</td><td class="m">Apache-2.0</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>pbakaus/<wbr>impeccable</td>
+      </tr>
+      <tr>
+        <td class="m">visual-explainer</td>
+        <td>Self-contained HTML explanations, technical diagrams and editorial decks. Found by web search.</td>
+        <td class="m">0.10.0</td><td class="m">MIT</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>nicobailon/<wbr>visual-explainer</td>
+      </tr>
+      <tr>
+        <td class="m">html-ppt</td>
+        <td>HTML PPT Studio: 36 themes, 31 layouts, 27 animations. The template-driven baseline. Found by web search.</td>
+        <td class="m">2026-08</td><td class="m">MIT</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>lewislulu/<wbr>html-ppt-skill</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/CONTENDERS.md &sect;&ldquo;Design tools (6)&rdquo;. Web-search sources for the two found tools:
+  https://github.com/ToseaAI/awesome-html-slide-skills and https://tosea.ai/blog/best-html-slide-skills-library-2026</p>
+
+  <h3>Review rubrics &mdash; four independent, plus the four messaging skills</h3>
+  <table>
+    <thead><tr><th style="width:28mm">id</th><th style="width:63mm">Its lens</th><th style="width:21mm">Licence</th><th>Origin</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="m">huashu-critique</td>
+        <td>Six scored dimensions with Concept weighted 0.30 and carrying a hard veto: score Concept at five or below and the total caps at 6.0 whatever the execution.</td>
+        <td class="m">MIT</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>alchaincyf/<wbr>huashu-design</td>
+      </tr>
+      <tr>
+        <td class="m">open-design-review</td>
+        <td>A design jury over the rendered pixels &mdash; critic 0.4, brand 0.2, accessibility 0.2, copy 0.2. In practice the accessibility column is the discriminator.</td>
+        <td class="m">Apache-2.0</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>nexu-io/<wbr>open-design</td>
+      </tr>
+      <tr>
+        <td class="m">academic-pptx</td>
+        <td>Evidence discipline: action titles, the ghost-deck test, exhibit rate, whether an exhibit states its own conclusion, and how citations are rendered.</td>
+        <td class="m">MIT</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>Gabberflast/<wbr>academic-pptx-skill</td>
+      </tr>
+      <tr>
+        <td class="m">impeccable-critique</td>
+        <td>Nielsen heuristics scored 0&ndash;4 in Persuade mode (applicable maximum 32) plus the craft floor and the static detector.</td>
+        <td class="m">Apache-2.0</td>
+        <td class="mono">https:/<wbr>/<wbr>github.com/<wbr>pbakaus/<wbr>impeccable</td>
+      </tr>
+      <tr>
+        <td class="m">messaging-rubrics</td>
+        <td>The four messaging skills turned on the rendered tracks: contract fidelity, comprehension, and the only empirical motion measurement anyone ran.</td>
+        <td class="m">mixed</td>
+        <td class="mono">the four messaging skills above, applied as rubrics</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/CONTENDERS.md &sect;&ldquo;Independent review rubrics (4)&rdquo; &middot; lens descriptions from each rubric&rsquo;s
+  own preamble in reviews/design/by-&lt;rubric&gt;.md</p>
+
+  <h3>Excluded, and why</h3>
+  <p>Three tools were excluded as already judged in the previous house bake-off &mdash;
+  <span class="m">huashu-design</span>, <span class="m">frontend-slides</span> and
+  <span class="m">appautomaton/presentation</span>; <span class="m">huashu-design</span> was then
+  readmitted as a <em>rubric</em> rather than as a contender. Two were excluded on licence or
+  provenance: <span class="m">guizang-ppt-skill</span> (AGPL-3.0) and
+  <span class="m">jiji262/claude-design-skill</span> (Anthropic system-prompt provenance).</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/CONTENDERS.md, closing paragraph of the tools table &middot; bakeoff/PROTOCOL.md &sect;Contenders</p>
+</section>
+
+<!-- ============================== 3 ============================== -->
+<section class="section sheet">
+  <div class="sechead"><div class="secno">3</div><div class="sectitle">The messaging leg</div></div>
+  <p class="claim">All four methods told the same story. Only their emphasis and their order diverged &mdash;
+  and every divergence traces to the method, not to taste.</p>
+
+  <h3>3.1 &nbsp; What all four did in common</h3>
+  <p>The convergence is the first finding, and it is not luck. The brief pre-specifies the one-liner, the
+  value proposition and the mechanism as three named educational goals, and the source corpus is strongly
+  opinionated. Given that, all four independently arrived at the same spine: <em>one position &rarr; two
+  claims &rarr; they always sum back &rarr; therefore no liquidation price exists</em>; the same value
+  proposition; and the same payoff table with the invariant as the thing to remember. All four reuse the
+  same five proof points, the same five objections and the same terminology canon.</p>
+
+  <table class="tight">
+    <thead><tr><th style="width:52mm">Common to all four</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Zero invented figures.</strong></td><td>Every numeric token in all deliverable files was run against the corpus. Every number that does not appear in the sources is staging metadata &mdash; energies, runtime shares, word budgets, per-slot seconds. Four independent fact-checks, one result.</td></tr>
+      <tr><td><strong>Same spine, same proof points.</strong></td><td>Problem &rarr; the split &rarr; the invariant &rarr; the payoff table &rarr; the honest cost. Same five objections in reserve, same terminology canon.</td></tr>
+      <tr><td><strong>Both corpus contradictions logged, none smoothed.</strong></td><td>The template-count conflict and the collateral-fit conflict are carried by every contender rather than resolved silently &mdash; though in three different places.</td></tr>
+      <tr><td><strong>Single pass, ten to eighteen minutes.</strong></td><td>No contender needed to rework its argument. The slowest was the one that had no transport format and had to borrow another skill&rsquo;s field names.</td></tr>
+      <tr><td><strong>Each emitted a machine-checkable contract.</strong></td><td>Every contender produced a staging contract the design layer could parse &mdash; though only three of the four produced one that parses cleanly against the closed vocabulary.</td></tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md &sect;&ldquo;Headline finding on correctness&rdquo;, &sect;2 and rev.2 &sect;6 &middot;
+  the four messaging/&lt;skill&gt;/NOTES.md time-to-artifact lines &middot; reviews/messaging/by-presentation-writing.md, cross-cutting fact-check</p>
+
+  <h3>3.2 &nbsp; Per-skill summary</h3>
+  <p class="note">Scores are the model judge&rsquo;s, on three axes: <em>fit</em> (inverse difficulty &mdash; ten
+  means the tool fitted the job with little adaptation), <em>representation quality</em> against the brief&rsquo;s
+  three educational goals, and <em>contract fitness</em> &mdash; how well its output survives being consumed by
+  six design tracks.</p>
+
+  <h4>staging <span class="tag">FIT 9 &middot; QUALITY 8 &middot; CONTRACT 9 &middot; ~10.5 MIN</span></h4>
+  <p>The only contender whose skill was built for this job, and the only one whose native output <em>is</em> the
+  transport contract. Closed-vocabulary functions, a claim and a beat on every slot, a bold moment whose
+  placement is derived separately per medium rather than inherited across media, and video arithmetic that
+  reconciles to the digit: 299 words written against a 300-word budget, scene durations summing to exactly
+  120 seconds, per-scene delivery between 144 and 156 words per minute. It ran seven machine checks on its own
+  output and all seven hold on re-run. Three video gates it could not run from the messaging layer are recorded
+  <span class="m">NOT RUN</span> with the owner named rather than fudged to pass &mdash; the only contender that
+  had to make that call.</p>
+  <p><strong>Against it.</strong> Its own notes carry the sharpest self-criticism in the leg: the deck landed at
+  fourteen slots partly because fourteen is the count at which the bold-moment window becomes satisfiable
+  (twelve gives 41.7%, thirteen gives 38.5%, fourteen gives 42.9% against a 40&ndash;50% window) &mdash; the
+  arithmetic led the argument for one pass. The skill has no notion of a <em>corpus</em>: no per-slot source
+  field, no objections block, no terminology canon, no provenance-conflict block; all four had to be invented as
+  extensions. And the one-diagram specification lives in its prose artifact, not in the contract the design
+  layer is told to consume &mdash; a design contender reading only the contract gets no diagram guidance at all.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md &sect;1 &ldquo;staging&rdquo; &middot; messaging/staging/NOTES.md
+  friction items 1 and 4 and the seven-check list &middot; reviews/messaging/by-staging.md</p>
+
+  <h4>house-guide <span class="tag">FIT 6 &middot; QUALITY 9 &middot; CONTRACT 8 &middot; ~18 MIN</span></h4>
+  <p>The highest editorial ceiling in the leg, and the only contender no rubric places worse than third. It is
+  the only one that <strong>mandates a worked example</strong> &mdash; one deposit, one strike, three prices,
+  three payouts &mdash; which is the gap every rubric marked against everyone else. Its number gate is the
+  strongest single artifact anyone produced: a verdict per figure, as-of dates in visible text rather than
+  footnotes, three explicit <span class="m">WITHHOLD</span> rows, and the only contender to catch that a widely
+  quoted market figure was an exchange&rsquo;s <em>summary</em> of a research report rather than the report, and
+  then decline it. It has the only real gloss table (seventeen rows) and the only rule refusing to name
+  prospects.</p>
+  <p><strong>Against it.</strong> The method has no transport format at all &mdash; no slot count, ordering,
+  timing, bold moment, motion vocabulary or genre &mdash; so its entire contract was built by mapping prose
+  sections onto another skill&rsquo;s field names. Its own gates certify things its file contradicts: three
+  statements disagree about when the first number arrives, and the glossary gate reports a pass over a slot
+  shipping three unglossed terms against its own rule. Twelve of its thirteen claims exceed the twelve-word cap
+  two rivals held, and its bold moment sits at 76.9% by index &mdash; behind the relief rather than in front of it.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md rev.2 &sect;4 &middot; messaging/house-guide/NOTES.md &sect;3
+  (five rules that did not transfer) &middot; reviews/messaging/by-staging.md finding 1 &middot; reviews/messaging/by-house-guide.md</p>
+
+  <h4>presentation-writing <span class="tag">FIT 6 &middot; QUALITY 8 &middot; CONTRACT 7 &middot; ~10 MIN</span></h4>
+  <p>The most brand-faithful contender: the only one to reuse the house canonical sentence <em>verbatim</em>, at
+  the cover and again at the end, which is exactly what the brand guide asks for. It gives the mechanism the most
+  airtime of the three that fed the design layer (two deck slots; 44 seconds of a 132-second film, or 33%), and
+  it has the best honesty placement in the leg &mdash; an entire slide disqualifying the product for the wrong
+  collateral, and the counter-evidence to the venue claim printed on the same slide as the claim. Its richest
+  asset is transitions: thirteen of them, one at every beat boundary, and the only contender that writes the
+  <em>spoken</em> bridge for every seam.</p>
+  <p><strong>Against it.</strong> The skill gates on a human four times and has no recorded-assumption escape, so
+  an unattended run fakes four confirmations. Its later phases pull hard toward building a slide file in the
+  skill&rsquo;s <em>own</em> default brand &mdash; a direct collision with the bake-off&rsquo;s design layer &mdash;
+  and there is no mode that stops at the outline. It has no provenance field anywhere, and no concept of video at
+  all: its entire kinetic vocabulary is borrowed from the staging skill next door, which it declares. Its headline
+  repeatable line runs to 38 words, which fails educational goal one on its own terms.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md &sect;1 &ldquo;presentation-writing&rdquo; &middot;
+  messaging/presentation-writing/NOTES.md friction 1&ndash;4 and &sect;5 &middot; reviews/messaging/by-presentation-writing.md</p>
+
+  <h4>pitch-deck-mastery <span class="tag">FIT 5 &middot; QUALITY 7 &middot; CONTRACT 6 &middot; ~12 MIN</span></h4>
+  <p>The furthest tool from the job and, for that reason, the most instructive. It is a fundraise skill in every
+  line &mdash; its checklist demands a market-size slide, a traction chart and a clear ask with an amount &mdash;
+  and <strong>nine distinct fundraise assumptions had to be adapted</strong>, none silently. Its notes carry the
+  single most useful document in the leg: a nine-row adaptation table, and the observation that the skill
+  &ldquo;would score that disclosure slide as a weakness&rdquo;. Despite the mismatch it scores best on educational
+  goal one (a 22-word one-liner plus a handshake form), it is the only contender to carry both corpus
+  contradictions in the <em>body</em> of its prose rather than in a data block a reader may never open, and it
+  adds two slots the others missed that this audience genuinely needs: who buys the other leg, and an itemised
+  risk register.</p>
+  <p><strong>Against it.</strong> The weakest transport artifact, and mechanically so. Its deck slots use the wrong
+  key name for the headline claim; nine of its fourteen function values sit outside the closed vocabulary the
+  design layer keys on; there is no beat on any slot and <strong>no transitions block at all</strong>. Its slot
+  four carries a field describing a payoff chart with axes &mdash; which breaches the composition contract&rsquo;s
+  rule that staging never names a chart type, and which is simultaneously the most immediately actionable field
+  any contender wrote. Two rubrics call that field its best idea; one calls it disqualifying. Its own checklist
+  self-certifies a bullet-length rule that 62% of its bullets break.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md &sect;1 &ldquo;pitch-deck-mastery&rdquo; &middot;
+  messaging/pitch-deck-mastery/NOTES.md, the nine-row adaptation table &middot; reviews/messaging/by-staging.md
+  (the diagram-field FAIL) &middot; reviews/messaging/by-house-guide.md (the same field, as its strength) &middot;
+  reviews/messaging/by-pitch-deck-mastery.md (the 62% self-certification)</p>
+
+  <h3>3.3 &nbsp; The cross-review matrix</h3>
+  <p>Every messaging skill reviewed every messaging output, its own included, and every self-review disclosed the
+  conflict. Rank one is best; the <strong>rank sum</strong> is simply the four ranks added, so the lowest number wins.</p>
+
+  <table>
+    <thead><tr><th style="width:66mm">Reviewer rubric &mdash; and its lens</th><th class="c">staging</th><th class="c">presentation<br>-writing</th><th class="c">pitch-deck<br>-mastery</th><th class="c">house-guide</th></tr></thead>
+    <tbody>
+      <tr><td>by-staging &mdash; <em>structural</em>: argument grammar, gate conformance</td><td class="c first">1</td><td class="c">3</td><td class="c">4</td><td class="c">2</td></tr>
+      <tr><td>by-pitch-deck-mastery &mdash; <em>structural</em>: coverage checklist</td><td class="c first">1</td><td class="c">4</td><td class="c">2</td><td class="c">3</td></tr>
+      <tr><td>by-presentation-writing &mdash; <em>comprehension</em>: thesis, density, bridges</td><td class="c">4</td><td class="c">3</td><td class="c first">1</td><td class="c">2</td></tr>
+      <tr><td>by-house-guide &mdash; <em>comprehension</em>: the nine comprehension failures</td><td class="c">4</td><td class="c">3</td><td class="c">2</td><td class="c first">1</td></tr>
+      <tr><td class="rs">Rank sum &mdash; lowest wins</td><td class="c rs">10</td><td class="c rs">13</td><td class="c rs">9</td><td class="c rs first">8</td></tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md rev.2 &sect;5 &middot; the four reviews/messaging/by-&lt;rubric&gt;.md,
+  each including its house-guide addendum</p>
+
+  <p class="wide"><strong>The two&ndash;two split is real and it is not noise.</strong> The two rubrics that grade
+  <em>structure</em> both put <span class="m">staging</span> first, from opposite directions but for one reason:
+  it is the contender whose every claim about itself reconciles, and structural rubrics can check that. The two
+  that grade <em>comprehension</em> both put <span class="m">pitch-deck-mastery</span> at or near the top,
+  because it reaches the whole product fastest &mdash; its mechanism arrives at 31% of the deck against 43%, 46%
+  and 57% &mdash; and because it is the only contender carrying the redrawable picture <em>through</em> the
+  transport. That is the whole disagreement in one artifact: the same field is its best idea and its
+  disqualifying leak, depending on who holds the pen.</p>
+  <p class="wide">Two caveats belong on the same page as the table. Two of the four are self-reviews placing
+  themselves first, both disclosed; and <span class="m">house-guide</span> arrived last, having read the rest.
+  <span class="m">staging</span> has the widest variance in the field &mdash; first on two rubrics and fourth on
+  the other two &mdash; and both rubrics that rank it last do so for the same reason: no speaker notes, five
+  bridged boundaries out of thirteen, and the mechanism arriving late.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md rev.2 &sect;5 &middot; reviews/messaging/by-house-guide.md
+  &sect;&ldquo;The conflict of interest, stated&rdquo; &middot; reviews/messaging/by-staging.md, disclosure paragraph &middot;
+  reviews/messaging/by-presentation-writing.md, verdict on staging</p>
+
+  <h3>3.4 &nbsp; What every reviewer agreed on</h3>
+  <ol class="wide">
+    <li><strong>No invented numbers, in any of the four.</strong> Every content figure traces to a named file and
+    slide. Notably, the clean sheet was verified <em>by hand</em>: two of the four rubrics have no provenance
+    machinery at all, and one says outright that a contender which invented a number would have passed all
+    fifteen of its rows.</li>
+    <li><strong>The template-count conflict is unresolvable from the corpus.</strong> Three contenders take the
+    higher figure on the brief&rsquo;s source-priority rule and log the conflict; <span class="m">house-guide</span>
+    withholds it. All four notice the thing that matters &mdash; the <em>later</em> revision carries the
+    <em>lower</em> number, so the priority rule may be selecting the stale figure.</li>
+    <li><strong>Unglossed jargon survives every method.</strong> One three-term phrase ships bare in three of four
+    contenders; <span class="m">house-guide</span> clears those and then ships three different bare terms on its
+    cost slot. Every rubric flagged it; <em>no contender&rsquo;s own gate caught it</em> &mdash; and the one
+    contender with a real gloss table certified a pass over its own violation.</li>
+    <li><strong>The fee is missing from the transport in three of four.</strong> Only
+    <span class="m">pitch-deck-mastery</span> puts the transaction fee on a slot;
+    <span class="m">house-guide</span> marks it ship-worthy in its own number gate and then omits it. Otherwise
+    six design tracks ship a pitch that never says what it costs. One rubric dissents and calls that slot a cut
+    candidate &mdash; so the fee is a must-pass row on one rubric and second-meeting material on two.</li>
+    <li><strong>The legal entity is on the cover.</strong> Three of four put it there; the corpus itself records
+    that naming that entity triggers an automatic sanctions review at US institutions. Spending it in the first
+    ten seconds buys nothing. One contender spends it twice.</li>
+    <li><strong>The collateral-fit question is a positioning fork, not a fact-check.</strong> Four methods
+    produced four different answers to the same question &mdash; one disqualifies the flagship collateral on a
+    slide, one in the ask, one names the requirement and refuses to name an underlying, one keeps the
+    brief&rsquo;s framing. Nobody was wrong; nobody could close it.</li>
+  </ol>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md rev.2 &sect;6 &middot; reviews/messaging/by-house-guide.md
+  (glossary failures, all four contenders) &middot; reviews/messaging/by-pitch-deck-mastery.md &sect;S3 unit economics
+  (the fee, three fails) &middot; reviews/messaging/by-presentation-writing.md, cross-cutting section (the entity on the cover)</p>
+
+  <h3>3.5 &nbsp; Verdict</h3>
+  <div class="callout">
+    <div class="lbl">Messaging verdict</div>
+    <p>Adopt <span class="m">staging</span> as the transport and <span class="m">house-guide</span> as the
+    content gate &mdash; one pass, not a pick.</p>
+  </div>
+  <p><span class="m">staging</span> is still the only contender with a legal genre, a classification block
+  carrying its rejections, one mechanism slot and a bold moment in front of the relief &mdash; and the contract is
+  what six design tracks consume. But <span class="m">house-guide</span> beats it decisively on the editorial
+  layer, nine against eight, so its number gate (a verdict per figure, as-of dates in visible text, withholding
+  as a legitimate outcome) and its gloss table become required blocks in the contract, and
+  <em>scene &rarr; value &rarr; mechanism &rarr; honest boundary</em> becomes the default arc check.</p>
+  <p><strong>Borrow, naming the slot and the device:</strong> <span class="m">pitch-deck-mastery</span>&rsquo;s
+  diagram key onto the mechanism slot, carrying the house redraw specification verbatim &mdash; it is the only
+  device that gets educational goal three through the handoff, and it is legal written as a redraw spec rather
+  than as a chart type. <span class="m">house-guide</span>&rsquo;s mandatory worked example onto whichever
+  mechanism slot survives. <span class="m">pitch-deck-mastery</span>&rsquo;s twice-performed gesture as the film&rsquo;s
+  bold moment &mdash; the liquidation completed in scene two, begun and refused mid-motion in scene five &mdash;
+  which is legal under staging&rsquo;s grammar as an answering rhyme and better than borrowing a third party&rsquo;s pain.
+  And <span class="m">presentation-writing</span>&rsquo;s speaker-note discipline onto every slot: two of four
+  contenders ship no presenter track at all.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md rev.2 &sect;7 &ldquo;Recommendation, revised&rdquo;</p>
+</section>
+
+<!-- ============================== 4 ============================== -->
+<section class="section sheet">
+  <div class="sechead"><div class="secno">4</div><div class="sectitle">The design leg</div></div>
+  <p class="claim">No tool scores above seven for fit, because all six had to build the timed&ndash;explainer
+  engine themselves.</p>
+
+  <h3>4.1 &nbsp; What all six did in common</h3>
+  <p>The design leg&rsquo;s most important finding is not about any one tool. Six skills, chosen from three
+  different lineages, converged on the same set of things they all had to build from scratch &mdash; and each
+  named the gap independently, in its own notes, before any reviewer read them.</p>
+
+  <table>
+    <thead><tr><th style="width:50mm">Every tool had to&hellip;</th><th>What that meant, in their own words</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Build the film engine itself.</strong></td>
+        <td>None of the six has a timeline concept. &ldquo;No motion vocabulary at all&rdquo;; &ldquo;could not
+        express: a scene timeline, narration timing&rdquo;; &ldquo;covers interaction motion, not a fixed-duration
+        film with a seek API&rdquo;; &ldquo;no scene/timeline concept at all&rdquo;; &ldquo;the skill has no
+        timeline&rdquo;. All six independently built the same surface: a frame clock, a per-scene duration
+        attribute equal to the narration budget, a scene deep-link, a progress bar and a player object.
+        <strong>This is the bake-off&rsquo;s clearest tooling gap.</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Borrow the motion vocabulary from the messaging layer.</strong></td>
+        <td>The eight motion verbs the films are built on came from the messaging contracts&rsquo; motion-role
+        field, not from any design skill. Every tool says so; the messaging side says the same thing from the
+        other direction.</td>
+      </tr>
+      <tr>
+        <td><strong>Replace the transport.</strong></td>
+        <td>Each tool assumes a scrolling responsive page, or a viewport-fluid deck, or a single printed page.
+        All six built the fixed letterboxed stage, the film stage, print pagination, keyboard navigation and a
+        slide counter from the task brief rather than from the skill.</td>
+      </tr>
+      <tr>
+        <td><strong>Ship one generator plus three content files.</strong></td>
+        <td>Every tool built a shared system once and then rendered the three messaging contracts through it.
+        Rebuild times after the system existed: 2.1 s, 0.03 s, under 1 s. Per-artifact time is therefore not
+        comparable to hand-authoring, and all six say so.</td>
+      </tr>
+      <tr>
+        <td><strong>Render every slot, including the awkward one.</strong></td>
+        <td>One messaging contract carries an appendix slot outside its numbered list. All six rendered it
+        rather than dropping it, and all six flagged the call. Contract fidelity is perfect across every
+        artifact measured: 30 of 30 decks and 30 of 30 explainers &mdash; the ten track-modes the fidelity
+        rubric covered, the finish arm inheriting its baseline &mdash; render every slot and scene, in order,
+        claims verbatim, footer on every surface, durations equal to the narration budget.</td>
+      </tr>
+      <tr>
+        <td><strong>Fight the same linter false positive.</strong></td>
+        <td>The brand linter&rsquo;s leak rule contains a substring of every real citation in the corpus, so
+        honest sourcing hard-fails it. <strong>Five of six notes files report it as top-tier friction.</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Invent a way to photograph a moving film.</strong></td>
+        <td>Headless rendering advances the script clock but not the animation clock, so every mid-animation
+        screenshot comes back at time zero &mdash; which reads exactly like a broken build. Every tool that
+        rendered frames hit this independently and each invented its own freeze hook. One notes file says the
+        bug &ldquo;would have silently shipped an unverified film&rdquo;.</td>
+      </tr>
+      <tr>
+        <td><strong>Discover that looking is what finds the defects.</strong></td>
+        <td>Every contender that looked at frames says looking is what found the real bugs; every contender that
+        could not look names that as its top risk. The finish contender puts it most sharply:
+        <em>a detector result is defect evidence, not proof of quality.</em></td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; the six tracks/&lt;tool&gt;/NOTES.md, &ldquo;could not express&rdquo; and friction sections &middot;
+  bakeoff/JUDGING-design-claude.md &sect;1 scoring convention and &sect;3 findings 3, 4 and 7</p>
+
+  <h3>4.2 &nbsp; Per-tool summary</h3>
+  <p class="note">Two frames per tool per brand mode, all from the same messaging lane so they are comparable:
+  the <strong>mechanism slide</strong> &mdash; the one slide the brief says a viewer must be able to redraw &mdash;
+  and the <strong>bold-moment scene</strong>, the film&rsquo;s designated peak. Scores are the model judge&rsquo;s:
+  fit, then representation quality.</p>
+</section>
+
+<section class="section sheet">
+  <h4>canvas-design <span class="tag">BRAND 3 / 9 &nbsp;&middot;&nbsp; FREE 3 / 7 &nbsp;&middot;&nbsp; DELTA &minus;1.5</span></h4>
+  <div class="plates">
+    <figure><img src="{{IMG:shots/canvas-design/brand/staging/slide-08.png}}" alt="canvas-design brand mode, mechanism slide"><figcaption><b>brand &middot; mechanism</b><br>shots/canvas-design/brand/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/canvas-design/brand/staging/scene-04.png}}" alt="canvas-design brand mode, bold-moment scene"><figcaption><b>brand &middot; bold moment</b><br>shots/canvas-design/brand/staging/scene-04.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/canvas-design/free/staging/slide-08.png}}" alt="canvas-design free mode, mechanism slide"><figcaption><b>free &middot; mechanism</b><br>shots/canvas-design/free/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/canvas-design/free/staging/scene-04.png}}" alt="canvas-design free mode, bold-moment scene"><figcaption><b>free &middot; bold moment</b><br>shots/canvas-design/free/staging/scene-04.png</figcaption></figure>
+  </div>
+  <p><strong>The worst fit and the best result.</strong> The skill&rsquo;s model is one page &mdash; it states
+  &ldquo;output only .md, .pdf, .png&rdquo; three times &mdash; with no sequence, no motion vocabulary, no HTML,
+  and an ethic (<em>never explain, let the composition tell the story</em>) that inverts an educational brief.
+  About 40% of the session went on building the structural requirements the skill does not have. What saved it is
+  one instruction: <em>systematic reference markers from an imaginary discipline</em> turns out to be the same
+  instruction as the brief&rsquo;s <em>every figure must trace to a source</em>, so provenance became a design
+  element rather than a compliance tax. The result is 42 of 42 exhibits and 42 of 42 file-level citations, with
+  alt-text on every drawing.</p>
+  <p>Its mechanism slide is the one payoff diagram a viewer could redraw unaided: the two legs stacked, the
+  constant edge held flat, the strike marked, and <em>both branches written as arithmetic under the axis</em>.
+  Its bold-moment scene &mdash; fifty-odd hairline marks falling to a zero baseline under one enormous figure
+  &mdash; is one of only two genuine visual peaks in the field, and a later slide draws a
+  <em>non-existence</em>, which nothing else attempted. One reviewer calls that plate &ldquo;the single best
+  visual in the bake-off: it draws a non-existence&rdquo;.</p>
+  <p><strong>Against it.</strong> The least legible deck measured: 123 of 221 strings under the 4.5:1 contrast
+  floor, with the source line running at <strong>1.85:1</strong>. And it is the only track in thirty decks that
+  <strong>dropped a fact</strong>. In free mode the same plate library gains the field&rsquo;s best
+  &ldquo;so what&rdquo; annotation &mdash; then collides it with a label on the one slide that must be
+  redrawable; citations collapse from 42 of 42 to <strong>4 of 42</strong> the moment the brand stops requiring
+  them; and no reduced-motion handling ships in either medium. The constraint made the better work.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;1 &ldquo;canvas-design&rdquo; &middot;
+  tracks/canvas-design/NOTES.md (the 40% figure, the render-and-look log) &middot; reviews/design/by-academic-pptx.md
+  (42/42 and 4/42 citations, exhibit rate) &middot; reviews/design/by-open-design-review.md (123/221, 1.85:1) &middot;
+  reviews/design/by-huashu-critique.md (score 8.6 brand, 7.6 free) &middot; reviews/design/by-messaging-rubrics.md (the dropped fact)</p>
+
+  <h4>algorithmic-art <span class="tag">BRAND 3 / 3 &nbsp;&middot;&nbsp; FREE 4 / 4 &nbsp;&middot;&nbsp; DELTA +1</span></h4>
+  <div class="plates">
+    <figure><img src="{{IMG:shots/algorithmic-art/brand/staging/slide-08.png}}" alt="algorithmic-art brand mode, mechanism slide"><figcaption><b>brand &middot; mechanism</b><br>shots/algorithmic-art/brand/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/algorithmic-art/brand/staging/scene-04.png}}" alt="algorithmic-art brand mode, bold-moment scene"><figcaption><b>brand &middot; bold moment</b><br>shots/algorithmic-art/brand/staging/scene-04.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/algorithmic-art/free/staging/slide-08.png}}" alt="algorithmic-art free mode, mechanism slide"><figcaption><b>free &middot; mechanism</b><br>shots/algorithmic-art/free/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/algorithmic-art/free/staging/scene-04.png}}" alt="algorithmic-art free mode, bold-moment scene"><figcaption><b>free &middot; bold moment</b><br>shots/algorithmic-art/free/staging/scene-04.png</figcaption></figure>
+  </div>
+  <p><strong>A generator with no opinion on type, layout, hierarchy or copy</strong>, so the deck tool had to be
+  written around it. Its notes are candid that the skill refused nothing and guarded nothing: &ldquo;the skill has
+  no guardrails that fired.&rdquo; A living canvas also cannot print. The single biggest bug in the bake-off was
+  its library&rsquo;s initialisation order, which surfaced as an opaque cross-origin script error that killed the
+  player.</p>
+  <p>The representation is the weakest in the field. <strong>The mechanism slide is a horizontal noise field</strong>
+  with twelve-pixel leg labels, no constant line, no strike and no axis values &mdash; goal three is unmet, and one
+  reviewer records that it &ldquo;reads as a rendering artifact&rdquo;. The bold-moment scene is a near-black frame
+  with barely visible wisps, and the measured film barely moves at all: every scene changes 0.28% or less of its
+  pixels between consecutive frames. Zero representational exhibits in either mode. One finding outranks all of it:
+  a live particle count is printed where a measurement belongs, in the evidence zone, to a room whose stated
+  distrust is numbers whose provenance is not named &mdash; and its value appears nowhere in the corpus. Two reviews
+  reach it independently; one calls it its highest-severity finding.</p>
+  <p><strong>For it.</strong> The one thing here no static design can do: a bar whose length is a live
+  <em>count</em>, so the invariant is watched rather than asserted. Its notes name the real insight &mdash; the
+  disaster and the product mechanism are the same algorithm one parameter apart, so the film argues by running an
+  A/B against itself. Free mode recovers citations to 41 of 42 and has the cleanest deck contrast in the whole free
+  field, then ships the entire staging contract verbatim as a data object inside a file stamped confidential.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;1 &ldquo;algorithmic-art&rdquo; and &sect;3 finding 2 &middot;
+  tracks/algorithmic-art/NOTES.md (the initialisation bug; &ldquo;nothing refused&rdquo;; the A/B insight) &middot;
+  reviews/design/by-academic-pptx.md (0/42 exhibits both modes; 4/42 then 41/42 citations; the untraceable figure as
+  highest-severity) &middot; reviews/design/by-messaging-rubrics.md (all scenes &le;0.28) &middot;
+  reviews/design/by-open-design-review.md (&ldquo;reads as a rendering artifact&rdquo;; 1 string under 4.5:1 in free)</p>
+</section>
+
+<div class="sheet">
+  <h4>impeccable <span class="tag">BRAND 5 / 7 &nbsp;&middot;&nbsp; FREE 5 / 7 &nbsp;&middot;&nbsp; DELTA +0.5</span></h4>
+  <div class="plates">
+    <figure><img src="{{IMG:shots/impeccable/brand/staging/slide-08.png}}" alt="impeccable brand mode, mechanism slide"><figcaption><b>brand &middot; mechanism</b><br>shots/impeccable/brand/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/impeccable/brand/staging/scene-04.png}}" alt="impeccable brand mode, bold-moment scene"><figcaption><b>brand &middot; bold moment</b><br>shots/impeccable/brand/staging/scene-04.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/impeccable/free/staging/slide-08.png}}" alt="impeccable free mode, mechanism slide"><figcaption><b>free &middot; mechanism</b><br>shots/impeccable/free/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/impeccable/free/staging/scene-04.png}}" alt="impeccable free mode, bold-moment scene"><figcaption><b>free &middot; bold moment</b><br>shots/impeccable/free/staging/scene-04.png</figcaption></figure>
+  </div>
+  <p><strong>The best-behaved artifact in the field.</strong> Its craft floor drove real checks; it read the
+  linter&rsquo;s <em>source</em> rather than its help text, which is why it passed first run; and its
+  clearing-house-circular device earns itself on this brief specifically &mdash; the audience distrusts unnamed
+  provenance, and a circular makes provenance structural. An authority line on every slide, carrying both the
+  source and the as-of date at the top of the slide where it is actually read, at 4.89:1, is
+  <strong>the best citation placement in the bake-off</strong>. Only two strings in the whole deck fall under the
+  contrast floor &mdash; the best brand-mode accessibility result measured. And it is the only track that
+  <strong>renamed the contract&rsquo;s internal field names</strong> before they reached the screen.</p>
+  <p><strong>Against it, in brand mode.</strong> A third of the skill&rsquo;s published flow is an interview this
+  harness cannot hold, and the step the skill names as its own best lever was unavailable. Nine of fourteen slides
+  carry no exhibit, eight sit over a dead vertical band, and the explainer&rsquo;s mechanism is the weakest drawing
+  of any tool that drew one &mdash; a descending line, a dotted rule and an empty box with its label clipped. The
+  cover&rsquo;s shield motif says &ldquo;security product&rdquo; on a deck arguing that no liquidation exists.
+  A beautifully set text document, not an explained mechanism.</p>
+  <p><strong>Free mode is the boldest swing and the highest ceiling.</strong> Its concept generator
+  <em>refused the build thread&rsquo;s own ranking</em> and landed on a historical double-entry codex whose two
+  sides must balance &mdash; which is exactly what the product&rsquo;s invariant is. Its mechanism slide states the
+  invariant and draws it in one gesture, the strongest show-don&rsquo;t-tell artifact here, and it is the one free
+  artifact whose world could not be resold to another client. It is also, uniquely, <em>more</em> on-brand than its
+  own brand mode.</p>
+  <p><strong>And it was never looked at.</strong> Its own notes say so: <em>no human or model ever looked at a
+  rendered frame of these six artifacts</em> &mdash; the largest evidence gap in the bake-off. It shows. The cover
+  ships a visible collision, one folio renders words out of reading order, the pigment established as one leg is
+  spent on the incumbent&rsquo;s win, and the scene whose job is to <em>give up</em> the apparatus measures as the
+  loudest scene in the film.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;1 &ldquo;impeccable&rdquo; &middot;
+  tracks/impeccable/NOTES.md (the interview gap; the concept-seed refusal; &ldquo;no human or model has ever
+  looked&rdquo;) &middot; reviews/design/by-open-design-review.md (4.89:1 authority line; 2 strings under 4.5:1;
+  the out-of-order copy blocker) &middot; reviews/design/by-messaging-rubrics.md (ranked first in both modes; the
+  quiet scene measuring 12.91 against the peak&rsquo;s 5.49) &middot; reviews/design/by-huashu-critique.md (7.6 free, first)</p>
+
+  <h4>impeccable-polish <span class="tag">BRAND 7 / 5 &nbsp;&middot;&nbsp; FREE 7 / 5 &nbsp;&middot;&nbsp; DELTA +1.4, inherited</span></h4>
+  <div class="plates">
+    <figure><img src="{{IMG:shots/impeccable-polish/brand/staging/slide-08.png}}" alt="impeccable-polish brand mode, mechanism slide"><figcaption><b>brand &middot; mechanism</b><br>shots/impeccable-polish/brand/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/impeccable-polish/brand/staging/scene-04.png}}" alt="impeccable-polish brand mode, bold-moment scene"><figcaption><b>brand &middot; bold moment</b><br>shots/impeccable-polish/brand/staging/scene-04.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/impeccable-polish/free/staging/slide-08.png}}" alt="impeccable-polish free mode, mechanism slide"><figcaption><b>free &middot; mechanism</b><br>shots/impeccable-polish/free/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/impeccable-polish/free/staging/scene-04.png}}" alt="impeccable-polish free mode, bold-moment scene"><figcaption><b>free &middot; bold moment</b><br>shots/impeccable-polish/free/staging/scene-04.png</figcaption></figure>
+  </div>
+  <p><strong>The best tool fit in the bake-off</strong> &mdash; its polish, craft-floor and animate commands are
+  written for exactly this job &mdash; and the method is exemplary: 227 substitutions across six files in one
+  batch, <em>every replacement asserting its expected hit count so nothing could silently no-op</em>. It bought
+  the entire craft floor. A real spacing scale where nine arbitrary values had been. The mandated confidentiality
+  footer lifted from 3.4:1 to 6.1:1 &mdash; the one string the brief requires on every slide, previously below
+  the legibility floor. Thirteen of fourteen slides removed from the screen-reader tree, which is
+  <strong>the single highest-value defect in the field and one no detector can see</strong>: every slide was
+  hidden by opacity alone, so a screen reader read all fourteen at once. A focus ring the brand pins and the
+  baseline omitted. The static detector went from 30 findings to 3.</p>
+  <p><strong>And it moved not one representation finding.</strong> Citations stay at 8 of 42. The payoff still has
+  no &ldquo;so what&rdquo;. The explainer&rsquo;s second bar is still undrawn. The eyebrow is still at 3.66:1 on
+  every slide despite the notes claiming otherwise. Compared directly against the baseline, the mechanism slide and
+  the bold-moment scene are near pixel-identical. In free mode it removed 40,026 bytes of unreachable stylesheet
+  &mdash; with correct reachability analysis through a runtime class construction a naive search would miss &mdash;
+  and made gradient-filled text solid, taking it from <em>no measurable contrast at all</em> to 5.09:1. Then it ran
+  out of things to buy: the free baseline had already banked the whole craft floor, and every rubric returns
+  approximately zero.</p>
+  <div class="callout">
+    <div class="lbl">The finish-pass result, four rubrics, one answer</div>
+    <p>+6 of 32, +0.8, +0.7 and one pixel in brand mode. +1 of 32, 0.0, +0.1 and nothing in free mode.
+    <strong>Not one composition finding closed, in either mode.</strong> The ceiling on a refinement pass is
+    the concept it inherits.</p>
+  </div>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;1 &ldquo;impeccable-polish&rdquo; and &sect;3 finding 6 &middot;
+  tracks/impeccable-polish/NOTES.md (227 substitutions; the accessibility-tree defect; 40,026 bytes; the two brand fights) &middot;
+  reviews/design/by-impeccable-critique.md (+6/32 brand, +1/32 free; detector 30&rarr;3) &middot;
+  reviews/design/by-open-design-review.md (+0.8 brand, 0.0 free; 3.66&rarr;6.10) &middot;
+  reviews/design/by-huashu-critique.md (+0.7, +0.1) &middot; reviews/design/by-academic-pptx.md (one pixel; exact zero in free)</p>
+</div>
+
+<div class="sheet">
+  <h4>visual-explainer <span class="tag">BRAND 5 / 6 &nbsp;&middot;&nbsp; FREE 5 / 7 &nbsp;&middot;&nbsp; DELTA +1</span></h4>
+  <div class="plates">
+    <figure><img src="{{IMG:shots/visual-explainer/brand/staging/slide-08.png}}" alt="visual-explainer brand mode, mechanism slide"><figcaption><b>brand &middot; mechanism</b><br>shots/visual-explainer/brand/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/visual-explainer/brand/staging/scene-04.png}}" alt="visual-explainer brand mode, bold-moment scene"><figcaption><b>brand &middot; bold moment</b><br>shots/visual-explainer/brand/staging/scene-04.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/visual-explainer/free/staging/slide-08.png}}" alt="visual-explainer free mode, mechanism slide"><figcaption><b>free &middot; mechanism</b><br>shots/visual-explainer/free/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/visual-explainer/free/staging/scene-04.png}}" alt="visual-explainer free mode, bold-moment scene"><figcaption><b>free &middot; bold moment</b><br>shots/visual-explainer/free/staging/scene-04.png</figcaption></figure>
+  </div>
+  <p><strong>The best teaching in brand mode.</strong> Its invariants &mdash; <em>depict the mechanism, not its
+  name</em>; <em>one figure, one claim; the caption states it</em> &mdash; are exactly right here, and its
+  design-judgment pass produced the one real layout idea in the field: <em>the payoff axis is the deck&rsquo;s
+  spine</em>, recurring on the mechanism, cost and proof slides, with the argument told by what gets drawn onto
+  it. Twenty-five of 42 exhibits, second-highest in the field. Its own notes name the reason it works: drawing the
+  two legs <em>stacked</em> makes the invariant literally visible, which is a stronger proof than writing the
+  identity out.</p>
+  <p><strong>Against it.</strong> Its diagram routing table has no row for a continuous mathematical function, so
+  its one permitted diagram engine was routed away entirely. Its slide engine is the wrong shape for a fixed stage
+  and had to be rewritten. Its slide-planning reference says to add slides rather than drop content, which is
+  actively wrong against a fixed slot count. And three real defects: the mechanism plot clips at the right, with
+  the curve running into the adjacent column; the provenance line runs at <strong>1.85:1 on every slide</strong>,
+  which one reviewer calls the highest-value single fix in its whole review; and
+  <strong>the bold-moment scene states the opposite of the fact</strong> &mdash; two quantities drawn as
+  comparable bars where the source records one of them as zero. Any recording taken at that frame is wrong.</p>
+  <p><strong>Free mode</strong> produces the most redrawable rendering of the arithmetic in the field &mdash; a
+  three-row case table set beside the chart &mdash; and is the only track clearing the title-size floor on every
+  slide. Then it is undone by chrome: the presenter widget is <em>baked into the stage</em>, overlapping the source
+  citation, and would be recorded and printed with it; the same frame disagrees with itself about which slide it is;
+  and the rail prints two of the contract&rsquo;s internal field names in front of an asset manager.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;1 &ldquo;visual-explainer&rdquo; &middot;
+  tracks/visual-explainer/NOTES.md (the routing gap; the slide-count rule; the stacked-legs insight) &middot;
+  reviews/design/by-impeccable-critique.md (the clipped plot at x&asymp;696; the contradicted-fact finding as a P0) &middot;
+  reviews/design/by-open-design-review.md (1.85:1, &ldquo;the highest-value fix in the review&rdquo;) &middot;
+  reviews/design/by-academic-pptx.md (25/42 exhibits; the 46px claim clearing the title floor)</p>
+
+  <h4>html-ppt <span class="tag">BRAND 4 / 4 &nbsp;&middot;&nbsp; FREE 6 / 7 &nbsp;&middot;&nbsp; DELTA +3, the largest</span></h4>
+  <div class="plates">
+    <figure><img src="{{IMG:shots/html-ppt/brand/staging/slide-08.png}}" alt="html-ppt brand mode, mechanism slide"><figcaption><b>brand &middot; mechanism</b><br>shots/html-ppt/brand/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/html-ppt/brand/staging/scene-04.png}}" alt="html-ppt brand mode, bold-moment scene"><figcaption><b>brand &middot; bold moment</b><br>shots/html-ppt/brand/staging/scene-04.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/html-ppt/free/staging/slide-08.png}}" alt="html-ppt free mode, mechanism slide"><figcaption><b>free &middot; mechanism</b><br>shots/html-ppt/free/staging/slide-08.png</figcaption></figure>
+    <figure><img src="{{IMG:shots/html-ppt/free/staging/scene-04.png}}" alt="html-ppt free mode, bold-moment scene"><figcaption><b>free &middot; bold moment</b><br>shots/html-ppt/free/staging/scene-04.png</figcaption></figure>
+  </div>
+  <p><strong>The pinned brand cost this tool everything it is for.</strong> All 23 of its theme tokens were
+  replaced; 20 of its 27 animations and all 20 of its canvas effect modules were cut as decoration by
+  construction; and presenter mode, theme cycling and the overview grid &mdash; its headline features &mdash;
+  were lost to the self-containment requirement. Its type scale was re-pinned downward so far that its own notes
+  call the result &ldquo;much quieter than any of its showcase decks&rdquo;. What survived is the primitive layer
+  and the token discipline, which is real and which paid. The result is hollow: dead vertical bands on five
+  slides, three headings stacked above every action title, <strong>8 of 42 citations, the worst in the
+  field</strong>, and a bold-moment scene that is one unlabelled rectangle with half the claim never drawn.</p>
+  <p><strong>Off the leash it becomes the most professionally resolved deck here.</strong> One theme per messaging
+  register. It owns <strong>the best-annotated exhibit in thirty decks</strong> &mdash; the one exhibit in the
+  whole field that states its own &ldquo;so what&rdquo; on the face of the chart &mdash; the most traceable
+  citations at 39 of 42, quoting the source phrase rather than naming a file, presenter notes on all fourteen
+  slides carrying the contract&rsquo;s spoken bridges, and
+  <strong>zero strings under the contrast floor and zero under the size floor</strong>: the most accessible
+  artifact measured in either mode.</p>
+  <p><strong>Its friction is the most instructive in the bake-off.</strong> Two of the skill&rsquo;s idioms fail
+  <em>silently</em>. Its count-up animation rendered a materially wrong figure on any slide caught mid-count, and
+  renders a literal zero in print or on an unvisited slide; its own notes record that one rounding call inside the
+  same idiom &ldquo;would have been a fabricated number&rdquo;. Its colour-mixing function fell back to solid black
+  in the capture browser and turned the payoff diagram into a black box. Both were caught only because every pass
+  was screenshotted. Against that: 6 of 42 exhibits, the lowest in the field &mdash; the tool proved it could build
+  the field&rsquo;s best exhibit, then built two of them in fourteen slides &mdash; an 89-word median against an
+  unused notes mechanism, a mechanism chart whose fill spans both legs so the two are indistinguishable at speed,
+  and a theme swap between messaging lanes, so the track has no single identity.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;1 &ldquo;html-ppt&rdquo; &middot;
+  tracks/html-ppt/NOTES.md (23 tokens replaced, 20 of 27 animations cut, the count-up and colour-mix hazards) &middot;
+  reviews/design/by-academic-pptx.md (8/42 then 39/42 citations; 6/42 exhibits; the annotated exhibit as best in the bake-off) &middot;
+  reviews/design/by-open-design-review.md (8.2 in free, zero strings under either floor) &middot;
+  reviews/design/by-impeccable-critique.md (detector 15 hard findings in free, worst measured)</p>
+</div>
+
+<section class="section sheet">
+  <h3>4.3 &nbsp; The cross-review matrix</h3>
+  <p>Five rubrics, ranked one to six per brand mode. The rank sum is taken over the four rubrics that scored all
+  six tools; the messaging rubrics did not score the finish contender, which is why its column carries a dash.
+  <strong>The dispersion is the result.</strong></p>
+
+  <div class="lbl" style="margin:6mm 0 1.5mm 0">Brand mode</div>
+  <table>
+    <thead><tr><th style="width:56mm">Rubric &mdash; and its bias</th><th class="c">canvas</th><th class="c">algo</th><th class="c">impec</th><th class="c">polish</th><th class="c">vis-exp</th><th class="c">html-ppt</th></tr></thead>
+    <tbody>
+      <tr><td>huashu-critique &mdash; <em>concept</em></td><td class="c first">1</td><td class="c">2</td><td class="c">3</td><td class="c">5</td><td class="c">4</td><td class="c">6</td></tr>
+      <tr><td>open-design-review &mdash; <em>accessibility</em></td><td class="c first">1</td><td class="c">5</td><td class="c">2</td><td class="c">4</td><td class="c">3</td><td class="c">6</td></tr>
+      <tr><td>academic-pptx &mdash; <em>evidence</em></td><td class="c first">1</td><td class="c">6</td><td class="c">3</td><td class="c">4</td><td class="c">2</td><td class="c">5</td></tr>
+      <tr><td>impeccable-critique &mdash; <em>craft floor</em></td><td class="c first">1</td><td class="c">4</td><td class="c">2</td><td class="c">3</td><td class="c">5</td><td class="c">6</td></tr>
+      <tr><td>messaging-rubrics &mdash; <em>fidelity</em></td><td class="c">4</td><td class="c">5</td><td class="c first">1</td><td class="c">&mdash;</td><td class="c">2</td><td class="c">3</td></tr>
+      <tr><td class="rs">Rank sum &mdash; four rubrics</td><td class="c rs first">4</td><td class="c rs">17</td><td class="c rs">10</td><td class="c rs">16</td><td class="c rs">14</td><td class="c rs">23</td></tr>
+    </tbody>
+  </table>
+
+  <div class="lbl" style="margin:7mm 0 1.5mm 0">Free mode</div>
+  <table>
+    <thead><tr><th style="width:56mm">Rubric</th><th class="c">canvas</th><th class="c">algo</th><th class="c">impec</th><th class="c">polish</th><th class="c">vis-exp</th><th class="c">html-ppt</th></tr></thead>
+    <tbody>
+      <tr><td>huashu-critique</td><td class="c">2</td><td class="c">3</td><td class="c first">1</td><td class="c">5</td><td class="c">4</td><td class="c">6</td></tr>
+      <tr><td>open-design-review</td><td class="c">6</td><td class="c">4</td><td class="c">5</td><td class="c first">1=</td><td class="c">3</td><td class="c first">1=</td></tr>
+      <tr><td>academic-pptx</td><td class="c">2</td><td class="c">6</td><td class="c">5</td><td class="c">4</td><td class="c first">1</td><td class="c">3</td></tr>
+      <tr><td>impeccable-critique</td><td class="c">5</td><td class="c">3</td><td class="c first">1=</td><td class="c">4</td><td class="c first">1=</td><td class="c">6</td></tr>
+      <tr><td>messaging-rubrics</td><td class="c">4</td><td class="c">5</td><td class="c first">1</td><td class="c">&mdash;</td><td class="c">3</td><td class="c">2</td></tr>
+      <tr><td class="rs">Rank sum &mdash; four rubrics</td><td class="c rs">15</td><td class="c rs">16</td><td class="c rs">12.5</td><td class="c rs">14.5</td><td class="c rs first">9.5</td><td class="c rs">16.5</td></tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;2, aggregated from the five reviews/design/by-&lt;rubric&gt;.md files</p>
+
+  <p class="wide">In <strong>brand</strong> mode <span class="m">canvas-design</span> takes four of five firsts and
+  a rank sum of 4 out of a possible 4 &mdash; <em>the only consensus in the bake-off</em>. In <strong>free</strong>
+  mode every tool except <span class="m">algorithmic-art</span> places first on at least one rubric and last or
+  next-to-last on another; the sums span 9.5 to 16.5 with four tools inside two points. There is no free-mode
+  consensus, and reporting one would be manufacturing it.</p>
+
+  <h3>4.4 &nbsp; Why the rubrics disagree</h3>
+  <p>Each rubric&rsquo;s ranking is a faithful expression of what that rubric can see. Printing that beside the
+  matrix is the difference between a ranking and a measurement.</p>
+  <table>
+    <thead><tr><th style="width:40mm">Rubric</th><th>What it is actually measuring, and what that does to the order</th></tr></thead>
+    <tbody>
+      <tr><td class="m">huashu-critique</td><td><strong>Concept-led by construction.</strong> Concept carries 0.30 <em>and</em> a hard veto: score it at five or below and the total caps at 6.0 regardless of execution. That one rule vetoed four of ten artifacts scoring seven and eight on hierarchy and craft, put a strong idea with ambient execution second in brand mode, and put the best-built free deck last.</td></tr>
+      <tr><td class="m">open-design-review</td><td><strong>Nominally a four-part jury, accessibility-led in practice.</strong> Its brand column sits between 8.5 and 9.5 for everyone while its accessibility column spans 2.5 to 9.0 &mdash; so a 0.2-weighted axis behaves as the discriminator. That is why the tool with the best idea finishes <em>last</em> in free mode (it sets its content in near-invisible grey) and the template engine wins outright.</td></tr>
+      <tr><td class="m">academic-pptx</td><td><strong>Evidence-led</strong> &mdash; exhibit rate, whether the exhibit carries its own conclusion, how citations render. The only rubric putting the generative tool last in <em>both</em> modes, and the only one ranking the diagram tool first in free mode. It states outright that it has no vocabulary for motion, so it systematically undersells the tool whose whole argument is kinetic.</td></tr>
+      <tr><td class="m">impeccable-critique</td><td><strong>Craft-floor-led</strong>, and it is the rubric the finish contender was optimising against with the file open in front of it. That is why it alone lifts that contender from sixth to third in brand mode, and why its bans penalise four tracks for habits they had no notice of. It declares the conflict twice and calls its own polish numbers &ldquo;a self-report with a stopwatch on it&rdquo;.</td></tr>
+      <tr><td class="m">messaging-rubrics</td><td><strong>Fidelity- and comprehension-led</strong>, and the only rubric that measured motion empirically (820 sampled frames) or diffed the contract&rsquo;s claims against extracted page text. Which is why it inverts nearly everything: the tool that kept insider vocabulary off the screen first in both modes, the consensus winner fourth in both, and the generative tool last for a film that does not move.</td></tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;2 &ldquo;Why they disagree&rdquo; &middot; each rubric&rsquo;s own
+  preamble and declared-bias section in reviews/design/by-&lt;rubric&gt;.md</p>
+
+  <div class="callout">
+    <div class="lbl">The sharpest single disagreement</div>
+    <p><span class="m">canvas-design/brand</span> is first on four rubrics and fourth on the fifth &mdash;
+    because the fifth is the only one that checked whether a fact went missing.</p>
+  </div>
+</section>
+
+<section class="section sheet">
+  <h3>4.5 &nbsp; Consensus findings across the whole design layer</h3>
+  <ol class="wide">
+    <li><strong>The bold moment is a visual peak in exactly one track-mode.</strong> Measured in-scene motion puts
+    a <em>later, contractually quieter</em> scene above the designated peak in six films, and a quiet scene above
+    it in three more. Only <span class="m">canvas-design/brand</span> orders the film as the contract requires,
+    with the peak measuring the maximum and a correlation of +0.85 between contract energy and measured motion.
+    Nine of ten films do not put their loudest frame where their argument does.</li>
+    <li><strong>One on-screen number is untraceable.</strong> A live particle count is printed where a
+    measurement belongs, and its value appears nowhere in the source corpus. Two reviews reach it independently;
+    one calls it its highest-severity finding. Same class: build seeds printed on every slide.</li>
+    <li><strong>The brand linter&rsquo;s leak rule is the most-reported tool defect in the bake-off.</strong> Its
+    forbidden-substring list contains a fragment of every real citation filename in the corpus, so honest sourcing
+    hard-fails the linter. <strong>Five of six notes files report it as top-tier friction.</strong> It pushed
+    provenance into prose &mdash; which is arguably better &mdash; or off the slide face entirely: one track&rsquo;s
+    4-of-42 citation rate is this rule&rsquo;s doing.</li>
+    <li><strong>No design tool has a timeline concept; all six built the explainer engine themselves.</strong>
+    The motion vocabulary came from the messaging layer. This is the bake-off&rsquo;s clearest tooling gap, and it
+    is why no tool scores above seven for fit.</li>
+    <li><strong>Provenance lines fail the contrast floor, everywhere.</strong> 1.85:1 on one winner&rsquo;s source
+    line; 1.85:1 on another tool&rsquo;s provenance line on <em>every</em> slide; 1.99:1 on a third&rsquo;s captions;
+    3.66:1 on an eyebrow the finish pass reported as fixed. The brief made traceability mandatory and the field set
+    it below the threshold of sight. One reviewer calls a single token change here the highest-value fix in its
+    whole review.</li>
+    <li><strong>Polish bought the craft floor and none of the composition.</strong> Four rubrics, one answer:
+    +6 of 32, +0.8, +0.7 and one pixel in brand; +1 of 32, 0.0, +0.1 and nothing in free.
+    <em>Not one composition finding closed in either mode.</em></li>
+    <li><strong>Contract fidelity is perfect across every artifact measured.</strong> Thirty of thirty decks and
+    thirty of thirty explainers &mdash; the ten track-modes the fidelity rubric covered &mdash; render every slot
+    and scene, in order, claims verbatim, the mandated footer on every surface, scene durations equal to the
+    narration budget. The messaging contract as a transport works
+    &mdash; a finding, not a given.</li>
+    <li><strong>Internal contract vocabulary is leaking onto the screen in four of six tools.</strong> Motion-role
+    names, the literal words &ldquo;bold moment&rdquo;, function-and-beat pairs used as slide kickers, and a
+    contract&rsquo;s figure-naming field printed as viewer-facing bullets. Only one tool renamed them.
+    <em>A contract&rsquo;s figure name is a commission, not a caption.</em> One line in the task spec fixes it.</li>
+    <li><strong>Raw internal filenames are on client-facing slide faces</strong> in five of twelve track-modes,
+    including an internal style-guide section number on two covers. <em>No review filed this as a class.</em> The
+    linter rule everyone routed around was, badly, trying to catch exactly this.</li>
+  </ol>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;3, findings 1&ndash;9 &middot;
+  reviews/design/by-messaging-rubrics.md (820 frames; the &rho;=+0.85 measurement; F1&ndash;F3) &middot;
+  reviews/design/by-academic-pptx.md (the untraceable figure) &middot; the five tracks/&lt;tool&gt;/NOTES.md reporting the linter rule</p>
+
+  <h3>4.6 &nbsp; Verdicts</h3>
+  <table>
+    <thead><tr><th style="width:34mm">Verdict</th><th style="width:40mm">Winner</th><th>On what basis</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Brand mode</strong></td><td class="m first">canvas-design / brand</td>
+        <td>First on four of five rubrics; rank sum 4 out of a possible 4. The only artifact with an idea a viewer
+        can restate, the only redrawable mechanism diagram, the only film whose bold moment measurably <em>is</em>
+        its peak, 42 of 42 exhibits and 42 of 42 citations.</td>
+      </tr>
+      <tr>
+        <td><strong>Free mode</strong></td><td class="m first">impeccable / free &mdash; on ceiling</td>
+        <td>No rank-sum consensus exists in free mode, so the pick is made on the mode&rsquo;s own stated purpose:
+        <em>this mode exists to show the tool&rsquo;s ceiling.</em> It is the only free artifact whose world could
+        not be resold to another client and whose mechanism slide both states and draws the invariant. It also
+        carries the most shipped defects, and it was never looked at. <strong>If the question were which free
+        artifact would survive contact with a projector, the answer is <span class="m">html-ppt / free</span>
+        &mdash; and the judge says so.</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Overall</strong></td><td class="m first">canvas-design</td>
+        <td>Rank sum 19 across both modes, against 22.5 and 23.5 for the next two &mdash; inside the noise the
+        reviews themselves declare, so read the top three as close. It wins on the thing the brief actually asked
+        for: goal three, one diagram they could redraw.</td>
+      </tr>
+      <tr>
+        <td><strong>Ship tomorrow</strong></td><td class="m first">canvas-design / brand / staging</td>
+        <td>The deck and the explainer from that one track-mode. Brand mode because it is the external surface the
+        house ships; the <span class="m">staging</span> lane because it is the contract the messaging leg
+        recommends adopting. Seven fixes first &mdash; overleaf.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;4</p>
+
+  <h3>4.7 &nbsp; The fix list for the ship-tomorrow artifact</h3>
+  <p>In order. The first is a content correction; the rest are craft.</p>
+  <ol class="wide">
+    <li><strong>Restore the dropped roll-cost line</strong> on the cost slide. One line. It is the only dropped
+    fact in thirty decks, and it is the <em>driver</em> of the headline drift figure printed on the same slide.</li>
+    <li><strong>Lift the provenance ramp.</strong> The source line from its current colour and 10.5px
+    (<strong>1.85:1</strong>) to a legible grey at 13px; the in-figure labels off a value running at 1.66:1.
+    123 of 221 strings are currently under the 4.5:1 floor.</li>
+    <li><strong>Reword the citations for a reader.</strong> Replace the internal filename-and-section form with a
+    human one that names the document and its date. An internal style-guide section number does not belong on a
+    prospect&rsquo;s cover.</li>
+    <li><strong>Rename the film&rsquo;s scene eyebrow</strong> from the contract&rsquo;s internal motion-role name
+    to what the scene is actually about.</li>
+    <li><strong>Fix the two explainer collisions</strong> &mdash; the axis label clipping a character off the
+    invariant in the mechanism scene, and an overlapping label in the bold-moment scene.</li>
+    <li><strong>Raise the film type ramp to the 28px floor.</strong> The current minimum is 16px, and seven of ten
+    sampled strings sit under the floor.</li>
+    <li><strong>Raise the claim from 30px to 44px</strong>, paid for by cutting the 94-word body median toward 40.</li>
+  </ol>
+  <p>Then the six human rulings the messaging leg logged &mdash; none of which a design tool can settle, and the
+  first two of which are on slide three. They are listed in the appendix.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;4, the numbered fix list &middot;
+  reviews/design/by-open-design-review.md (contrast values, 123/221) &middot; reviews/design/by-academic-pptx.md (type sizes, 94-word median)</p>
+</section>
+
+<!-- ============================== 5 ============================== -->
+<section class="section sheet">
+  <div class="sechead"><div class="secno">5</div><div class="sectitle">What it cost</div></div>
+  <p class="claim">The winning deck lost a fact, and then reported that it had lost nothing.</p>
+
+  <div class="callout">
+    <div class="lbl">The one event in the run that changes what the verdict means</div>
+    <p>One track dropped a line from a slide: the roll-cost figure that <em>drives</em> the headline
+    drift number printed on that same slide. It is the only fact missing from any of the thirty decks. The
+    track&rsquo;s own notes report that nothing was dropped. Four rubrics ranked it first anyway. The fifth
+    ranked it fourth &mdash; and the fifth is the only one that checked.</p>
+  </div>
+
+  <p>That is not an argument against the winner. It is an argument against trusting any single rubric, including
+  the four that agreed, and it is the strongest evidence in this document for running a stack rather than picking
+  a favourite. Two contenders reported &ldquo;nothing dropped&rdquo;; both were wrong; the check that would have
+  caught it is five lines of code that nobody had written. Below, the rest of what the reviews found, stated
+  without softening.</p>
+
+  <h3>5.1 &nbsp; Issues in the artifacts</h3>
+  <table>
+    <thead><tr><th style="width:44mm">Class</th><th>What was found</th></tr></thead>
+    <tbody>
+      <tr><td><strong>A fact went missing</strong></td><td>One dropped contract figure in thirty decks &mdash; and it is in the winning track. Two tracks self-reported a clean sweep; both were wrong.</td></tr>
+      <tr><td><strong>A number was invented on screen</strong></td><td>Not by the messaging layer &mdash; that leg is clean &mdash; but by a design tool. A live render statistic is printed in the evidence zone, formatted as a measurement, with a value that appears nowhere in the corpus. The audience&rsquo;s stated distrust is numbers whose provenance is not named.</td></tr>
+      <tr><td><strong>A scene contradicts its own claim</strong></td><td>One film&rsquo;s bold moment draws two quantities as comparable bars where the source records one of them as zero. Any recording taken at that frame is factually wrong.</td></tr>
+      <tr><td><strong>A near-miss on a fabricated figure</strong></td><td>One tool&rsquo;s count-up idiom rendered a materially wrong number on any slide caught mid-count, and a rounding call inside the same idiom would have turned the drift figure into a fabrication. Removed after being caught by a screenshot, not by a check.</td></tr>
+      <tr><td><strong>Traceability set below sight</strong></td><td>The brief made citation mandatory. Five of six tools then set the citation line under the contrast floor &mdash; as low as 1.85:1 &mdash; and one deck has 123 of 221 strings under it.</td></tr>
+      <tr><td><strong>Internal vocabulary on the client-facing surface</strong></td><td>Motion-role names, the words &ldquo;bold moment&rdquo;, a contract&rsquo;s figure-naming field printed as bullets, build seeds, presenter chrome baked into the recorded stage, and raw internal filenames on two covers.</td></tr>
+      <tr><td><strong>The bold moment is not the peak</strong></td><td>Nine films of ten put their loudest measured frame somewhere other than their designated peak. The contract asked for it; nobody checked; one tool got it right.</td></tr>
+      <tr><td><strong>Confidential metadata inside a confidential artifact</strong></td><td>One track ships the entire staging contract verbatim as an embedded data object inside a file stamped proprietary and confidential.</td></tr>
+      <tr><td><strong>Accessibility as an afterthought</strong></td><td>Every deck fails an 18-pixel body floor. One track hid inactive slides by opacity alone, so a screen reader read all fourteen slides at once &mdash; the single highest-value defect found, and one no static detector can see.</td></tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;3 and &sect;1 &middot; reviews/design/by-messaging-rubrics.md (F1&ndash;F3) &middot;
+  reviews/design/by-academic-pptx.md (highest-severity finding) &middot; reviews/design/by-impeccable-critique.md (the contradicted-fact P0) &middot;
+  reviews/design/by-open-design-review.md (contrast and type floors) &middot; tracks/html-ppt/NOTES.md (the count-up hazard) &middot;
+  tracks/impeccable-polish/NOTES.md (the accessibility-tree defect)</p>
+
+  <h3>5.2 &nbsp; Issues in the messaging</h3>
+  <p>The messaging leg&rsquo;s clean sheet on invented numbers is real and it held everywhere. What did not hold
+  is everything downstream of a number: what it means, whether the reader can parse the sentence around it, and
+  whether the deck ever says what the thing costs.</p>
+  <ul class="wide">
+    <li><strong>Every method shipped unglossed jargon</strong>, including the one method whose defining
+    contribution is a glossary rule &mdash; and whose own gate certified a pass over its own violation.</li>
+    <li><strong>Three of four decks never say what the product costs.</strong> The one contender that puts the fee
+    on a slot is called a cut candidate by another rubric. The question was never settled, so six design tracks
+    inherited it.</li>
+    <li><strong>Two contenders self-certified a check they failed.</strong> One passes a bullet-length rule that
+    62% of its bullets break; another certifies a sequencing rule its own file contradicts twice. As one reviewer
+    put it: a checklist filled in wrong is worse than one never filled in.</li>
+    <li><strong>The redraw specification never entered the transport.</strong> Three of four methods describe the
+    one diagram the brief demands &mdash; in prose, in a file the design layer is not told to read. The one that
+    <em>did</em> transport it did so through a field that breaches the composition contract. Goal three survives
+    the messaging leg and dies at the handoff.</li>
+    <li><strong>The legal entity is on the cover</strong> in three of four, and the corpus itself says naming it
+    triggers a sanctions review at US institutions.</li>
+  </ul>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md rev.2 &sect;6 &middot; reviews/messaging/by-house-guide.md (glossary failures) &middot;
+  reviews/messaging/by-pitch-deck-mastery.md (the fee; the self-certification) &middot; reviews/messaging/by-presentation-writing.md (the diagram in prose; the entity)</p>
+
+  <h3>5.3 &nbsp; Issues in the reviewing</h3>
+  <p>The reviews were candid about themselves, and that candour belongs in the report rather than in a footnote.
+  Every rubric declared its own bias; several declared it twice.</p>
+  <ul class="wide">
+    <li><strong>Two of five design rubrics substituted a scaffold they had to invent.</strong> One rubric&rsquo;s
+    published skill turned out to be a catalogue stub with no weighting, no seat definitions and no severity
+    ladder &mdash; so its entire jury model is the reviewer&rsquo;s own. Another invented the unit conversion its
+    type-size verdicts rest on.</li>
+    <li><strong>One rubric graded its own tool</strong>, under its own rules, with the subject optimising against
+    those rules with the file open. It says so twice and calls the resulting numbers &ldquo;a self-report with a
+    stopwatch on it&rdquo;.</li>
+    <li><strong>No screenshots existed when reviewing began.</strong> Four of five rubrics rendered their own
+    frames; the fifth read the page source instead and states that it cannot see collisions, contrast or the actual
+    generated output.</li>
+    <li><strong>Motion was graded from stills.</strong> All four rendering rubrics say so, and all four say their
+    explainer scores should be read as a <em>floor</em>. The two tracks that invested most in motion are the two
+    least well served by that.</li>
+    <li><strong>Two messaging self-reviews placed themselves first</strong>, both disclosed; one arrived last,
+    having read the rest.</li>
+    <li><strong>A contract-level gate went unrun everywhere.</strong> The seam gate &mdash; numeric verification of
+    every scene boundary &mdash; is recorded not run for all ten track-modes, because no track produced the ledger
+    it needs.</li>
+    <li><strong>Two rubrics disagree on their own arithmetic.</strong> One contender&rsquo;s bullet count is given
+    against two different denominators by two reviewers who both claim to have measured it; one review&rsquo;s
+    summary line does not match its own table. Both discrepancies are printed here rather than reconciled, because
+    reconciling them silently would be the same mistake the reviews caught elsewhere.</li>
+  </ul>
+  <p class="src"><b>SRC</b> &middot; each rubric&rsquo;s declared-bias and blind-spot section in reviews/design/by-&lt;rubric&gt;.md and
+  reviews/messaging/by-&lt;rubric&gt;.md &middot; bakeoff/JUDGING-design-claude.md &sect;5 &ldquo;Blind spots in this judgement&rdquo;</p>
+
+  <h3>5.4 &nbsp; What the judge could not see</h3>
+  <p>The design judge read 44 frames, all stills, most of them scene-entry or near-frozen states &mdash; so motion
+  was judged from frozen frames and from source, and the two tracks that invested most in motion are the two it was
+  least equipped to score. It looked at one messaging lane of three, so a lane-specific failure would have escaped
+  it; three tracks differ between lanes in their stylesheet and one differs in <em>theme</em>. It did not
+  independently re-verify any figure against the corpus &mdash; it took the reviews&rsquo; fact-checks, which agree
+  with each other. Its one independent correctness observation came from looking at a frame, not from checking a
+  number. Every explainer score in this report should be read as a floor, and the free-mode rank sums should be
+  read as evidence that the rubrics disagree, not as a ranking.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;5, in full</p>
+</section>
+
+<!-- ============================== 6 ============================== -->
+<section class="section sheet">
+  <div class="sechead"><div class="secno">6</div><div class="sectitle">The recommended house pipeline</div></div>
+  <p class="claim">Stage with <span class="m" style="font-family:GeistMono">staging</span>, gate with
+  <span class="m" style="font-family:GeistMono">house-guide</span>, draw with
+  <span class="m" style="font-family:GeistMono">canvas-design</span>, finish with
+  <span class="m" style="font-family:GeistMono">impeccable</span>.</p>
+
+  <table>
+    <thead><tr><th style="width:26mm">Stage</th><th style="width:48mm">Pick</th><th>Why this one</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Messaging</strong></td>
+        <td class="m">staging as transport<br>+ house-guide as content gate</td>
+        <td>The only contender whose native output <em>is</em> the transport contract, gated by the only method
+        with a real number gate and a real gloss table. Carry the diagram key onto the mechanism slot as a
+        <em>redraw specification</em> &mdash; that is the only device that gets educational goal three through
+        the handoff, and written as a redraw spec rather than as a chart type it does not breach the composition
+        contract.</td>
+      </tr>
+      <tr>
+        <td><strong>Design</strong></td>
+        <td class="m">canvas-design, run under the house brand</td>
+        <td>The only tool whose signature instruction &mdash; systematic reference markers from an imaginary
+        discipline &mdash; turns the brief&rsquo;s hardest constraint into a design element rather than a
+        compliance tax. Run it in brand mode: the constraint made the better work, by 1.5 points.</td>
+      </tr>
+      <tr>
+        <td><strong>Finish</strong></td>
+        <td class="m">impeccable polish (+ animate), mandatory</td>
+        <td>It measurably cannot author, and it reliably clears the craft floor. The winner&rsquo;s two worst
+        defects &mdash; provenance contrast and the film type ramp &mdash; are exactly the class this pass
+        closes. It is a mandatory pass on top, never a substitute for a concept.</td>
+      </tr>
+      <tr>
+        <td><strong>Review</strong></td>
+        <td class="m">open-design-review, gating<br>academic-pptx, second<br>huashu-critique, <em>before any pixels</em></td>
+        <td>Accessibility measured from computed styles caught the field&rsquo;s commonest defect and should gate.
+        Evidence discipline second. The concept test is a go / no-go run <em>before</em> anything is built, not a
+        score applied afterwards &mdash; its hard veto is only useful as a gate.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;4 &ldquo;Recommended house pipeline&rdquo; &middot;
+  bakeoff/JUDGING-messaging-claude.md rev.2 &sect;7</p>
+
+  <h3>The two checks this bake-off proved missing</h3>
+  <p>Both are about five lines each, and both are run by the contender before it writes its notes &mdash; not by a
+  reviewer afterwards.</p>
+  <div class="kv">
+    <dt>Motion assertion</dt>
+    <dd>Assert that the designated bold moment&rsquo;s measured in-scene motion exceeds every other scene&rsquo;s,
+    using any frame-diff harness. <strong>It would have caught nine films of ten.</strong></dd>
+    <dt>Fidelity differ</dt>
+    <dd>Diff the contract&rsquo;s claims and supporting points against the text extracted from the rendered page.
+    Two tracks reported &ldquo;nothing dropped&rdquo;; both were wrong, and one of them won.</dd>
+  </div>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;4, closing paragraph of the pipeline table</p>
+
+  <h3>Borrow from the non-winners</h3>
+  <table class="tight">
+    <thead><tr><th style="width:44mm">From</th><th>Take</th></tr></thead>
+    <tbody>
+      <tr><td class="m">html-ppt / free</td><td>The annotated exhibit &mdash; the one exhibit in thirty decks that states its own &ldquo;so what&rdquo; on the face of the chart. Presenter notes as the home for the contract&rsquo;s spoken bridges. The citation form that quotes the source phrase instead of naming a file.</td></tr>
+      <tr><td class="m">impeccable / brand</td><td>The authority mast &mdash; source <em>and</em> as-of date at the top of the slide, at 4.89:1 &mdash; and a numbered clause id as a speaking aid across a room and across a forward.</td></tr>
+      <tr><td class="m">impeccable / free</td><td>The catchword: the next slide&rsquo;s first words at the foot of this one &mdash; functional, not whimsy. And the fresh-context finish reviewer with no forked history, which found four things its own build thread was confident and wrong about.</td></tr>
+      <tr><td class="m">visual-explainer / free</td><td>The three-row case table beside the chart: the most redrawable rendering of the arithmetic in the field.</td></tr>
+      <tr><td class="m">algorithmic-art</td><td>The live census &mdash; a quantity that is <em>counted</em> rather than asserted, so the invariant is watched. Relabelled so it cannot be read as a corpus figure. The one thing here no static design can do.</td></tr>
+      <tr><td class="m">impeccable-polish</td><td>The method: batched edits where every replacement asserts its expected hit count, so nothing silently no-ops on a simultaneous six-file change.</td></tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-design-claude.md &sect;4 &ldquo;Borrow from the non-winners&rdquo;</p>
+
+  <h3>What this document is</h3>
+  <p>This report is the pipeline&rsquo;s first output. It was staged with the house
+  <span class="m">staging</span> skill &mdash; there is a staging contract for it at
+  <span class="m">bakeoff/report-staging.yaml</span>, with its gates recorded, including the one it fails.
+  It was gated with the house messaging method: every figure prints its source in the reader&rsquo;s line of
+  sight, and every insider term is glossed on first use. It was designed with
+  <span class="m">canvas-design</span>: the design philosophy was written first, as the skill requires, and
+  lives at <span class="m">bakeoff/report-philosophy.md</span>. It is deliberately unbranded &mdash; no house
+  marks, no house palette, no house type &mdash; because that is what was asked for.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/report-staging.yaml &middot; bakeoff/report-philosophy.md &middot;
+  skills/messaging/staging/SKILL.md &middot; skills/messaging/house-guide/messaging-guide.md &sect;5 and &sect;7 &middot;
+  skills/design/canvas-design/SKILL.md</p>
+</section>
+
+<!-- ============================== 7 ============================== -->
+<section class="section sheet">
+  <div class="sechead"><div class="secno">7</div><div class="sectitle">The winning explainer</div></div>
+  <p class="claim">Nine scenes, one hundred and twenty seconds, one break in the film &mdash; and the break is
+  where the argument says it should be.</p>
+
+  <p>This is the artifact the design verdict names: the explainer from
+  <span class="m">canvas-design / brand / staging</span>, the one film in the field whose designated bold moment
+  measurably <em>is</em> its loudest scene, with a correlation of +0.85 between the contract&rsquo;s declared
+  scene energies and the motion actually measured on screen. Every scene&rsquo;s duration equals the narration
+  budget in the contract, unaltered; the nine durations sum to exactly 120 seconds. The film has no audio and no
+  text-to-speech: the voice-over column below is the narration to be read over a screen recording.</p>
+  <p class="src"><b>SRC</b> &middot; winner/explainer/{explainer.html, SCRIPT.md} &middot;
+  reviews/design/by-messaging-rubrics.md (&rho;=+0.85; peak scene measuring the maximum) &middot;
+  bakeoff/JUDGING-design-claude.md &sect;3 finding 1 and &sect;4</p>
+
+  <h3>7.1 &nbsp; The nine frames</h3>
+  <div class="scenes">
+    <figure><img src="{{SCENE:01}}" alt="Scene 1"><figcaption><b>01 &middot; hold &middot; 0&ndash;10 s</b><br>{{SCENEPATH:01}}</figcaption></figure>
+    <figure><img src="{{SCENE:02}}" alt="Scene 2"><figcaption><b>02 &middot; accumulate &middot; 10&ndash;20 s</b><br>{{SCENEPATH:02}}</figcaption></figure>
+    <figure><img src="{{SCENE:03}}" alt="Scene 3"><figcaption><b>03 &middot; strain &middot; 20&ndash;30 s</b><br>{{SCENEPATH:03}}</figcaption></figure>
+    <figure><img src="{{SCENE:04}}" alt="Scene 4"><figcaption><b>04 &middot; rupture &middot; PEAK &middot; 30&ndash;42 s</b><br>{{SCENEPATH:04}}</figcaption></figure>
+    <figure><img src="{{SCENE:05}}" alt="Scene 5"><figcaption><b>05 &middot; hold &middot; 42&ndash;52 s</b><br>{{SCENEPATH:05}}</figcaption></figure>
+    <figure><img src="{{SCENE:06}}" alt="Scene 6"><figcaption><b>06 &middot; assemble &middot; PEAK &middot; 52&ndash;76 s</b><br>{{SCENEPATH:06}}</figcaption></figure>
+    <figure><img src="{{SCENE:07}}" alt="Scene 7"><figcaption><b>07 &middot; hold &middot; 76&ndash;90 s</b><br>{{SCENEPATH:07}}</figcaption></figure>
+    <figure><img src="{{SCENE:08}}" alt="Scene 8"><figcaption><b>08 &middot; divest &middot; 90&ndash;108 s</b><br>{{SCENEPATH:08}}</figcaption></figure>
+    <figure><img src="{{SCENE:09}}" alt="Scene 9"><figcaption><b>09 &middot; cadence &middot; 108&ndash;120 s</b><br>{{SCENEPATH:09}}</figcaption></figure>
+  </div>
+  <p class="src" style="margin-top:3mm">{{SCENENOTE}}</p>
+</section>
+
+<section class="section sheet">
+  <h3>7.3 &nbsp; What the motion is doing</h3>
+  <p>The film&rsquo;s motion is not decoration, and the script says so scene by scene. Scene two grows its bar
+  field left to right across the whole scene, because the climb <em>is</em> the figure, not its endpoint. Scene
+  four is the only break in the film: at four seconds every proceeds mark collapses to the baseline in 320
+  milliseconds, and the frame is then still for the rest of the scene. Scene five is deliberately motionless
+  &mdash; motion there would let the viewer off the previous scene early. Scene six reveals in the exact order of
+  the narration, and nothing that arrives ever leaves. Scene eight is subtractive only: the apparatus is removed
+  one mark at a time until the decline curve and its two numbers are all that is left standing.</p>
+  <p class="src"><b>SRC</b> &middot; winner/explainer/SCRIPT.md, the &ldquo;what moves&rdquo; column, scene by scene</p>
+  <h3>7.2 &nbsp; The talk track</h3>
+  <p class="note">Verbatim from the winner&rsquo;s script; durations are the contract&rsquo;s own narration budgets, unchanged.</p>
+
+  <table class="tight">
+    <thead><tr><th class="c" style="width:9mm">#</th><th class="c" style="width:13mm">Start</th><th class="c" style="width:11mm">Dur</th><th style="width:22mm">Motion</th><th>Voice-over</th></tr></thead>
+    <tbody>
+      <tr><td class="c">1</td><td class="c">0 s</td><td class="c">10 s</td><td class="m">hold</td>
+        <td>Tokenized treasuries, fund shares, gold: on-chain now, and mostly sitting still. Making one productive means accepting a liquidation price. There is a way that doesn&rsquo;t.</td></tr>
+      <tr><td class="c">2</td><td class="c">10 s</td><td class="c">10 s</td><td class="m">accumulate</td>
+        <td>Every venue that lends against these assets prices in a liquidation threshold. On Morpho, tokenized collateral grew from nothing to over $620 million in a year.</td></tr>
+      <tr><td class="c">3</td><td class="c">20 s</td><td class="c">10 s</td><td class="m">strain</td>
+        <td>But this collateral doesn&rsquo;t behave: NAV pricing, monthly redemption windows, no sale in a single transaction. So the market signs liquidation agreements with issuers.</td></tr>
+      <tr><td class="c">4</td><td class="c">30 s</td><td class="c">12 s</td><td class="m first">rupture &middot; peak</td>
+        <td>Under stress, that machinery does exactly what it was built to do. March 2020: MakerDAO&rsquo;s collateral was auctioned for zero dollars. Around eight million dollars of it, sold for nothing.</td></tr>
+      <tr><td class="c">5</td><td class="c">42 s</td><td class="c">10 s</td><td class="m">hold</td>
+        <td>Every fix since has been discipline: better curators, tighter frameworks, more paperwork. The mechanism is unchanged. It still has a threshold, and thresholds get breached.</td></tr>
+      <tr><td class="c">6</td><td class="c">52 s</td><td class="c">24 s</td><td class="m first">assemble &middot; peak</td>
+        <td>Medici splits the collateral in two: P, protected, and N, amplified. At maturity one price is read against the strike. At or below it, P is worth the whole collateral, N nothing. Above it, P takes S over x, N takes the rest. They always sum to the collateral, at every price. No under-collateralized state. No threshold. Nothing to force-sell.</td></tr>
+      <tr><td class="c">7</td><td class="c">76 s</td><td class="c">14 s</td><td class="m">hold</td>
+        <td>It runs on Canton, where three hundred and forty-four billion dollars of real-world assets already sit. Positions are visible to their counterparties and no one else. Split, roll and settlement are single atomic transactions.</td></tr>
+      <tr><td class="c">8</td><td class="c">90 s</td><td class="c">18 s</td><td class="m">divest</td>
+        <td>The cost is real. P is short a call above the strike: when the asset rallies, P&rsquo;s value declines, continuously and computably. Nine years of backtest put that drift at negative one and a quarter percent a year, on ETH. And nothing is on mainnet yet.</td></tr>
+      <tr><td class="c">9</td><td class="c">108 s</td><td class="c">12 s</td><td class="m">cadence</td>
+        <td>So this is not a pitch to allocate. Bring one tokenized position, and argue with the payoff table. If the math holds, the asset never has to be sold.</td></tr>
+      <tr><td class="c rs" colspan="2" style="text-align:right">Total</td><td class="c rs">120 s</td><td colspan="2" class="rs">9 scenes &middot; 1920&times;1080 &middot; no audio, no text-to-speech, no external media</td></tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; winner/explainer/SCRIPT.md, the per-scene table, verbatim &middot; identical talk track at
+  tracks/canvas-design/brand/staging/explainer/SCRIPT.md</p>
+
+</section>
+
+<!-- ============================== 8 ============================== -->
+<section class="section sheet">
+  <div class="sechead"><div class="secno">8</div><div class="sectitle">Appendix</div></div>
+  <p class="claim">Six questions are left, and none of them is a design question.</p>
+
+  <h3>8.1 &nbsp; The human rulings still needed</h3>
+  <p>Four independent methods reached these six and none could close any of them. Each is a judgment about what is
+  true or what the pitch should be, and each blocks something concrete: the first two sit on slide three of every
+  deck in the field.</p>
+
+  <table>
+    <thead><tr><th class="c" style="width:10mm">#</th><th style="width:44mm">The question</th><th>Why it is a human&rsquo;s and not a method&rsquo;s</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="c">1</td><td><strong>The build-size figures.</strong> 54 or 36 contract templates &mdash; and the two matching line counts.</td>
+        <td>The one question no contender could close, and one says so outright. Three took the higher figure on
+        the brief&rsquo;s source-priority rule; the fourth withheld it. All four noticed that the <em>later</em>
+        source revision carries the <em>lower</em> number, so the priority rule may be selecting the stale figure.
+        If the lower figure is right, every deck in this bake-off overstates the build on a first-contact slide
+        &mdash; precisely the class of error a diligence process kills a conversation over. Ian states the number;
+        the priority rule does not get to decide this one.</td>
+      </tr>
+      <tr>
+        <td class="c">2</td><td><strong>The venue claim.</strong> &ldquo;$344B represented / $2T a month in repo / the #1 RWA network&rdquo;.</td>
+        <td>Asserted by the product&rsquo;s own deck with no external citation anywhere in the corpus, and sitting
+        directly against a research document in the same corpus which repeatedly finds that this venue appears
+        <em>nowhere</em> in either part of the 2026 lending map. All four contenders put it on a slide, two inside
+        a headline claim; only one puts the counter-evidence on the same slide. It needs a source, or a hedge,
+        before it leaves the room.</td>
+      </tr>
+      <tr>
+        <td class="c">3</td><td><strong>Which underlying the pitch names.</strong></td>
+        <td>The brief&rsquo;s product story leads with money-market and treasury collateral; the corpus&rsquo;s own
+        research says near-zero-volatility treasuries are the <em>wrong</em> first underlying and names tokenized
+        gold instead. Four methods produced four different answers. It is a positioning ruling, not a fact-check
+        &mdash; and it changes what the deck <em>is</em>, so it cannot be left to four contenders to decide
+        differently.</td>
+      </tr>
+      <tr>
+        <td class="c">4</td><td><strong>May the legal entity appear on the cover?</strong></td>
+        <td>Three of four put it there, and the corpus records that this entity triggers an automatic sanctions
+        review at US institutions. Counsel or Ian, not a messaging call.</td>
+      </tr>
+      <tr>
+        <td class="c">5</td><td><strong>Does the fee get a slot at all,</strong> given the educate-first framing?</td>
+        <td>One contender puts it on a slot; another marks it ship-worthy in its own gate and then omits it; a
+        third rubric calls the slot a cut candidate. Decide once, for all six tracks &mdash; otherwise six design
+        tracks keep shipping a pitch that never says what it costs.</td>
+      </tr>
+      <tr>
+        <td class="c">6</td><td><strong>The implied full-period gross figure.</strong></td>
+        <td>Derived by one contender from the published net figure and the roll cost, and withheld by it as
+        unpublished. If the derivation holds, the income framing rests on execution improving rather than on the
+        backtest &mdash; which is a different pitch. It was flagged as an open question, not asserted.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md rev.2 &sect;7 &ldquo;Human rulings needed&rdquo; (items 1&ndash;6),
+  restating &sect;3 items 1&ndash;3 of revision 1 &middot; messaging/house-guide/NOTES.md open questions Q1 and Q2</p>
+
+  <p class="note">A seventh was flagged as a runner-up rather than a ruling: the canonical unhedged claim sits one
+  sentence from its own honest cost in every deck. Every contender obeyed the canon correctly and disclosed the
+  cost; whether that pairing survives a compliance read for an external audience is a counsel question, not a
+  messaging one.</p>
+  <p class="src"><b>SRC</b> &middot; bakeoff/JUDGING-messaging-claude.md &sect;3, closing paragraph</p>
+</section>
+
+<section class="section sheet">
+  <h3>8.2 &nbsp; Pointers to every file</h3>
+  <p>All paths are relative to the bake-off directory. Per-slide screenshots are ignored by version control; the
+  contact sheets are not.</p>
+
+  <table class="tight">
+    <thead><tr><th style="width:70mm">Path</th><th>What is in it</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">README.md</td><td>The layout, the contender list, the originating prompt verbatim, the follow-up instructions, and how the run was staged.</td></tr>
+      <tr><td class="mono">BRIEF.md</td><td>The shared brief every contender rendered: the product story, the audience, the three educational goals, the media specifications, the two brand modes and the messaging-layer contract.</td></tr>
+      <tr><td class="mono">DESIGN-TASK.md</td><td>The task specification every design agent followed.</td></tr>
+      <tr><td class="mono">bakeoff/<wbr>PROTOCOL.md</td><td>Contenders, rules, judging axes, and the exclusion list with reasons.</td></tr>
+      <tr><td class="mono">bakeoff/<wbr>CONTENDERS.md</td><td>Names, origin URLs, versions and licences &mdash; the source for section 2 of this report.</td></tr>
+      <tr><td class="mono">bakeoff/<wbr>JUDGING-messaging-claude.md</td><td>The messaging verdict. Revision 1 covers three contenders; revision 2 adds the fourth, the cross-review matrix, the consensus findings and the six human rulings.</td></tr>
+      <tr><td class="mono">bakeoff/<wbr>JUDGING-design-claude.md</td><td>The design verdict: per-tool scorecards, both cross-review matrices, nine consensus findings, four verdicts, the fix list, the recommended pipeline, and a declared blind-spot section.</td></tr>
+      <tr><td class="mono">messaging/<wbr>&lt;skill&gt;/<wbr></td><td>Four messaging contenders. Each carries its native artifact, a prose messaging document, the normalized staging contract, and a notes file recording time, friction, refusals and adaptations.</td></tr>
+      <tr><td class="mono">tracks/<wbr>&lt;tool&gt;/<wbr>&lt;mode&gt;/<wbr>&lt;messaging&gt;/<wbr>deck/<wbr>index.html</td><td>36 decks. Self-contained, fixed 1280&times;720 stage, keyboard-navigable, printing one slide per page.</td></tr>
+      <tr><td class="mono">tracks/<wbr>&lt;tool&gt;/<wbr>&lt;mode&gt;/<wbr>&lt;messaging&gt;/<wbr>explainer/<wbr></td><td>36 timed explainers plus their talk tracks. 1920&times;1080, auto-playing, with a player object and a scene deep-link.</td></tr>
+      <tr><td class="mono">tracks/<wbr>&lt;tool&gt;/<wbr>NOTES.md</td><td>Per-tool time-to-artifact, friction ranked by cost, overrides, brand fights, and what the tool refused or could not express. Six files; collectively the most useful artifact the run produced.</td></tr>
+      <tr><td class="mono">reviews/<wbr>messaging/<wbr>by-&lt;rubric&gt;.md</td><td>Four files. Each messaging skill reviewing every messaging output, its own included, each with a declared conflict-of-interest section and a &ldquo;what this rubric cannot see&rdquo; section.</td></tr>
+      <tr><td class="mono">reviews/<wbr>design/<wbr>by-&lt;rubric&gt;.md</td><td>Five files. Four independent design rubrics plus the messaging rubrics, over every rendered track, each with its own declared bias and scaffold substitutions.</td></tr>
+      <tr><td class="mono">shots/<wbr>&lt;tool&gt;/<wbr>&lt;mode&gt;/<wbr>&lt;messaging&gt;/<wbr></td><td>Per-slide and per-scene frames plus contact sheets. The source of every image in this report.</td></tr>
+      <tr><td class="mono">shots/<wbr>_reviewer-frames/<wbr></td><td>The 92-frame set the design judge read: six tools &times; two modes &times; nine frames.</td></tr>
+      <tr><td class="mono">winner/<wbr></td><td>The ship-tomorrow artifact: the winning deck and explainer, with the talk track.</td></tr>
+      <tr><td class="mono">source/<wbr></td><td>The read-only input corpus &mdash; product and research documents plus the house brand guide. Personal names anonymized.</td></tr>
+      <tr><td class="mono">bakeoff/<wbr>report-staging.yaml</td><td>This report&rsquo;s own staging contract, with its gates recorded &mdash; including the placement gate it fails, and why.</td></tr>
+      <tr><td class="mono">bakeoff/<wbr>report-philosophy.md</td><td>This report&rsquo;s design philosophy, written before the document was built, as the design skill requires.</td></tr>
+      <tr><td class="mono">bakeoff/<wbr>report.body.html &middot; report-build.py</td><td>The report source and the builder that inlines the fonts and the downscaled images.</td></tr>
+      <tr><td class="mono">report.html &middot; report.pdf</td><td>This document.</td></tr>
+      <tr><td class="mono">LICENSE</td><td>Apache 2.0. Third-party skills retain their own licences, listed in section 2. The source material is included as bake-off input only.</td></tr>
+    </tbody>
+  </table>
+  <p class="src"><b>SRC</b> &middot; README.md &sect;Layout, extended by direct inspection of the directory tree at render time</p>
+
+  <hr class="rule hard">
+  <div class="lbl" style="line-height:1.7">
+    Colophon &mdash; staged with the house <span style="text-transform:none">staging</span> skill;
+    gated with the house messaging method (&sect;5 glossary rule, &sect;7 trace-every-number);
+    designed with Anthropic <span style="text-transform:none">canvas-design</span> under the philosophy
+    <span style="text-transform:none">&ldquo;Ordinal Field&rdquo;</span>.<br>
+    Type &mdash; Young Serif, Lora, Geist Mono, all embedded, all open-licensed, from the design skill&rsquo;s own bundle.<br>
+    Unbranded by instruction. Rendered to A4 with headless Chrome. 2026&ndash;08&ndash;27.
+  </div>
+</section>
+
+</body>
+</html>

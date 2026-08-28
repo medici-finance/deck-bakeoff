@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medici — Collateral splitting for tokenized real-world assets</title>
+<meta name="deck-footer" content="Medici — Proprietary &amp; Confidential">
+<style>
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans.woff2') format('woff2');font-weight:100 700;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans-italic.woff2') format('woff2');font-weight:100 700;font-style:italic;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#000000;--surface:#0A0A0A;--line:#1A1A1A;--line2:#252525;
+  --white:#FFFFFF;--text:#AAAAAA;--meta:#8A8A8A;--dim:#7A7A7A;--muted:#666666;
+  --blue:#3366FF;--blue-l:#5C85FF;--gold:#D4A843;--green:#00CC66;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+html,body{height:100%;background:var(--black);overflow:hidden}
+body{font-family:var(--sans);color:var(--text);-webkit-font-smoothing:antialiased}
+.stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;
+  transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:50% 50%;
+  background:var(--black);overflow:hidden}
+
+.scene{position:absolute;inset:0;padding:52px 110px 128px;display:grid;
+  grid-template-rows:auto 1fr auto;opacity:0;visibility:hidden}
+.scene.on{opacity:1;visibility:visible}
+
+/* masthead — the notice register, carried into the film */
+.mast{display:flex;align-items:center;gap:18px}
+.seal{width:13px;height:13px;background:var(--blue);flex:none}
+.ref{font-family:var(--mono);font-size:24px;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--white)}
+.subj{font-size:24px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--meta)}
+.mast .rule{flex:1;height:1px;background:var(--line2)}
+
+.figwrap{align-self:center;display:flex;align-items:center;justify-content:center;
+  padding:22px 0}
+.figwrap svg{display:block;width:1700px;height:auto}
+
+.say{max-width:1500px}
+.say h2{font-size:60px;font-weight:600;line-height:1.1;letter-spacing:-.02em;
+  color:var(--white);text-wrap:balance}
+.say p{font-size:32px;line-height:1.42;color:var(--text);margin-top:20px;max-width:1380px}
+
+.foot{position:absolute;left:0;right:0;bottom:38px;text-align:center;font-size:28px;
+  font-weight:400;letter-spacing:.06em;color:var(--muted)}
+.count{position:absolute;right:56px;bottom:34px;font-family:var(--mono);font-size:26px;
+  color:var(--dim);font-variant-numeric:tabular-nums}
+.bar{position:absolute;left:0;bottom:0;height:3px;background:var(--line2);width:100%}
+.bar i{display:block;height:100%;width:0;background:var(--blue)}
+.hint{position:absolute;left:56px;bottom:34px;font-family:var(--mono);font-size:22px;
+  color:#3A3A3A}
+
+/* ── motion material ─────────────────────────────────────────────────────── */
+.anim{animation-fill-mode:both;animation-timing-function:var(--ease)}
+/* A scene's motion exists only while the scene is on. Adding .on re-supplies the
+   animation-name, which restarts every animation from zero on every seek. */
+.scene:not(.on) .anim{animation-name:none !important}
+
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes unfade{from{opacity:1}to{opacity:0}}
+@keyframes draw{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+@keyframes wipeR{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes wipeU{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes slideDown{from{transform:translateY(-360px)}to{transform:translateY(0)}}
+@keyframes cut{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(100% 0 0 0)}}
+@keyframes partP{from{transform:translate(0,0)}to{transform:translate(520px,64px)}}
+@keyframes partN{from{transform:translate(0,0)}to{transform:translate(520px,-64px)}}
+@keyframes sweepX{from{transform:translateX(0)}to{transform:translateX(var(--sweep))}}
+@keyframes reach{0%{transform:translateX(0)}70%{transform:translateX(var(--reach))}
+  100%{transform:translateX(var(--reach))}}
+@keyframes reachStop{0%{transform:translateX(0)}55%{transform:translateX(var(--reach))}
+  100%{transform:translateX(var(--reach))}}
+@keyframes strainOn{from{stroke:#FFFFFF;stroke-width:2}to{stroke:#8A8A8A;stroke-width:4}}
+@keyframes fall{from{transform:translateY(0)}to{transform:translateY(150px)}}
+
+.d{--d:0}
+.rise{animation-name:rise;animation-duration:.5s}
+.fade{animation-name:fade;animation-duration:.5s}
+.out{animation-name:unfade;animation-duration:.45s}
+.drawn{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);
+  animation-name:draw;animation-timing-function:linear}
+
+@media (prefers-reduced-motion:reduce){
+  .anim{animation:none !important;opacity:1 !important;transform:none !important;
+    stroke-dashoffset:0 !important;clip-path:none !important}
+}
+@keyframes sumbar-p{0%{transform:scaleY(1.0000)}4%{transform:scaleY(1.0000)}8%{transform:scaleY(1.0000)}12%{transform:scaleY(1.0000)}16%{transform:scaleY(1.0000)}20%{transform:scaleY(1.0000)}24%{transform:scaleY(1.0000)}28%{transform:scaleY(1.0000)}32%{transform:scaleY(0.9349)}36%{transform:scaleY(0.8690)}40%{transform:scaleY(0.8117)}44%{transform:scaleY(0.7615)}48%{transform:scaleY(0.7172)}52%{transform:scaleY(0.6777)}56%{transform:scaleY(0.6423)}60%{transform:scaleY(0.6105)}64%{transform:scaleY(0.5817)}68%{transform:scaleY(0.5554)}72%{transform:scaleY(0.5315)}76%{transform:scaleY(0.5095)}80%{transform:scaleY(0.4892)}84%{transform:scaleY(0.4705)}88%{transform:scaleY(0.4532)}92%{transform:scaleY(0.4371)}96%{transform:scaleY(0.4222)}100%{transform:scaleY(0.4082)}}
+@keyframes sumbar-n{0%{transform:scaleY(0.0000)}4%{transform:scaleY(0.0000)}8%{transform:scaleY(0.0000)}12%{transform:scaleY(0.0000)}16%{transform:scaleY(0.0000)}20%{transform:scaleY(0.0000)}24%{transform:scaleY(0.0000)}28%{transform:scaleY(0.0000)}32%{transform:scaleY(0.0651)}36%{transform:scaleY(0.1310)}40%{transform:scaleY(0.1883)}44%{transform:scaleY(0.2385)}48%{transform:scaleY(0.2828)}52%{transform:scaleY(0.3223)}56%{transform:scaleY(0.3577)}60%{transform:scaleY(0.3895)}64%{transform:scaleY(0.4183)}68%{transform:scaleY(0.4446)}72%{transform:scaleY(0.4685)}76%{transform:scaleY(0.4905)}80%{transform:scaleY(0.5108)}84%{transform:scaleY(0.5295)}88%{transform:scaleY(0.5468)}92%{transform:scaleY(0.5629)}96%{transform:scaleY(0.5778)}100%{transform:scaleY(0.5918)}}
+</style>
+</head>
+<body>
+<!--
+IMPECCABLE DIRECTION CONTRACT — brand mode, explainer · seed key 549e8b77 · direction 6 of 7
+THESIS: The film is the same clearing-house circular, read aloud: one numbered notice per
+  scene, each drawn rather than asserted. It refuses the explainer-video default (icon
+  montage over a gradient, kinetic type, a bouncing logo).
+OWN-WORLD: Pinned Medici external surface — true black #000, #1A1A1A hairlines, Electric
+  Blue #3366FF for P, house green #00CC66 for N, IBM Plex Sans/Mono self-hosted. Every
+  figure is drawn in hairline on black; the only motion material is line, mask, position
+  and one hard clip. No gradient, no glow, no spring, no overshoot (brand §9).
+STORY: The viewer watches a threshold get breached, then watches the same gesture be
+  refused on a payoff that has nowhere to put it, and leaves able to redraw P + N.
+FIRST VIEWPORT: Scene 1 at rest — one hairline position on black, its claim beneath,
+  a 3px progress rule at the foot. Nothing moves for ten seconds, on purpose.
+FORM: The clearing-house circular; candidate 6 of 7; seed 549e8b77.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review,
+  the verdict, and DESIGN.md
+-->
+<div class="stage" id="stage">
+<section class="scene on" data-scene="1" data-dur="13" style="--dur:13">
+<div class="mast"><span class="seal" aria-hidden="true"></span><span class="ref">Scene 01 / 08</span><span class="subj">The position</span><span class="rule"></span></div>
+<div class="figwrap"><svg viewBox="0 0 1600 470" role="img" aria-label="One tokenized position, at rest."><g class="anim rise" style="animation-delay:calc(var(--dur) * .04s)"><rect x="590" y="120" width="420" height="200" fill="#0A0A0A" stroke="#FFFFFF" stroke-width="2"/><text x="800.0" y="232.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="middle">tokenized position</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * .40s)"><line x1="240" y1="400" x2="1360" y2="400" stroke="#7A7A7A" stroke-width="2" stroke-dasharray="3 7"/><text x="800.0" y="434.0" fill="#7A7A7A" font-family="IBM Plex Mono,monospace" font-size="24" text-anchor="middle">a price at which somebody else sells it</text></g></svg></div>
+<div class="say"><h2>Your tokenized collateral has a price at which someone else sells it.</h2></div>
+<p class="foot">Medici — Proprietary & Confidential</p>
+</section>
+<section class="scene" data-scene="2" data-dur="22" style="--dur:22">
+<div class="mast"><span class="seal" aria-hidden="true"></span><span class="ref">Scene 02 / 08</span><span class="subj">The seizure</span><span class="rule"></span></div>
+<div class="figwrap"><svg viewBox="0 0 1600 470" role="img" aria-label="The price crosses the liquidation threshold and the collateral is cut away; proceeds fall to zero."><line x1="180" y1="268" x2="900" y2="268" stroke="#7A7A7A" stroke-width="2" stroke-dasharray="3 7"/><text x="180.0" y="254.0" fill="#7A7A7A" font-family="IBM Plex Mono,monospace" font-size="24" text-anchor="start">liquidation threshold</text><polyline class="anim drawn" style="--len:703;animation-delay:calc(var(--dur) * .04s);animation-duration:calc(var(--dur) * .44s)" points="200.0,120.0 420.0,175.0 620.0,232.0 760.0,300.0 860.0,352.0" fill="none" stroke="#FFFFFF" stroke-width="3"/><g class="anim" style="animation-name:cut;animation-duration:.18s;animation-delay:calc(var(--dur) * .48s);animation-timing-function:linear"><rect x="1060" y="110" width="380" height="220" fill="#0A0A0A" stroke="#FFFFFF" stroke-width="2"/><text x="1250.0" y="232.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="middle">collateral</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * .54s)"><text x="1250.0" y="250.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="92" text-anchor="middle">$0</text></g><text x="1250.0" y="400.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="26" text-anchor="middle">proceeds returned</text></svg></div>
+<div class="say"><h2>When the threshold breaks, the position is sold at the worst price.</h2></div>
+<p class="foot">Medici — Proprietary & Confidential</p>
+</section>
+<section class="scene" data-scene="3" data-dur="20" style="--dur:20">
+<div class="mast"><span class="seal" aria-hidden="true"></span><span class="ref">Scene 03 / 08</span><span class="subj">The split</span><span class="rule"></span></div>
+<div class="figwrap"><svg viewBox="0 0 1600 470" role="img" aria-label="One collateral position becomes two stacked claims of exactly the same total height."><g class="anim rise" style="animation-delay:calc(var(--dur) * .02s)"><rect x="150" y="130" width="360" height="200" fill="#0A0A0A" stroke="#FFFFFF" stroke-width="2"/><text x="330.0" y="242.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="28" text-anchor="middle">collateral</text><line x1="110" y1="130" x2="110" y2="330" stroke="#8A8A8A" stroke-width="1"/><line x1="103" y1="130" x2="117" y2="130" stroke="#8A8A8A" stroke-width="1"/><line x1="103" y1="330" x2="117" y2="330" stroke="#8A8A8A" stroke-width="1"/></g><g class="anim fade" style="animation-delay:calc(var(--dur) * .18s)"><line x1="560" y1="230" x2="700" y2="230" stroke="#252525" stroke-width="2"/><path d="M 700,230 l -14,-7 l 0,14 Z" fill="#8A8A8A"/><text x="630.0" y="208.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="24" text-anchor="middle">split</text></g><g class="anim rise" style="animation-delay:calc(var(--dur) * .30s)"><rect x="760" y="130" width="360" height="76" fill="#00CC66" fill-opacity=".11" stroke="#00CC66" stroke-width="2"/><text x="940.0" y="180.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="28" text-anchor="middle">Amplified</text></g><g class="anim rise" style="animation-delay:calc(var(--dur) * .42s)"><rect x="760" y="206" width="360" height="124" fill="#3366FF" fill-opacity=".13" stroke="#3366FF" stroke-width="2"/><text x="940.0" y="278.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="28" text-anchor="middle">Protected</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * .58s)"><line x1="1170" y1="130" x2="1170" y2="330" stroke="#8A8A8A" stroke-width="1"/><line x1="1163" y1="130" x2="1177" y2="130" stroke="#8A8A8A" stroke-width="1"/><line x1="1163" y1="330" x2="1177" y2="330" stroke="#8A8A8A" stroke-width="1"/><text x="1200.0" y="240.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="30" text-anchor="start">P + N &equiv; collateral</text></g></svg></div>
+<div class="say"><h2>Medici splits one position into two claims: Protected and Amplified.</h2></div>
+<p class="foot">Medici — Proprietary & Confidential</p>
+</section>
+<section class="scene" data-scene="4" data-dur="21" style="--dur:21">
+<div class="mast"><span class="seal" aria-hidden="true"></span><span class="ref">Scene 04 / 08</span><span class="subj">The sweep</span><span class="rule"></span></div>
+<div class="figwrap"><svg viewBox="0 0 1600 470" role="img" aria-label="A price cursor sweeps the whole range while the stacked P and N bar keeps exactly the same total height."><g ><line x1="300" y1="360.0" x2="1470" y2="360.0" stroke="#252525" stroke-width="1"/><text x="282.0" y="369.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="24" text-anchor="end">0</text><text x="282.0" y="69.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="24" text-anchor="end">1.00</text><text x="1470.0" y="406.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="24" text-anchor="end">reference price x  →</text></g><g ><line x1="634.3" y1="48.0" x2="634.3" y2="360.0" stroke="#8A8A8A" stroke-width="1.5" stroke-dasharray="3 6"/><text x="634.3" y="38.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="26" text-anchor="middle">S</text></g><polyline  points="300.0,60.0 634.3,60.0" fill="none" stroke="#3366FF" stroke-width="3"/><polyline  points="634.3,60.0 643.6,64.8 652.9,69.4 662.1,73.8 671.4,78.2 680.7,82.4 690.0,86.4 699.3,90.4 708.6,94.3 717.9,98.0 727.1,101.6 736.4,105.2 745.7,108.6 755.0,112.0 764.3,115.2 773.6,118.4 782.9,121.5 792.1,124.5 801.4,127.4 810.7,130.3 820.0,133.1 829.3,135.8 838.6,138.5 847.9,141.1 857.1,143.7 866.4,146.1 875.7,148.6 885.0,150.9 894.3,153.3 903.6,155.5 912.9,157.8 922.1,159.9 931.4,162.1 940.7,164.1 950.0,166.2 959.3,168.2 968.6,170.1 977.9,172.0 987.1,173.9 996.4,175.8 1005.7,177.6 1015.0,179.3 1024.3,181.1 1033.6,182.8 1042.9,184.4 1052.1,186.1 1061.4,187.7 1070.7,189.3 1080.0,190.8 1089.3,192.4 1098.6,193.8 1107.9,195.3 1117.1,196.8 1126.4,198.2 1135.7,199.6 1145.0,200.9 1154.3,202.3 1163.6,203.6 1172.9,204.9 1182.1,206.2 1191.4,207.5 1200.7,208.7 1210.0,209.9 1219.3,211.1 1228.6,212.3 1237.9,213.5 1247.1,214.6 1256.4,215.7 1265.7,216.8 1275.0,217.9 1284.3,219.0 1293.6,220.1 1302.9,221.1 1312.1,222.1 1321.4,223.2 1330.7,224.2 1340.0,225.1 1349.3,226.1 1358.6,227.1 1367.9,228.0 1377.1,228.9 1386.4,229.8 1395.7,230.8 1405.0,231.6 1414.3,232.5 1423.6,233.4 1432.9,234.2 1442.1,235.1 1451.4,235.9 1460.7,236.7 1470.0,237.6" fill="none" stroke="#3366FF" stroke-width="3"/><g ><text x="415.3" y="240.0" fill="#5C85FF" font-family="IBM Plex Sans,sans-serif" font-size="34" text-anchor="start">P</text></g><path  d="M 300.0,60.0 L 300.0,60.0 L 634.3,60.0 L 634.3,60.0 L 643.6,64.8 L 652.9,69.4 L 662.1,73.8 L 671.4,78.2 L 680.7,82.4 L 690.0,86.4 L 699.3,90.4 L 708.6,94.3 L 717.9,98.0 L 727.1,101.6 L 736.4,105.2 L 745.7,108.6 L 755.0,112.0 L 764.3,115.2 L 773.6,118.4 L 782.9,121.5 L 792.1,124.5 L 801.4,127.4 L 810.7,130.3 L 820.0,133.1 L 829.3,135.8 L 838.6,138.5 L 847.9,141.1 L 857.1,143.7 L 866.4,146.1 L 875.7,148.6 L 885.0,150.9 L 894.3,153.3 L 903.6,155.5 L 912.9,157.8 L 922.1,159.9 L 931.4,162.1 L 940.7,164.1 L 950.0,166.2 L 959.3,168.2 L 968.6,170.1 L 977.9,172.0 L 987.1,173.9 L 996.4,175.8 L 1005.7,177.6 L 1015.0,179.3 L 1024.3,181.1 L 1033.6,182.8 L 1042.9,184.4 L 1052.1,186.1 L 1061.4,187.7 L 1070.7,189.3 L 1080.0,190.8 L 1089.3,192.4 L 1098.6,193.8 L 1107.9,195.3 L 1117.1,196.8 L 1126.4,198.2 L 1135.7,199.6 L 1145.0,200.9 L 1154.3,202.3 L 1163.6,203.6 L 1172.9,204.9 L 1182.1,206.2 L 1191.4,207.5 L 1200.7,208.7 L 1210.0,209.9 L 1219.3,211.1 L 1228.6,212.3 L 1237.9,213.5 L 1247.1,214.6 L 1256.4,215.7 L 1265.7,216.8 L 1275.0,217.9 L 1284.3,219.0 L 1293.6,220.1 L 1302.9,221.1 L 1312.1,222.1 L 1321.4,223.2 L 1330.7,224.2 L 1340.0,225.1 L 1349.3,226.1 L 1358.6,227.1 L 1367.9,228.0 L 1377.1,228.9 L 1386.4,229.8 L 1395.7,230.8 L 1405.0,231.6 L 1414.3,232.5 L 1423.6,233.4 L 1432.9,234.2 L 1442.1,235.1 L 1451.4,235.9 L 1460.7,236.7 L 1470.0,237.6 L 1470.0,60.0 Z" fill="#00CC66" fill-opacity=".11"/><g ><text x="1210.6" y="114.0" fill="#00CC66" font-family="IBM Plex Sans,sans-serif" font-size="34" text-anchor="start">N</text></g><polyline  points="300.0,60.0 1470.0,60.0" fill="none" stroke="#00CC66" stroke-width="3"/><g ><text x="1014.7" y="40.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="28" text-anchor="middle">P + N = 1.00 at every price</text></g><g class="anim" style="animation-name:sweepX;--sweep:1170px;animation-duration:calc(var(--dur) * .92s);animation-timing-function:linear"><line x1="300.0" y1="46" x2="300.0" y2="360.0" stroke="#FFFFFF" stroke-width="2"/></g><rect x="1520" y="60.0" width="56" height="300.0" fill="#00CC66" fill-opacity=".11" stroke="#00CC66" stroke-width="2" class="anim" style="animation-name:sumbar-n;animation-duration:calc(var(--dur) * .92s);transform-box:fill-box;transform-origin:top;animation-timing-function:linear"/><rect x="1520" y="60.0" width="56" height="300.0" fill="#3366FF" fill-opacity=".13" stroke="#3366FF" stroke-width="2" class="anim" style="animation-name:sumbar-p;animation-duration:calc(var(--dur) * .92s);transform-box:fill-box;transform-origin:bottom;animation-timing-function:linear"/><line x1="1598" y1="60.0" x2="1598" y2="360.0" stroke="#8A8A8A" stroke-width="1"/><text x="1548.0" y="406.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="26" text-anchor="middle">P + N</text></svg></div>
+<div class="say"><h2>At maturity, P takes S/x, N takes the rest, and the two still sum to the collateral.</h2></div>
+<p class="foot">Medici — Proprietary & Confidential</p>
+</section>
+<section class="scene" data-scene="5" data-dur="21" style="--dur:21">
+<div class="mast"><span class="seal" aria-hidden="true"></span><span class="ref">Scene 05 / 08</span><span class="subj">The refusal</span><span class="rule"></span></div>
+<div class="figwrap"><svg viewBox="0 0 1600 470" role="img" aria-label="The clamp that seizes collateral reaches in, decelerates and stops short: there is no threshold for it to act on."><g ><line x1="300" y1="360.0" x2="1470" y2="360.0" stroke="#252525" stroke-width="1"/><text x="282.0" y="369.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="24" text-anchor="end">0</text><text x="282.0" y="69.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="24" text-anchor="end">1.00</text><text x="1470.0" y="406.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="24" text-anchor="end">reference price x  →</text></g><g ><line x1="634.3" y1="48.0" x2="634.3" y2="360.0" stroke="#8A8A8A" stroke-width="1.5" stroke-dasharray="3 6"/><text x="634.3" y="38.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="26" text-anchor="middle">S</text></g><polyline  points="300.0,60.0 634.3,60.0" fill="none" stroke="#3366FF" stroke-width="3"/><polyline  points="634.3,60.0 643.6,64.8 652.9,69.4 662.1,73.8 671.4,78.2 680.7,82.4 690.0,86.4 699.3,90.4 708.6,94.3 717.9,98.0 727.1,101.6 736.4,105.2 745.7,108.6 755.0,112.0 764.3,115.2 773.6,118.4 782.9,121.5 792.1,124.5 801.4,127.4 810.7,130.3 820.0,133.1 829.3,135.8 838.6,138.5 847.9,141.1 857.1,143.7 866.4,146.1 875.7,148.6 885.0,150.9 894.3,153.3 903.6,155.5 912.9,157.8 922.1,159.9 931.4,162.1 940.7,164.1 950.0,166.2 959.3,168.2 968.6,170.1 977.9,172.0 987.1,173.9 996.4,175.8 1005.7,177.6 1015.0,179.3 1024.3,181.1 1033.6,182.8 1042.9,184.4 1052.1,186.1 1061.4,187.7 1070.7,189.3 1080.0,190.8 1089.3,192.4 1098.6,193.8 1107.9,195.3 1117.1,196.8 1126.4,198.2 1135.7,199.6 1145.0,200.9 1154.3,202.3 1163.6,203.6 1172.9,204.9 1182.1,206.2 1191.4,207.5 1200.7,208.7 1210.0,209.9 1219.3,211.1 1228.6,212.3 1237.9,213.5 1247.1,214.6 1256.4,215.7 1265.7,216.8 1275.0,217.9 1284.3,219.0 1293.6,220.1 1302.9,221.1 1312.1,222.1 1321.4,223.2 1330.7,224.2 1340.0,225.1 1349.3,226.1 1358.6,227.1 1367.9,228.0 1377.1,228.9 1386.4,229.8 1395.7,230.8 1405.0,231.6 1414.3,232.5 1423.6,233.4 1432.9,234.2 1442.1,235.1 1451.4,235.9 1460.7,236.7 1470.0,237.6" fill="none" stroke="#3366FF" stroke-width="3"/><g ><text x="415.3" y="240.0" fill="#5C85FF" font-family="IBM Plex Sans,sans-serif" font-size="34" text-anchor="start">P</text></g><path  d="M 300.0,60.0 L 300.0,60.0 L 634.3,60.0 L 634.3,60.0 L 643.6,64.8 L 652.9,69.4 L 662.1,73.8 L 671.4,78.2 L 680.7,82.4 L 690.0,86.4 L 699.3,90.4 L 708.6,94.3 L 717.9,98.0 L 727.1,101.6 L 736.4,105.2 L 745.7,108.6 L 755.0,112.0 L 764.3,115.2 L 773.6,118.4 L 782.9,121.5 L 792.1,124.5 L 801.4,127.4 L 810.7,130.3 L 820.0,133.1 L 829.3,135.8 L 838.6,138.5 L 847.9,141.1 L 857.1,143.7 L 866.4,146.1 L 875.7,148.6 L 885.0,150.9 L 894.3,153.3 L 903.6,155.5 L 912.9,157.8 L 922.1,159.9 L 931.4,162.1 L 940.7,164.1 L 950.0,166.2 L 959.3,168.2 L 968.6,170.1 L 977.9,172.0 L 987.1,173.9 L 996.4,175.8 L 1005.7,177.6 L 1015.0,179.3 L 1024.3,181.1 L 1033.6,182.8 L 1042.9,184.4 L 1052.1,186.1 L 1061.4,187.7 L 1070.7,189.3 L 1080.0,190.8 L 1089.3,192.4 L 1098.6,193.8 L 1107.9,195.3 L 1117.1,196.8 L 1126.4,198.2 L 1135.7,199.6 L 1145.0,200.9 L 1154.3,202.3 L 1163.6,203.6 L 1172.9,204.9 L 1182.1,206.2 L 1191.4,207.5 L 1200.7,208.7 L 1210.0,209.9 L 1219.3,211.1 L 1228.6,212.3 L 1237.9,213.5 L 1247.1,214.6 L 1256.4,215.7 L 1265.7,216.8 L 1275.0,217.9 L 1284.3,219.0 L 1293.6,220.1 L 1302.9,221.1 L 1312.1,222.1 L 1321.4,223.2 L 1330.7,224.2 L 1340.0,225.1 L 1349.3,226.1 L 1358.6,227.1 L 1367.9,228.0 L 1377.1,228.9 L 1386.4,229.8 L 1395.7,230.8 L 1405.0,231.6 L 1414.3,232.5 L 1423.6,233.4 L 1432.9,234.2 L 1442.1,235.1 L 1451.4,235.9 L 1460.7,236.7 L 1470.0,237.6 L 1470.0,60.0 Z" fill="#00CC66" fill-opacity=".11"/><g ><text x="1210.6" y="114.0" fill="#00CC66" font-family="IBM Plex Sans,sans-serif" font-size="34" text-anchor="start">N</text></g><polyline  points="300.0,60.0 1470.0,60.0" fill="none" stroke="#00CC66" stroke-width="3"/><g ><text x="1014.7" y="40.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="28" text-anchor="middle">P + N = 1.00 at every price</text></g><g class="anim" style="animation-name:reachStop;--reach:-540px;animation-duration:calc(var(--dur) * .55s);animation-timing-function:var(--ease)"><path d="M 1560,150 l 0,-34 l 90,0 M 1560,150 l 0,180 M 1560,330 l 0,34 l 90,0" fill="none" stroke="#8A8A8A" stroke-width="3"/><text x="1600.0" y="246.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="24" text-anchor="start">seize</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * .80s)"><text x="807.2" y="406.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="28" text-anchor="middle">nothing fires — the payoff has no threshold</text></g></svg></div>
+<div class="say"><h2>The price rises, and the liquidation that would fire does not exist.</h2></div>
+<p class="foot">Medici — Proprietary & Confidential</p>
+</section>
+<section class="scene" data-scene="6" data-dur="17" style="--dur:17">
+<div class="mast"><span class="seal" aria-hidden="true"></span><span class="ref">Scene 06 / 08</span><span class="subj">Two holders</span><span class="rule"></span></div>
+<div class="figwrap"><svg viewBox="0 0 1600 470" role="img" aria-label="Two legs with two holders, each with its own reason to want it."><g class="anim rise" style="animation-delay:calc(var(--dur) * .04s)"><line x1="800" y1="90" x2="800" y2="380" stroke="#1A1A1A" stroke-width="1"/><rect x="200" y="110" width="420" height="90" fill="#3366FF" fill-opacity=".13" stroke="#3366FF" stroke-width="2"/><text x="410.0" y="166.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="34" text-anchor="middle">P</text><rect x="980" y="110" width="420" height="90" fill="#00CC66" fill-opacity=".11" stroke="#00CC66" stroke-width="2"/><text x="1190.0" y="166.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="34" text-anchor="middle">N</text></g><g class="anim rise" style="animation-delay:calc(var(--dur) * .18s)"><text x="410.0" y="262.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="middle">Fund treasury</text><text x="410.0" y="306.0" fill="#AAAAAA" font-family="IBM Plex Sans,sans-serif" font-size="26" text-anchor="middle">income on an asset it never sells</text><text x="1190.0" y="262.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="middle">Allocator</text><text x="1190.0" y="306.0" fill="#AAAAAA" font-family="IBM Plex Sans,sans-serif" font-size="26" text-anchor="middle">exposure with no liquidation price</text></g></svg></div>
+<div class="say"><h2>Two holders, two reasons: income kept, exposure amplified.</h2></div>
+<p class="foot">Medici — Proprietary & Confidential</p>
+</section>
+<section class="scene" data-scene="7" data-dur="14" style="--dur:14">
+<div class="mast"><span class="seal" aria-hidden="true"></span><span class="ref">Scene 07 / 08</span><span class="subj">Disclosure</span><span class="rule"></span></div>
+<div class="figwrap"><svg viewBox="0 0 1600 470" role="img" aria-label="The claim set shrinks: what is not built is struck out, one line at a time."><g class="anim fade" style="animation-delay:calc(var(--dur) * .02s)"><text x="180.0" y="96.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="26" text-anchor="start">What exists</text></g><g class="anim rise" style="animation-delay:calc(var(--dur) * 0.06s)"><text x="180.0" y="152.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start">54 DAML contracts on Canton</text></g><g class="anim rise" style="animation-delay:calc(var(--dur) * 0.11s)"><text x="180.0" y="204.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start">a twelve-agent fleet</text></g><g class="anim rise" style="animation-delay:calc(var(--dur) * 0.16s)"><text x="180.0" y="256.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start">a nine-year backtest</text></g><g class="anim rise" style="animation-delay:calc(var(--dur) * 0.21s)"><text x="180.0" y="308.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start">closed-form proofs</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * .34s)"><text x="900.0" y="96.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="26" text-anchor="start">What does not</text></g><g class="anim" style="animation-name:fade,unfade;animation-duration:.4s,.4s;animation-delay:calc(var(--dur) * 0.38s),calc(var(--dur) * 0.56s)"><text x="900.0" y="152.0" fill="#AAAAAA" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start">mainnet</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * 0.60s)"><text x="900.0" y="152.0" fill="#7A7A7A" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start" text-decoration="line-through">mainnet</text></g><g class="anim" style="animation-name:fade,unfade;animation-duration:.4s,.4s;animation-delay:calc(var(--dur) * 0.47s),calc(var(--dur) * 0.65s)"><text x="900.0" y="204.0" fill="#AAAAAA" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start">an audit</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * 0.69s)"><text x="900.0" y="204.0" fill="#7A7A7A" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start" text-decoration="line-through">an audit</text></g><g class="anim" style="animation-name:fade,unfade;animation-duration:.4s,.4s;animation-delay:calc(var(--dur) * 0.56s),calc(var(--dur) * 0.74s)"><text x="900.0" y="256.0" fill="#AAAAAA" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start">live collateral</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * 0.78s)"><text x="900.0" y="256.0" fill="#7A7A7A" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start" text-decoration="line-through">live collateral</text></g><g class="anim" style="animation-name:fade,unfade;animation-duration:.4s,.4s;animation-delay:calc(var(--dur) * 0.65s),calc(var(--dur) * 0.83s)"><text x="900.0" y="308.0" fill="#AAAAAA" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start">a customer</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * 0.87s)"><text x="900.0" y="308.0" fill="#7A7A7A" font-family="IBM Plex Sans,sans-serif" font-size="30" text-anchor="start" text-decoration="line-through">a customer</text></g></svg></div>
+<div class="say"><h2>What is built is real; what is not built is named.</h2></div>
+<p class="foot">Medici — Proprietary & Confidential</p>
+</section>
+<section class="scene" data-scene="8" data-dur="15" style="--dur:15">
+<div class="mast"><span class="seal" aria-hidden="true"></span><span class="ref">Scene 08 / 08</span><span class="subj">The close</span><span class="rule"></span></div>
+<div class="figwrap"><svg viewBox="0 0 1600 470" role="img" aria-label="The position from the opening returns, split into two claims and still held."><g class="anim rise" style="animation-delay:calc(var(--dur) * .04s)"><rect x="700" y="120" width="360" height="76" fill="#00CC66" fill-opacity=".11" stroke="#00CC66" stroke-width="2"/><text x="880.0" y="170.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="28" text-anchor="middle">N</text><rect x="700" y="196" width="360" height="124" fill="#3366FF" fill-opacity=".13" stroke="#3366FF" stroke-width="2"/><text x="880.0" y="268.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="28" text-anchor="middle">P</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * .26s)"><line x1="1110" y1="120" x2="1110" y2="320" stroke="#8A8A8A" stroke-width="1"/><line x1="1103" y1="120" x2="1117" y2="120" stroke="#8A8A8A" stroke-width="1"/><line x1="1103" y1="320" x2="1117" y2="320" stroke="#8A8A8A" stroke-width="1"/><text x="1140.0" y="228.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="30" text-anchor="start">P + N &equiv; collateral</text></g><g class="anim fade" style="animation-delay:calc(var(--dur) * .12s)"><text x="360.0" y="228.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="28" text-anchor="end">still held</text><line x1="390" y1="220" x2="660" y2="220" stroke="#252525" stroke-width="2"/></g></svg></div>
+<div class="say"><h2>Bring one position, and the split is modelled against it.</h2></div>
+<p class="foot">Medici — Proprietary & Confidential</p>
+</section>
+<div class="bar"><i id="bar"></i></div>
+<span class="count" id="cnt">1 / 1</span>
+<span class="hint">space / → · ?scene=N</span>
+</div>
+<script>
+(function(){
+  var scenes=[].slice.call(document.querySelectorAll('.scene'));
+  var durs=scenes.map(function(s){return parseFloat(s.getAttribute('data-dur'));});
+  var totalSeconds=durs.reduce(function(a,b){return a+b;},0);
+  var starts=[],acc=0;
+  durs.forEach(function(d){starts.push(acc);acc+=d;});
+  var stage=document.getElementById('stage'),bar=document.getElementById('bar'),
+      cnt=document.getElementById('cnt');
+  var cur=0,t=0,last=0,raf=null;
+  function fit(){stage.style.setProperty('--s',Math.min(window.innerWidth/1920,window.innerHeight/1080));}
+  function paint(){
+    bar.style.width=(((starts[cur]+Math.min(t,durs[cur]))/totalSeconds)*100)+'%';
+    if(cnt)cnt.textContent=(cur+1)+' / '+scenes.length;
+    window.__player.scene=cur+1;window.__player.t=t;
+  }
+  function goto(n){
+    if(n<0)n=0; if(n>scenes.length-1)n=scenes.length-1;
+    scenes.forEach(function(s){s.classList.remove('on');});
+    cur=n;t=0;
+    var s=scenes[cur];
+    void s.offsetWidth;              /* restart this scene's animations */
+    s.classList.add('on');
+    paint();
+  }
+  function tick(ts){
+    if(!last)last=ts;
+    var dt=Math.min((ts-last)/1000,0.25);last=ts;
+    t+=dt;
+    if(t>=durs[cur]){
+      if(cur<scenes.length-1){goto(cur+1);last=ts;}
+      else{t=durs[cur];paint();raf=null;return;}
+    }
+    paint();
+    raf=requestAnimationFrame(tick);
+  }
+  function play(){if(!raf){last=0;raf=requestAnimationFrame(tick);}}
+  window.__player={
+    scene:1,t:0,total:scenes.length,totalSeconds:totalSeconds,
+    seek:function(n){goto((n|0)-1);last=0;if(!raf)play();return window.__player.scene;}
+  };
+  window.addEventListener('resize',fit);
+  document.addEventListener('keydown',function(e){
+    if(e.key===' '||e.key==='ArrowRight'){e.preventDefault();window.__player.seek(cur+2);}
+    else if(e.key==='ArrowLeft'){e.preventDefault();window.__player.seek(cur);}
+    else if(e.key==='Home'){e.preventDefault();window.__player.seek(1);}
+  });
+  fit();
+  var m=/[?&]scene=(\d+)/.exec(location.search);
+  goto(m?parseInt(m[1],10)-1:0);
+  play();
+})();
+</script>
+</body>
+</html>

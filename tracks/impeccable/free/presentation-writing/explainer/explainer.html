@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medici — the split, in two minutes (presentation-writing)</title>
+<meta name="deck-footer" content="Medici — Proprietary &amp; Confidential">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  /* ground — lapis lazuli, ground and levigated. Not parchment. */
+  --lapis-0:#080F2A; --lapis-1:#0B1436; --lapis-2:#132049; --lapis-3:#1B2B5E;
+  /* the scribe's ruling, in lead point */
+  --rule:#2C3E7C; --rule-soft:#1B2A58;
+  /* the lettering is the light on this page */
+  --ink:#F2ECDC; --ink-2:#AEB9DA; --ink-3:#7E8AB6;
+  /* gold leaf — the leg that is kept whole */
+  --gold:#E8B44A; --gold-hi:#F7DC90; --gold-deep:#B8862C;
+  /* vermilion / minium — the rubricator's call-out, and the amplified leg */
+  --verm:#FF6A4D; --verm-deep:#DE3F24;
+  /* verdigris — the total that holds */
+  --verd:#4FB89E; --verd-deep:#2E7D6B;
+  --serif:'Cardo',Georgia,'Times New Roman',serif;
+  --sans:'Alegreya Sans','Optima','Segoe UI',system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#04081A;color:var(--ink);font-family:var(--sans);display:grid;place-items:center;
+  overflow:hidden;-webkit-font-smoothing:antialiased}
+#stage{width:1920px;height:1080px;position:relative;transform-origin:center center;overflow:hidden;
+  
+  background:linear-gradient(177deg,#111D4A 0%,#0D1739 42%,#0A1230 100%);
+}
+#stage::before{content:"";position:absolute;inset:0;
+  background-image:repeating-linear-gradient(to bottom,rgba(44,62,124,.34) 0 1px,transparent 1px 28px);
+opacity:.5;pointer-events:none}
+#stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(135% 105% at 50% 42%,rgba(0,0,0,0) 52%,rgba(3,6,20,.62) 100%)}
+.scene{position:absolute;inset:0;padding:92px 128px 104px;display:none;z-index:2}
+.scene.on{display:grid}
+.claim{font-family:var(--serif);font-weight:700;font-size:72px;line-height:1.1;letter-spacing:-.018em;
+  color:var(--ink);text-wrap:balance;max-width:19ch}
+.claim .rub{color:var(--gold)}.claim .min{color:var(--verm)}
+.sub{font-size:31px;line-height:1.45;color:var(--ink-2);max-width:36ch;margin-top:26px}
+.sub b{color:var(--ink);font-weight:500}
+.sub .gold{color:var(--gold)}.sub .min{color:var(--verm)}
+
+/* layouts */
+.lay-center{place-content:center;justify-items:center;text-align:center;row-gap:54px}
+.duo{display:grid;grid-template-columns:.42fr .58fr;gap:64px;align-items:center;
+  width:100%;height:100%;min-height:0}
+.duo>*{min-width:0}
+.lay-center .claim{max-width:22ch}.lay-center .sub{max-width:48ch}
+.lay-fig-right{grid-template-columns:1fr 1fr;align-items:center;column-gap:80px}
+.lay-fig-left{grid-template-columns:1.15fr .85fr;align-items:center;column-gap:80px}
+.lay-fig-left .txt{order:2}.lay-fig-left .figw{order:1}
+.lay-stack{grid-template-rows:auto 1fr;align-content:start;row-gap:44px}
+.lay-stack .claim{max-width:26ch;font-size:62px}
+.figw{display:flex;align-items:center;justify-content:center;min-width:0;min-height:0}
+.f{width:100%;height:auto;max-height:100%;display:block;overflow:visible}
+.f-lab{fill:var(--ink-2);font-family:var(--sans);font-size:30px;letter-spacing:.03em}
+.f-lab.gold{fill:var(--gold)}.f-lab.min{fill:var(--verm)}.f-lab.verd{fill:var(--verd)}
+.f-lab.dark{fill:#0B1436;font-family:var(--serif);font-size:56px;font-weight:700}
+
+/* apparatus */
+.meta{position:absolute;left:128px;top:52px;font-size:28px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);z-index:3}
+.meta em{color:var(--verm);font-style:normal}
+.foot{position:absolute;left:128px;right:128px;bottom:46px;display:flex;justify-content:space-between;
+  align-items:baseline;font-size:28px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);z-index:3}
+.foot .mark{color:var(--gold);letter-spacing:.24em}
+#bar{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(44,62,124,.55);z-index:5}
+#bar i{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:left center;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold-hi))}
+#ticks{position:absolute;left:0;right:0;bottom:0;height:4px;z-index:6;pointer-events:none}
+#ticks u{position:absolute;top:0;width:1px;height:4px;background:rgba(11,20,54,.85)}
+
+/* ===================== motion, by role ===================== */
+.scene.on .claim{animation:rise calc(var(--d)*.09) var(--ease) both}
+.scene.on .sub{animation:rise calc(var(--d)*.09) var(--ease) calc(var(--d)*.05) both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* hold — the frame is given, not developed */
+.r-hold .figw .f{opacity:0}
+.scene.on.r-hold .figw .f{animation:fadein calc(var(--d)*.16) var(--ease) calc(var(--d)*.08) both}
+.r-hold .pos-plate{transform-box:fill-box;transform-origin:center}
+.scene.on.r-hold .pos-plate{animation:breathe 9s ease-in-out infinite}
+@keyframes breathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.09)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.un-l{opacity:0}
+.scene.on .un-l{animation:fadein calc(var(--d)*.1) var(--ease) calc(var(--d)*.14 + var(--i)*var(--d)*.09) both}
+.un-thr{opacity:0}
+.scene.on .un-thr{animation:fadein calc(var(--d)*.06) linear calc(var(--d)*.1) both}
+.vn-m,.vn-scope,.vn-atom{opacity:0}
+.scene.on .vn-m{animation:fadein calc(var(--d)*.1) linear calc(var(--d)*.08 + var(--i)*var(--d)*.004) both}
+.scene.on .vn-scope{animation:fadein calc(var(--d)*.12) linear calc(var(--d)*.46) both}
+.scene.on .vn-atom{animation:fadein calc(var(--d)*.12) linear calc(var(--d)*.62) both}
+.hd,.hd-teth{opacity:0}
+.scene.on .hd{animation:fadein calc(var(--d)*.14) var(--ease) calc(var(--d)*.1 + var(--i)*var(--d)*.16) both}
+.scene.on .hd-teth{animation:fadein calc(var(--d)*.12) linear calc(var(--d)*.5) both}
+
+/* accumulate — one value grows across the scene; the growth IS the point */
+.cl-bar{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0)}
+.scene.on .cl-bar{animation:grow calc(var(--d)*.14) var(--ease) calc(var(--d)*.16 + var(--i)*var(--d)*.045) both}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.cl-thr{stroke-dasharray:8 8;opacity:0}
+.scene.on .cl-thr{animation:fadein calc(var(--d)*.12) linear calc(var(--d)*.6) both}
+.pw-sweep{opacity:0}
+.scene.on .pw-sweep{animation:sweepx calc(var(--d)*.52) cubic-bezier(.4,0,.6,1) calc(var(--d)*.3) both}
+@keyframes sweepx{0%{opacity:0;transform:translateX(0)}8%{opacity:1}100%{opacity:1;transform:translateX(760px)}}
+
+/* strain — an intact arrangement is put under load and visibly does not cope */
+.st-stack{transform-box:fill-box;transform-origin:center}
+.scene.on .st-stack{animation:compress calc(var(--d)*.6) cubic-bezier(.35,0,.2,1) calc(var(--d)*.18) both}
+@keyframes compress{from{transform:scaleY(1)}to{transform:scaleY(.72) skewX(-2.5deg)}}
+.scene.on .st-load{animation:press calc(var(--d)*.6) cubic-bezier(.35,0,.2,1) calc(var(--d)*.18) both}
+@keyframes press{from{transform:translateY(0);opacity:.3}to{transform:translateY(64px);opacity:1}}
+.scene.on .st-try{animation:rebuff calc(var(--d)*.24) cubic-bezier(.16,1,.3,1) calc(var(--d)*.44) 2 both}
+@keyframes rebuff{0%{transform:translateX(-40px);opacity:0}40%{transform:translateX(0);opacity:1}100%{transform:translateX(-40px);opacity:.4}}
+.st-shut{opacity:.85}
+
+/* rupture — the break; it needs time to be legible */
+.au-top{stroke-dasharray:660;stroke-dashoffset:0}
+.scene.on .au-top{animation:snap calc(var(--d)*.1) cubic-bezier(.7,0,.9,.4) calc(var(--d)*.3) both}
+@keyframes snap{0%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:660;opacity:0}}
+.au-b{transform-box:fill-box;transform-origin:bottom}
+.scene.on .au-b{animation:collapse calc(var(--d)*.26) cubic-bezier(.55,.02,.85,.35)
+  calc(var(--d)*.34 + var(--i)*var(--d)*.028) both}
+@keyframes collapse{0%{transform:translateY(0) scaleY(1);opacity:1}
+  100%{transform:translateY(150px) scaleY(.02);opacity:.25}}
+.au-zero{fill:var(--verm);font-family:var(--serif);font-weight:700;font-size:132px;
+  letter-spacing:-.04em;opacity:0}
+.scene.on .au-zero{animation:land calc(var(--d)*.13) cubic-bezier(.12,.9,.2,1) calc(var(--d)*.62) both}
+@keyframes land{0%{opacity:0;transform:translateY(-46px) scale(.86)}100%{opacity:1;transform:none}}
+.au-cap{opacity:0}
+.scene.on .au-cap{animation:fadein calc(var(--d)*.1) linear calc(var(--d)*.76) both}
+.scene.on.r-rupture .claim{animation:rise calc(var(--d)*.07) var(--ease) both}
+
+/* assemble — everything that arrives stays; the invariant is an accumulation that never breaks */
+.pw-grid,.pw-ax,.pw-s,.pw-n,.pw-p,.pw-div,.pw-lp,.pw-ln{opacity:0}
+.pw-top{stroke-dasharray:780;stroke-dashoffset:780}
+.scene.on .pw-grid{animation:fadein calc(var(--d)*.07) linear calc(var(--d)*.06) both}
+.scene.on .pw-ax{animation:fadein calc(var(--d)*.07) linear calc(var(--d)*.10) both}
+.scene.on .pw-s{animation:fadein calc(var(--d)*.06) linear calc(var(--d)*.16) both}
+.scene.on .pw-p{animation:wipe calc(var(--d)*.20) var(--ease) calc(var(--d)*.22) both}
+.scene.on .pw-lp{animation:fadein calc(var(--d)*.06) linear calc(var(--d)*.30) both}
+.scene.on .pw-n{animation:wipe calc(var(--d)*.20) var(--ease) calc(var(--d)*.44) both}
+.scene.on .pw-ln{animation:fadein calc(var(--d)*.06) linear calc(var(--d)*.52) both}
+.scene.on .pw-div{animation:fadein calc(var(--d)*.08) linear calc(var(--d)*.44) both}
+.scene.on .pw-top{animation:foot calc(var(--d)*.20) var(--ease) calc(var(--d)*.66) both}
+@keyframes wipe{from{opacity:0;clip-path:inset(0 100% 0 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes foot{to{stroke-dashoffset:0}}
+.sp-src{transform-box:fill-box;transform-origin:center}
+.scene.on .sp-src{animation:srcout calc(var(--d)*.18) var(--ease) calc(var(--d)*.14) both}
+@keyframes srcout{0%{opacity:1;transform:scaleX(1)}100%{opacity:0;transform:scaleX(.2)}}
+.sp-p,.sp-n{opacity:0}
+.scene.on .sp-p{animation:slidel calc(var(--d)*.22) var(--ease) calc(var(--d)*.2) both}
+.scene.on .sp-n{animation:slider calc(var(--d)*.22) var(--ease) calc(var(--d)*.2) both}
+@keyframes slidel{from{opacity:0;transform:translateX(190px)}to{opacity:1;transform:none}}
+@keyframes slider{from{opacity:0;transform:translateX(-190px)}to{opacity:1;transform:none}}
+.sp-teth{opacity:0}
+.scene.on .sp-teth{animation:fadein calc(var(--d)*.12) linear calc(var(--d)*.46) both}
+
+/* strain, second figure family: patches accumulate over an unmoved threshold */
+.pt-p{opacity:0}
+.scene.on .pt-p{animation:patchin calc(var(--d)*.14) var(--ease) calc(var(--d)*.24 + var(--i)*var(--d)*.16) both}
+@keyframes patchin{from{opacity:0;transform:translateY(-22px)}to{opacity:1;transform:none}}
+.pt-plate{transform-box:fill-box;transform-origin:center}
+.scene.on .pt-plate{animation:squash calc(var(--d)*.62) cubic-bezier(.35,0,.2,1) calc(var(--d)*.2) both}
+@keyframes squash{from{transform:scaleY(1)}to{transform:scaleY(.86) skewX(-2deg)}}
+
+/* accumulate, second family: the chain that feeds itself */
+.cs-b{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0)}
+.scene.on .cs-b{animation:grow calc(var(--d)*.1) cubic-bezier(.4,0,.3,1)
+  calc(var(--d)*.12 + var(--i)*var(--d)*.075) both}
+
+/* rupture, second family: the crossing and the seizure */
+.sz-track{opacity:0}
+.scene.on .sz-track{animation:track calc(var(--d)*.46) cubic-bezier(.45,0,.55,1) calc(var(--d)*.1) both}
+@keyframes track{0%{opacity:1;stroke-dashoffset:1100}100%{opacity:1;stroke-dashoffset:0}}
+.sz-dot{opacity:0}
+.scene.on .sz-dot{animation:dot calc(var(--d)*.46) cubic-bezier(.45,0,.55,1) calc(var(--d)*.1) both}
+@keyframes dot{0%{opacity:1;transform:translate(40px,96px)}45%{transform:translate(440px,190px)}
+  100%{opacity:1;transform:translate(840px,286px)}}
+.sz-plate{transform-box:fill-box;transform-origin:center}
+.scene.on .sz-plate{animation:taken calc(var(--d)*.18) cubic-bezier(.6,0,.9,.3) calc(var(--d)*.52) both}
+@keyframes taken{0%{opacity:1;transform:none;filter:none}
+  100%{opacity:.12;transform:translateY(120px) scaleY(.06);filter:grayscale(1)}}
+.sz-cap{opacity:0}
+.scene.on .sz-cap{animation:fadein calc(var(--d)*.1) linear calc(var(--d)*.7) both}
+
+/* rupture, third family: the line that cannot be placed */
+.scene.on.r-rupture .pw-thr{animation:refuse calc(var(--d)*.3) var(--ease) calc(var(--d)*.66) both}
+@keyframes refuse{0%{opacity:0;transform:translateX(150px)}18%{opacity:1;transform:translateX(0)}
+  46%{transform:translateX(-230px)}72%{opacity:1;transform:translateX(210px)}
+  100%{opacity:.18;transform:translateX(210px)}}
+
+/* arrest — the gesture begins and stops; the stillness is the argument */
+.rc-arm{opacity:0}
+.scene.on .rc-arm{animation:arrest calc(var(--d)*.42) cubic-bezier(.2,.85,.25,1) calc(var(--d)*.2) both}
+@keyframes arrest{0%{opacity:0;transform:translateX(920px)}
+  14%{opacity:1}72%{transform:translateX(470px)}100%{opacity:1;transform:translateX(455px)}}
+.rc-none{opacity:0}
+.scene.on .rc-none{animation:fadein calc(var(--d)*.08) linear calc(var(--d)*.72) both}
+.scene.on .pw-thr{animation:fadein calc(var(--d)*.1) linear calc(var(--d)*.62) both}
+.m-refused .pw-thr,.m-arrest .pw-thr{opacity:0}
+
+/* divest — motion is subtractive only; nothing new may enter */
+.f-divest{display:flex;flex-direction:column;gap:0;width:100%;border-top:1px solid var(--rule)}
+.dv{padding:21px 0;border-bottom:1px solid var(--rule-soft);font-size:31px;color:var(--ink-2);
+  position:relative;line-height:1.35}
+.dv::after{content:"";position:absolute;left:0;top:50%;height:2px;width:0;background:var(--verm);opacity:.9}
+.scene.on .dv::after{animation:strike calc(var(--d)*.1) var(--ease) calc(var(--d)*.3 + var(--i)*var(--d)*.11) both}
+.scene.on .dv{animation:dim calc(var(--d)*.1) var(--ease) calc(var(--d)*.3 + var(--i)*var(--d)*.11) both}
+@keyframes strike{from{width:0}to{width:100%}}
+@keyframes dim{from{color:var(--ink-2)}to{color:#55618E}}
+.scene.on.r-divest .pw-n{animation:leave calc(var(--d)*.22) var(--ease) calc(var(--d)*.22) both}
+.scene.on.r-divest .pw-grid{animation:leave calc(var(--d)*.18) linear calc(var(--d)*.44) both}
+.scene.on.r-divest .pw-ln{animation:leave calc(var(--d)*.14) linear calc(var(--d)*.22) both}
+.scene.on.r-divest .pw-top{animation:foot calc(var(--d)*.16) var(--ease) both}
+@keyframes leave{from{opacity:1}to{opacity:0}}
+
+/* cadence — one gesture, then stop */
+.scene.on.r-cadence .sp-p{animation:slidel calc(var(--d)*.28) var(--ease) calc(var(--d)*.14) both}
+.scene.on.r-cadence .sp-n{animation:slider calc(var(--d)*.28) var(--ease) calc(var(--d)*.14) both}
+.scene.on.r-cadence .sp-src{animation:srcout calc(var(--d)*.2) var(--ease) calc(var(--d)*.1) both}
+
+/* strain/rupture claim colouring already carried by the world's rubrication */
+@media (prefers-reduced-motion:reduce){
+  .scene *,.scene::before,.scene::after{animation-duration:.01ms!important;animation-delay:0s!important;
+    animation-iteration-count:1!important}
+  .pw-grid,.pw-ax,.pw-s,.pw-n,.pw-p,.pw-div,.pw-lp,.pw-ln,.un-l,.un-thr,.sp-p,.sp-n,.sp-teth,
+  .rc-arm,.rc-none,.au-zero,.au-cap,.cl-thr{opacity:1}
+  .pw-top{stroke-dashoffset:0}.cl-bar{transform:scaleY(1)}.sp-src{opacity:0}
+}</style>
+</head><body>
+<!--
+  IMPECCABLE DIRECTION CONTRACT — free mode (explainer)
+  THESIS: this film owns the balance — P and N as two sides of one entry that must foot; it refuses
+    the neon protocol explainer and the cream editorial one alike.
+  OWN-WORLD: a quattrocento libro segreto in saturated pigment — lapis field, gold leaf for P,
+    vermilion rubrication for N, verdigris for the total, lead-point rulings, Cardo over Alegreya Sans.
+  STORY: the viewer watches collateral split, the top edge stay flat at 1.00, and a liquidation line
+    find nowhere to sit.
+  FIRST VIEWPORT: ruled lapis field, one still gold-leaf position, the claim in Cardo at 72px.
+  FORM: the libro segreto, candidate 7 of 7 on the grounded list, seed key 275daa63.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the
+    verdict, and DESIGN.md.
+  MOTION SPEC: every scene's role/energy/peak is taken verbatim from messaging/presentation-writing/staging.yaml's video lane;
+    quiet scenes carry no figure motion at all.
+-->
+<div id="stage">
+<section class="scene r-hold lay-center" data-dur="12"
+  data-scene="1" style="--d:12s">
+  <div class="meta">scene 1 / 8</div>
+  <div class="txt"><h2 class="claim">Real collateral, on a ledger, that <span class="min">nobody can sell in one transaction</span></h2><p class="sub">A tokenized fund share. A gold bar with a ticker.</p></div>
+  <div class="figw"><svg class="f f-pos" viewBox="0 0 900 380"><defs>
+  <linearGradient id="q1-fp-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q1-fp-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+    <rect class="pos-plate" x="330" y="80" width="240" height="200" rx="3" fill="url(#q1-fp-leaf)"/>
+    <rect x="330" y="80" width="240" height="200" rx="3" fill="none" stroke="#0B1436" stroke-opacity=".35"/>
+    
+    <text class="f-lab" x="450" y="330" text-anchor="middle">real collateral, on a ledger</text></svg></div>
+  <div class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span>Medici on Canton</span></div>
+</section>
+<section class="scene r-strain lay-stack" data-dur="18"
+  data-scene="2" style="--d:18s">
+  <div class="meta">scene 2 / 8</div>
+  <div class="txt"><h2 class="claim">Every venue prices that loan against <span class="min">a liquidation threshold anyway</span></h2><p class="sub">RedStone calls those <b>fundamental design constraints</b>, not edge cases.</p></div>
+  <div class="figw"><svg class="f f-patch" viewBox="0 0 1120 380"><defs>
+  <linearGradient id="q2-fp2-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q2-fp2-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+    <rect class="pt-plate" x="60" y="60" width="300" height="150" rx="3" fill="url(#q2-fp2-leaf)"/>
+    <text class="f-lab" x="60" y="240">the position</text>
+    <line class="pt-thr" x1="40" y1="286" x2="1090" y2="286" stroke="var(--verm)" stroke-width="3" stroke-dasharray="7 8"/>
+    <text class="f-lab min" x="40" y="330">liquidation threshold, priced in anyway</text>
+    <g class="pt-p" style="--i:0">
+      <rect x="470" y="34" width="636" height="50" rx="2" fill="var(--lapis-2)" stroke="var(--rule)"/>
+      <text class="f-lab" x="492" y="68">signed liquidation agreements with the issuer</text></g><g class="pt-p" style="--i:1">
+      <rect x="484" y="96" width="636" height="50" rx="2" fill="var(--lapis-2)" stroke="var(--rule)"/>
+      <text class="f-lab" x="506" y="130">curator-run de-leverage frameworks</text></g><g class="pt-p" style="--i:2">
+      <rect x="498" y="158" width="636" height="50" rx="2" fill="var(--lapis-2)" stroke="var(--rule)"/>
+      <text class="f-lab" x="520" y="192">NAV instead of a market price</text></g></svg></div>
+  <div class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span>Medici on Canton</span></div>
+</section>
+<section class="scene r-accumulate lay-stack" data-dur="16"
+  data-scene="3" style="--d:16s">
+  <div class="meta">scene 3 / 8</div>
+  <div class="txt"><h2 class="claim">When the pathway runs, <span class="min">it runs at zero</span></h2><p class="sub">Black Thursday: <b>$8 million</b> of MakerDAO collateral, auctioned for $0.</p></div>
+  <div class="figw"><svg class="f f-casc" viewBox="0 0 900 420"><defs>
+  <linearGradient id="q3-fk-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q3-fk-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+    <line x1="40" y1="300" x2="820" y2="300" stroke="var(--rule)"/>
+    <rect class="cs-b" style="--i:0" x="60" y="260" width="54" height="40" fill="url(#q3-fk-min)"/><rect class="cs-b" style="--i:1" x="146" y="236" width="54" height="64" fill="url(#q3-fk-min)"/><rect class="cs-b" style="--i:2" x="232" y="212" width="54" height="88" fill="url(#q3-fk-min)"/><rect class="cs-b" style="--i:3" x="318" y="188" width="54" height="112" fill="url(#q3-fk-min)"/><rect class="cs-b" style="--i:4" x="404" y="164" width="54" height="136" fill="url(#q3-fk-min)"/><rect class="cs-b" style="--i:5" x="490" y="140" width="54" height="160" fill="url(#q3-fk-min)"/><rect class="cs-b" style="--i:6" x="576" y="116" width="54" height="184" fill="url(#q3-fk-min)"/><rect class="cs-b" style="--i:7" x="662" y="92" width="54" height="208" fill="url(#q3-fk-min)"/><rect class="cs-b" style="--i:8" x="748" y="68" width="54" height="232" fill="url(#q3-fk-min)"/>
+    <text class="f-lab min" x="40" y="344">one forced sale sets off the next</text>
+    <text class="f-lab" x="40" y="394">Black Thursday &#183; $8M of collateral cleared for $0</text></svg></div>
+  <div class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span>Medici on Canton</span></div>
+</section>
+<section class="scene r-hold lay-center" data-dur="12"
+  data-scene="4" style="--d:12s">
+  <div class="meta">scene 4 / 8</div>
+  <div class="txt"><h2 class="claim">Medici asks <span class="rub">a different question</span></h2><p class="sub">Not how do we liquidate this safely &#8212; what if there were nothing to liquidate?</p></div>
+  
+  <div class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span>Medici on Canton</span></div>
+</section>
+<section class="scene r-assemble lay-stack" data-dur="20"
+  data-scene="5" style="--d:20s">
+  <div class="meta">scene 5 / 8</div>
+  <div class="txt"><h2 class="claim">One position becomes two claims that <span class="rub">always add back to it</span></h2><p class="sub">Closed form, at every price. The oracle isn&#8217;t even read until settlement.</p></div>
+  <div class="figw"><div class="duo"><svg class="f f-split" viewBox="0 0 820 340"><defs>
+  <linearGradient id="q4-fx-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q4-fx-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+    <rect class="sp-src" x="330" y="80" width="160" height="180" rx="3" fill="url(#q4-fx-leaf)"/>
+    <g class="sp-p"><rect x="120" y="80" width="160" height="180" rx="3" fill="url(#q4-fx-leaf)"/>
+      <text class="f-lab dark" x="200" y="178" text-anchor="middle">P</text>
+      <text class="f-lab" x="200" y="292" text-anchor="middle">protected</text></g>
+    <g class="sp-n"><rect x="540" y="80" width="160" height="180" rx="3" fill="url(#q4-fx-min)"/>
+      <text class="f-lab dark" x="620" y="178" text-anchor="middle">N</text>
+      <text class="f-lab" x="620" y="292" text-anchor="middle">amplified</text></g>
+    <path class="sp-teth" d="M280 170 C 350 170 470 170 540 170" stroke="var(--verd)" stroke-width="2" fill="none" stroke-dasharray="4 6"/>
+      <text class="f-lab verd sp-teth" x="410" y="152" text-anchor="middle">one collateral, never leaves the vault</text></svg><svg class="f f-payoff m-assemble" viewBox="0 0 916 476"><defs>
+  <linearGradient id="q5-px-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q5-px-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+  <g transform="translate(108,60)">
+    <g class="pw-grid"><line x1="0" y1="340.0" x2="760" y2="340.0" stroke="var(--rule-soft)"/><line x1="0" y1="255.0" x2="760" y2="255.0" stroke="var(--rule-soft)"/><line x1="0" y1="170.0" x2="760" y2="170.0" stroke="var(--rule-soft)"/><line x1="0" y1="85.0" x2="760" y2="85.0" stroke="var(--rule-soft)"/><line x1="0" y1="0.0" x2="760" y2="0.0" stroke="var(--rule-soft)"/></g>
+    <path class="pw-n" d="M0.00 0.00 L3.17 0.00 L6.33 0.00 L9.50 0.00 L12.67 0.00 L15.83 0.00 L19.00 0.00 L22.17 0.00 L25.33 0.00 L28.50 0.00 L31.67 0.00 L34.83 0.00 L38.00 0.00 L41.17 0.00 L44.33 0.00 L47.50 0.00 L50.67 0.00 L53.83 0.00 L57.00 0.00 L60.17 0.00 L63.33 0.00 L66.50 0.00 L69.67 0.00 L72.83 0.00 L76.00 0.00 L79.17 0.00 L82.33 0.00 L85.50 0.00 L88.67 0.00 L91.83 0.00 L95.00 0.00 L98.17 0.00 L101.33 0.00 L104.50 0.00 L107.67 0.00 L110.83 0.00 L114.00 0.00 L117.17 0.00 L120.33 0.00 L123.50 0.00 L126.67 0.00 L129.83 0.00 L133.00 0.00 L136.17 0.00 L139.33 0.00 L142.50 0.00 L145.67 0.00 L148.83 0.00 L152.00 0.00 L155.17 0.00 L158.33 0.00 L161.50 0.00 L164.67 0.00 L167.83 0.00 L171.00 0.00 L174.17 0.00 L177.33 0.00 L180.50 0.00 L183.67 0.00 L186.83 0.00 L190.00 0.00 L193.17 0.00 L196.33 1.83 L199.50 4.82 L202.67 7.75 L205.83 10.64 L209.00 13.47 L212.17 16.25 L215.33 18.99 L218.50 21.69 L221.67 24.33 L224.83 26.94 L228.00 29.50 L231.17 32.02 L234.33 34.50 L237.50 36.94 L240.67 39.34 L243.83 41.70 L247.00 44.03 L250.17 46.32 L253.33 48.57 L256.50 50.79 L259.67 52.98 L262.83 55.13 L266.00 57.26 L269.17 59.35 L272.33 61.41 L275.50 63.44 L278.67 65.44 L281.83 67.41 L285.00 69.35 L288.17 71.27 L291.33 73.16 L294.50 75.02 L297.67 76.86 L300.83 78.67 L304.00 80.46 L307.17 82.22 L310.33 83.96 L313.50 85.68 L316.67 87.37 L319.83 89.04 L323.00 90.69 L326.17 92.31 L329.33 93.92 L332.50 95.51 L335.67 97.07 L338.83 98.62 L342.00 100.14 L345.17 101.65 L348.33 103.13 L351.50 104.60 L354.67 106.06 L357.83 107.49 L361.00 108.90 L364.17 110.30 L367.33 111.68 L370.50 113.05 L373.67 114.40 L376.83 115.73 L380.00 117.05 L383.17 118.35 L386.33 119.64 L389.50 120.91 L392.67 122.17 L395.83 123.41 L399.00 124.64 L402.17 125.85 L405.33 127.06 L408.50 128.24 L411.67 129.42 L414.83 130.58 L418.00 131.73 L421.17 132.87 L424.33 133.99 L427.50 135.10 L430.67 136.20 L433.83 137.29 L437.00 138.37 L440.17 139.43 L443.33 140.49 L446.50 141.53 L449.67 142.56 L452.83 143.59 L456.00 144.60 L459.17 145.60 L462.33 146.59 L465.50 147.57 L468.67 148.54 L471.83 149.50 L475.00 150.45 L478.17 151.39 L481.33 152.33 L484.50 153.25 L487.67 154.17 L490.83 155.07 L494.00 155.97 L497.17 156.86 L500.33 157.74 L503.50 158.61 L506.67 159.47 L509.83 160.32 L513.00 161.17 L516.17 162.01 L519.33 162.84 L522.50 163.66 L525.67 164.48 L528.83 165.29 L532.00 166.09 L535.17 166.88 L538.33 167.67 L541.50 168.45 L544.67 169.22 L547.83 169.98 L551.00 170.74 L554.17 171.49 L557.33 172.24 L560.50 172.98 L563.67 173.71 L566.83 174.43 L570.00 175.15 L573.17 175.86 L576.33 176.57 L579.50 177.27 L582.67 177.97 L585.83 178.66 L589.00 179.34 L592.17 180.02 L595.33 180.69 L598.50 181.35 L601.67 182.01 L604.83 182.67 L608.00 183.32 L611.17 183.96 L614.33 184.60 L617.50 185.23 L620.67 185.86 L623.83 186.49 L627.00 187.11 L630.17 187.72 L633.33 188.33 L636.50 188.93 L639.67 189.53 L642.83 190.12 L646.00 190.71 L649.17 191.30 L652.33 191.88 L655.50 192.45 L658.67 193.03 L661.83 193.59 L665.00 194.16 L668.17 194.71 L671.33 195.27 L674.50 195.82 L677.67 196.36 L680.83 196.90 L684.00 197.44 L687.17 197.98 L690.33 198.51 L693.50 199.03 L696.67 199.55 L699.83 200.07 L703.00 200.58 L706.17 201.09 L709.33 201.60 L712.50 202.10 L715.67 202.60 L718.83 203.10 L722.00 203.59 L725.17 204.08 L728.33 204.56 L731.50 205.05 L734.67 205.52 L737.83 206.00 L741.00 206.47 L744.17 206.94 L747.33 207.40 L750.50 207.86 L753.67 208.32 L756.83 208.78 L760.00 209.23 L 760.00 0.00 L 0 0.00 Z" fill="url(#q5-px-min)" opacity=".92"/>
+    <path class="pw-p" d="M0.00 0.00 L3.17 0.00 L6.33 0.00 L9.50 0.00 L12.67 0.00 L15.83 0.00 L19.00 0.00 L22.17 0.00 L25.33 0.00 L28.50 0.00 L31.67 0.00 L34.83 0.00 L38.00 0.00 L41.17 0.00 L44.33 0.00 L47.50 0.00 L50.67 0.00 L53.83 0.00 L57.00 0.00 L60.17 0.00 L63.33 0.00 L66.50 0.00 L69.67 0.00 L72.83 0.00 L76.00 0.00 L79.17 0.00 L82.33 0.00 L85.50 0.00 L88.67 0.00 L91.83 0.00 L95.00 0.00 L98.17 0.00 L101.33 0.00 L104.50 0.00 L107.67 0.00 L110.83 0.00 L114.00 0.00 L117.17 0.00 L120.33 0.00 L123.50 0.00 L126.67 0.00 L129.83 0.00 L133.00 0.00 L136.17 0.00 L139.33 0.00 L142.50 0.00 L145.67 0.00 L148.83 0.00 L152.00 0.00 L155.17 0.00 L158.33 0.00 L161.50 0.00 L164.67 0.00 L167.83 0.00 L171.00 0.00 L174.17 0.00 L177.33 0.00 L180.50 0.00 L183.67 0.00 L186.83 0.00 L190.00 0.00 L193.17 0.00 L196.33 1.83 L199.50 4.82 L202.67 7.75 L205.83 10.64 L209.00 13.47 L212.17 16.25 L215.33 18.99 L218.50 21.69 L221.67 24.33 L224.83 26.94 L228.00 29.50 L231.17 32.02 L234.33 34.50 L237.50 36.94 L240.67 39.34 L243.83 41.70 L247.00 44.03 L250.17 46.32 L253.33 48.57 L256.50 50.79 L259.67 52.98 L262.83 55.13 L266.00 57.26 L269.17 59.35 L272.33 61.41 L275.50 63.44 L278.67 65.44 L281.83 67.41 L285.00 69.35 L288.17 71.27 L291.33 73.16 L294.50 75.02 L297.67 76.86 L300.83 78.67 L304.00 80.46 L307.17 82.22 L310.33 83.96 L313.50 85.68 L316.67 87.37 L319.83 89.04 L323.00 90.69 L326.17 92.31 L329.33 93.92 L332.50 95.51 L335.67 97.07 L338.83 98.62 L342.00 100.14 L345.17 101.65 L348.33 103.13 L351.50 104.60 L354.67 106.06 L357.83 107.49 L361.00 108.90 L364.17 110.30 L367.33 111.68 L370.50 113.05 L373.67 114.40 L376.83 115.73 L380.00 117.05 L383.17 118.35 L386.33 119.64 L389.50 120.91 L392.67 122.17 L395.83 123.41 L399.00 124.64 L402.17 125.85 L405.33 127.06 L408.50 128.24 L411.67 129.42 L414.83 130.58 L418.00 131.73 L421.17 132.87 L424.33 133.99 L427.50 135.10 L430.67 136.20 L433.83 137.29 L437.00 138.37 L440.17 139.43 L443.33 140.49 L446.50 141.53 L449.67 142.56 L452.83 143.59 L456.00 144.60 L459.17 145.60 L462.33 146.59 L465.50 147.57 L468.67 148.54 L471.83 149.50 L475.00 150.45 L478.17 151.39 L481.33 152.33 L484.50 153.25 L487.67 154.17 L490.83 155.07 L494.00 155.97 L497.17 156.86 L500.33 157.74 L503.50 158.61 L506.67 159.47 L509.83 160.32 L513.00 161.17 L516.17 162.01 L519.33 162.84 L522.50 163.66 L525.67 164.48 L528.83 165.29 L532.00 166.09 L535.17 166.88 L538.33 167.67 L541.50 168.45 L544.67 169.22 L547.83 169.98 L551.00 170.74 L554.17 171.49 L557.33 172.24 L560.50 172.98 L563.67 173.71 L566.83 174.43 L570.00 175.15 L573.17 175.86 L576.33 176.57 L579.50 177.27 L582.67 177.97 L585.83 178.66 L589.00 179.34 L592.17 180.02 L595.33 180.69 L598.50 181.35 L601.67 182.01 L604.83 182.67 L608.00 183.32 L611.17 183.96 L614.33 184.60 L617.50 185.23 L620.67 185.86 L623.83 186.49 L627.00 187.11 L630.17 187.72 L633.33 188.33 L636.50 188.93 L639.67 189.53 L642.83 190.12 L646.00 190.71 L649.17 191.30 L652.33 191.88 L655.50 192.45 L658.67 193.03 L661.83 193.59 L665.00 194.16 L668.17 194.71 L671.33 195.27 L674.50 195.82 L677.67 196.36 L680.83 196.90 L684.00 197.44 L687.17 197.98 L690.33 198.51 L693.50 199.03 L696.67 199.55 L699.83 200.07 L703.00 200.58 L706.17 201.09 L709.33 201.60 L712.50 202.10 L715.67 202.60 L718.83 203.10 L722.00 203.59 L725.17 204.08 L728.33 204.56 L731.50 205.05 L734.67 205.52 L737.83 206.00 L741.00 206.47 L744.17 206.94 L747.33 207.40 L750.50 207.86 L753.67 208.32 L756.83 208.78 L760.00 209.23 L 760.00 340 L 0 340 Z" fill="url(#q5-px-leaf)"/>
+    <path class="pw-top" d="M 0 0.00 L 760.00 0.00" stroke="var(--verd)" stroke-width="4" fill="none"/>
+    <path class="pw-div" d="M0.00 0.00 L3.17 0.00 L6.33 0.00 L9.50 0.00 L12.67 0.00 L15.83 0.00 L19.00 0.00 L22.17 0.00 L25.33 0.00 L28.50 0.00 L31.67 0.00 L34.83 0.00 L38.00 0.00 L41.17 0.00 L44.33 0.00 L47.50 0.00 L50.67 0.00 L53.83 0.00 L57.00 0.00 L60.17 0.00 L63.33 0.00 L66.50 0.00 L69.67 0.00 L72.83 0.00 L76.00 0.00 L79.17 0.00 L82.33 0.00 L85.50 0.00 L88.67 0.00 L91.83 0.00 L95.00 0.00 L98.17 0.00 L101.33 0.00 L104.50 0.00 L107.67 0.00 L110.83 0.00 L114.00 0.00 L117.17 0.00 L120.33 0.00 L123.50 0.00 L126.67 0.00 L129.83 0.00 L133.00 0.00 L136.17 0.00 L139.33 0.00 L142.50 0.00 L145.67 0.00 L148.83 0.00 L152.00 0.00 L155.17 0.00 L158.33 0.00 L161.50 0.00 L164.67 0.00 L167.83 0.00 L171.00 0.00 L174.17 0.00 L177.33 0.00 L180.50 0.00 L183.67 0.00 L186.83 0.00 L190.00 0.00 L193.17 0.00 L196.33 1.83 L199.50 4.82 L202.67 7.75 L205.83 10.64 L209.00 13.47 L212.17 16.25 L215.33 18.99 L218.50 21.69 L221.67 24.33 L224.83 26.94 L228.00 29.50 L231.17 32.02 L234.33 34.50 L237.50 36.94 L240.67 39.34 L243.83 41.70 L247.00 44.03 L250.17 46.32 L253.33 48.57 L256.50 50.79 L259.67 52.98 L262.83 55.13 L266.00 57.26 L269.17 59.35 L272.33 61.41 L275.50 63.44 L278.67 65.44 L281.83 67.41 L285.00 69.35 L288.17 71.27 L291.33 73.16 L294.50 75.02 L297.67 76.86 L300.83 78.67 L304.00 80.46 L307.17 82.22 L310.33 83.96 L313.50 85.68 L316.67 87.37 L319.83 89.04 L323.00 90.69 L326.17 92.31 L329.33 93.92 L332.50 95.51 L335.67 97.07 L338.83 98.62 L342.00 100.14 L345.17 101.65 L348.33 103.13 L351.50 104.60 L354.67 106.06 L357.83 107.49 L361.00 108.90 L364.17 110.30 L367.33 111.68 L370.50 113.05 L373.67 114.40 L376.83 115.73 L380.00 117.05 L383.17 118.35 L386.33 119.64 L389.50 120.91 L392.67 122.17 L395.83 123.41 L399.00 124.64 L402.17 125.85 L405.33 127.06 L408.50 128.24 L411.67 129.42 L414.83 130.58 L418.00 131.73 L421.17 132.87 L424.33 133.99 L427.50 135.10 L430.67 136.20 L433.83 137.29 L437.00 138.37 L440.17 139.43 L443.33 140.49 L446.50 141.53 L449.67 142.56 L452.83 143.59 L456.00 144.60 L459.17 145.60 L462.33 146.59 L465.50 147.57 L468.67 148.54 L471.83 149.50 L475.00 150.45 L478.17 151.39 L481.33 152.33 L484.50 153.25 L487.67 154.17 L490.83 155.07 L494.00 155.97 L497.17 156.86 L500.33 157.74 L503.50 158.61 L506.67 159.47 L509.83 160.32 L513.00 161.17 L516.17 162.01 L519.33 162.84 L522.50 163.66 L525.67 164.48 L528.83 165.29 L532.00 166.09 L535.17 166.88 L538.33 167.67 L541.50 168.45 L544.67 169.22 L547.83 169.98 L551.00 170.74 L554.17 171.49 L557.33 172.24 L560.50 172.98 L563.67 173.71 L566.83 174.43 L570.00 175.15 L573.17 175.86 L576.33 176.57 L579.50 177.27 L582.67 177.97 L585.83 178.66 L589.00 179.34 L592.17 180.02 L595.33 180.69 L598.50 181.35 L601.67 182.01 L604.83 182.67 L608.00 183.32 L611.17 183.96 L614.33 184.60 L617.50 185.23 L620.67 185.86 L623.83 186.49 L627.00 187.11 L630.17 187.72 L633.33 188.33 L636.50 188.93 L639.67 189.53 L642.83 190.12 L646.00 190.71 L649.17 191.30 L652.33 191.88 L655.50 192.45 L658.67 193.03 L661.83 193.59 L665.00 194.16 L668.17 194.71 L671.33 195.27 L674.50 195.82 L677.67 196.36 L680.83 196.90 L684.00 197.44 L687.17 197.98 L690.33 198.51 L693.50 199.03 L696.67 199.55 L699.83 200.07 L703.00 200.58 L706.17 201.09 L709.33 201.60 L712.50 202.10 L715.67 202.60 L718.83 203.10 L722.00 203.59 L725.17 204.08 L728.33 204.56 L731.50 205.05 L734.67 205.52 L737.83 206.00 L741.00 206.47 L744.17 206.94 L747.33 207.40 L750.50 207.86 L753.67 208.32 L756.83 208.78 L760.00 209.23" stroke="var(--lapis-0)" stroke-width="2" fill="none" opacity=".5"/>
+    <line class="pw-s" x1="194.4" y1="-10" x2="194.4" y2="340" stroke="var(--ink-2)" stroke-dasharray="3 5"/>
+    
+    <g class="pw-ax">
+      <text class="f-lab" x="-18" y="8.0" text-anchor="end">1.00</text>
+      <text class="f-lab" x="-18" y="348.0" text-anchor="end">0</text>
+      <text class="f-lab" x="194.4" y="382" text-anchor="middle">strike S</text>
+      <text class="f-lab" x="760" y="382" text-anchor="end">reference price x &#8594;</text>
+      <text class="f-lab gold pw-lp" x="60" y="197.2">P</text>
+      <text class="f-lab min pw-ln" x="670.0" y="95.2">N</text>
+    </g>
+  </g></svg></div></div>
+  <div class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span>Medici on Canton</span></div>
+</section>
+<section class="scene r-rupture lay-stack" data-dur="24"
+  data-scene="6" style="--d:24s">
+  <div class="meta">scene 6 / 8</div>
+  <div class="txt"><h2 class="claim">The liquidation line <span class="min">has nowhere to sit</span></h2><p class="sub">At or below the strike: P 1.00, N 0.00. Above it: P = S/x, N = 1 &minus; S/x.</p></div>
+  <div class="figw"><svg class="f f-payoff m-refused" viewBox="0 0 916 476"><defs>
+  <linearGradient id="q6-pr-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q6-pr-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+  <g transform="translate(108,60)">
+    <g class="pw-grid"><line x1="0" y1="340.0" x2="760" y2="340.0" stroke="var(--rule-soft)"/><line x1="0" y1="255.0" x2="760" y2="255.0" stroke="var(--rule-soft)"/><line x1="0" y1="170.0" x2="760" y2="170.0" stroke="var(--rule-soft)"/><line x1="0" y1="85.0" x2="760" y2="85.0" stroke="var(--rule-soft)"/><line x1="0" y1="0.0" x2="760" y2="0.0" stroke="var(--rule-soft)"/></g>
+    <path class="pw-n" d="M0.00 0.00 L3.17 0.00 L6.33 0.00 L9.50 0.00 L12.67 0.00 L15.83 0.00 L19.00 0.00 L22.17 0.00 L25.33 0.00 L28.50 0.00 L31.67 0.00 L34.83 0.00 L38.00 0.00 L41.17 0.00 L44.33 0.00 L47.50 0.00 L50.67 0.00 L53.83 0.00 L57.00 0.00 L60.17 0.00 L63.33 0.00 L66.50 0.00 L69.67 0.00 L72.83 0.00 L76.00 0.00 L79.17 0.00 L82.33 0.00 L85.50 0.00 L88.67 0.00 L91.83 0.00 L95.00 0.00 L98.17 0.00 L101.33 0.00 L104.50 0.00 L107.67 0.00 L110.83 0.00 L114.00 0.00 L117.17 0.00 L120.33 0.00 L123.50 0.00 L126.67 0.00 L129.83 0.00 L133.00 0.00 L136.17 0.00 L139.33 0.00 L142.50 0.00 L145.67 0.00 L148.83 0.00 L152.00 0.00 L155.17 0.00 L158.33 0.00 L161.50 0.00 L164.67 0.00 L167.83 0.00 L171.00 0.00 L174.17 0.00 L177.33 0.00 L180.50 0.00 L183.67 0.00 L186.83 0.00 L190.00 0.00 L193.17 0.00 L196.33 1.83 L199.50 4.82 L202.67 7.75 L205.83 10.64 L209.00 13.47 L212.17 16.25 L215.33 18.99 L218.50 21.69 L221.67 24.33 L224.83 26.94 L228.00 29.50 L231.17 32.02 L234.33 34.50 L237.50 36.94 L240.67 39.34 L243.83 41.70 L247.00 44.03 L250.17 46.32 L253.33 48.57 L256.50 50.79 L259.67 52.98 L262.83 55.13 L266.00 57.26 L269.17 59.35 L272.33 61.41 L275.50 63.44 L278.67 65.44 L281.83 67.41 L285.00 69.35 L288.17 71.27 L291.33 73.16 L294.50 75.02 L297.67 76.86 L300.83 78.67 L304.00 80.46 L307.17 82.22 L310.33 83.96 L313.50 85.68 L316.67 87.37 L319.83 89.04 L323.00 90.69 L326.17 92.31 L329.33 93.92 L332.50 95.51 L335.67 97.07 L338.83 98.62 L342.00 100.14 L345.17 101.65 L348.33 103.13 L351.50 104.60 L354.67 106.06 L357.83 107.49 L361.00 108.90 L364.17 110.30 L367.33 111.68 L370.50 113.05 L373.67 114.40 L376.83 115.73 L380.00 117.05 L383.17 118.35 L386.33 119.64 L389.50 120.91 L392.67 122.17 L395.83 123.41 L399.00 124.64 L402.17 125.85 L405.33 127.06 L408.50 128.24 L411.67 129.42 L414.83 130.58 L418.00 131.73 L421.17 132.87 L424.33 133.99 L427.50 135.10 L430.67 136.20 L433.83 137.29 L437.00 138.37 L440.17 139.43 L443.33 140.49 L446.50 141.53 L449.67 142.56 L452.83 143.59 L456.00 144.60 L459.17 145.60 L462.33 146.59 L465.50 147.57 L468.67 148.54 L471.83 149.50 L475.00 150.45 L478.17 151.39 L481.33 152.33 L484.50 153.25 L487.67 154.17 L490.83 155.07 L494.00 155.97 L497.17 156.86 L500.33 157.74 L503.50 158.61 L506.67 159.47 L509.83 160.32 L513.00 161.17 L516.17 162.01 L519.33 162.84 L522.50 163.66 L525.67 164.48 L528.83 165.29 L532.00 166.09 L535.17 166.88 L538.33 167.67 L541.50 168.45 L544.67 169.22 L547.83 169.98 L551.00 170.74 L554.17 171.49 L557.33 172.24 L560.50 172.98 L563.67 173.71 L566.83 174.43 L570.00 175.15 L573.17 175.86 L576.33 176.57 L579.50 177.27 L582.67 177.97 L585.83 178.66 L589.00 179.34 L592.17 180.02 L595.33 180.69 L598.50 181.35 L601.67 182.01 L604.83 182.67 L608.00 183.32 L611.17 183.96 L614.33 184.60 L617.50 185.23 L620.67 185.86 L623.83 186.49 L627.00 187.11 L630.17 187.72 L633.33 188.33 L636.50 188.93 L639.67 189.53 L642.83 190.12 L646.00 190.71 L649.17 191.30 L652.33 191.88 L655.50 192.45 L658.67 193.03 L661.83 193.59 L665.00 194.16 L668.17 194.71 L671.33 195.27 L674.50 195.82 L677.67 196.36 L680.83 196.90 L684.00 197.44 L687.17 197.98 L690.33 198.51 L693.50 199.03 L696.67 199.55 L699.83 200.07 L703.00 200.58 L706.17 201.09 L709.33 201.60 L712.50 202.10 L715.67 202.60 L718.83 203.10 L722.00 203.59 L725.17 204.08 L728.33 204.56 L731.50 205.05 L734.67 205.52 L737.83 206.00 L741.00 206.47 L744.17 206.94 L747.33 207.40 L750.50 207.86 L753.67 208.32 L756.83 208.78 L760.00 209.23 L 760.00 0.00 L 0 0.00 Z" fill="url(#q6-pr-min)" opacity=".92"/>
+    <path class="pw-p" d="M0.00 0.00 L3.17 0.00 L6.33 0.00 L9.50 0.00 L12.67 0.00 L15.83 0.00 L19.00 0.00 L22.17 0.00 L25.33 0.00 L28.50 0.00 L31.67 0.00 L34.83 0.00 L38.00 0.00 L41.17 0.00 L44.33 0.00 L47.50 0.00 L50.67 0.00 L53.83 0.00 L57.00 0.00 L60.17 0.00 L63.33 0.00 L66.50 0.00 L69.67 0.00 L72.83 0.00 L76.00 0.00 L79.17 0.00 L82.33 0.00 L85.50 0.00 L88.67 0.00 L91.83 0.00 L95.00 0.00 L98.17 0.00 L101.33 0.00 L104.50 0.00 L107.67 0.00 L110.83 0.00 L114.00 0.00 L117.17 0.00 L120.33 0.00 L123.50 0.00 L126.67 0.00 L129.83 0.00 L133.00 0.00 L136.17 0.00 L139.33 0.00 L142.50 0.00 L145.67 0.00 L148.83 0.00 L152.00 0.00 L155.17 0.00 L158.33 0.00 L161.50 0.00 L164.67 0.00 L167.83 0.00 L171.00 0.00 L174.17 0.00 L177.33 0.00 L180.50 0.00 L183.67 0.00 L186.83 0.00 L190.00 0.00 L193.17 0.00 L196.33 1.83 L199.50 4.82 L202.67 7.75 L205.83 10.64 L209.00 13.47 L212.17 16.25 L215.33 18.99 L218.50 21.69 L221.67 24.33 L224.83 26.94 L228.00 29.50 L231.17 32.02 L234.33 34.50 L237.50 36.94 L240.67 39.34 L243.83 41.70 L247.00 44.03 L250.17 46.32 L253.33 48.57 L256.50 50.79 L259.67 52.98 L262.83 55.13 L266.00 57.26 L269.17 59.35 L272.33 61.41 L275.50 63.44 L278.67 65.44 L281.83 67.41 L285.00 69.35 L288.17 71.27 L291.33 73.16 L294.50 75.02 L297.67 76.86 L300.83 78.67 L304.00 80.46 L307.17 82.22 L310.33 83.96 L313.50 85.68 L316.67 87.37 L319.83 89.04 L323.00 90.69 L326.17 92.31 L329.33 93.92 L332.50 95.51 L335.67 97.07 L338.83 98.62 L342.00 100.14 L345.17 101.65 L348.33 103.13 L351.50 104.60 L354.67 106.06 L357.83 107.49 L361.00 108.90 L364.17 110.30 L367.33 111.68 L370.50 113.05 L373.67 114.40 L376.83 115.73 L380.00 117.05 L383.17 118.35 L386.33 119.64 L389.50 120.91 L392.67 122.17 L395.83 123.41 L399.00 124.64 L402.17 125.85 L405.33 127.06 L408.50 128.24 L411.67 129.42 L414.83 130.58 L418.00 131.73 L421.17 132.87 L424.33 133.99 L427.50 135.10 L430.67 136.20 L433.83 137.29 L437.00 138.37 L440.17 139.43 L443.33 140.49 L446.50 141.53 L449.67 142.56 L452.83 143.59 L456.00 144.60 L459.17 145.60 L462.33 146.59 L465.50 147.57 L468.67 148.54 L471.83 149.50 L475.00 150.45 L478.17 151.39 L481.33 152.33 L484.50 153.25 L487.67 154.17 L490.83 155.07 L494.00 155.97 L497.17 156.86 L500.33 157.74 L503.50 158.61 L506.67 159.47 L509.83 160.32 L513.00 161.17 L516.17 162.01 L519.33 162.84 L522.50 163.66 L525.67 164.48 L528.83 165.29 L532.00 166.09 L535.17 166.88 L538.33 167.67 L541.50 168.45 L544.67 169.22 L547.83 169.98 L551.00 170.74 L554.17 171.49 L557.33 172.24 L560.50 172.98 L563.67 173.71 L566.83 174.43 L570.00 175.15 L573.17 175.86 L576.33 176.57 L579.50 177.27 L582.67 177.97 L585.83 178.66 L589.00 179.34 L592.17 180.02 L595.33 180.69 L598.50 181.35 L601.67 182.01 L604.83 182.67 L608.00 183.32 L611.17 183.96 L614.33 184.60 L617.50 185.23 L620.67 185.86 L623.83 186.49 L627.00 187.11 L630.17 187.72 L633.33 188.33 L636.50 188.93 L639.67 189.53 L642.83 190.12 L646.00 190.71 L649.17 191.30 L652.33 191.88 L655.50 192.45 L658.67 193.03 L661.83 193.59 L665.00 194.16 L668.17 194.71 L671.33 195.27 L674.50 195.82 L677.67 196.36 L680.83 196.90 L684.00 197.44 L687.17 197.98 L690.33 198.51 L693.50 199.03 L696.67 199.55 L699.83 200.07 L703.00 200.58 L706.17 201.09 L709.33 201.60 L712.50 202.10 L715.67 202.60 L718.83 203.10 L722.00 203.59 L725.17 204.08 L728.33 204.56 L731.50 205.05 L734.67 205.52 L737.83 206.00 L741.00 206.47 L744.17 206.94 L747.33 207.40 L750.50 207.86 L753.67 208.32 L756.83 208.78 L760.00 209.23 L 760.00 340 L 0 340 Z" fill="url(#q6-pr-leaf)"/>
+    <path class="pw-top" d="M 0 0.00 L 760.00 0.00" stroke="var(--verd)" stroke-width="4" fill="none"/>
+    <path class="pw-div" d="M0.00 0.00 L3.17 0.00 L6.33 0.00 L9.50 0.00 L12.67 0.00 L15.83 0.00 L19.00 0.00 L22.17 0.00 L25.33 0.00 L28.50 0.00 L31.67 0.00 L34.83 0.00 L38.00 0.00 L41.17 0.00 L44.33 0.00 L47.50 0.00 L50.67 0.00 L53.83 0.00 L57.00 0.00 L60.17 0.00 L63.33 0.00 L66.50 0.00 L69.67 0.00 L72.83 0.00 L76.00 0.00 L79.17 0.00 L82.33 0.00 L85.50 0.00 L88.67 0.00 L91.83 0.00 L95.00 0.00 L98.17 0.00 L101.33 0.00 L104.50 0.00 L107.67 0.00 L110.83 0.00 L114.00 0.00 L117.17 0.00 L120.33 0.00 L123.50 0.00 L126.67 0.00 L129.83 0.00 L133.00 0.00 L136.17 0.00 L139.33 0.00 L142.50 0.00 L145.67 0.00 L148.83 0.00 L152.00 0.00 L155.17 0.00 L158.33 0.00 L161.50 0.00 L164.67 0.00 L167.83 0.00 L171.00 0.00 L174.17 0.00 L177.33 0.00 L180.50 0.00 L183.67 0.00 L186.83 0.00 L190.00 0.00 L193.17 0.00 L196.33 1.83 L199.50 4.82 L202.67 7.75 L205.83 10.64 L209.00 13.47 L212.17 16.25 L215.33 18.99 L218.50 21.69 L221.67 24.33 L224.83 26.94 L228.00 29.50 L231.17 32.02 L234.33 34.50 L237.50 36.94 L240.67 39.34 L243.83 41.70 L247.00 44.03 L250.17 46.32 L253.33 48.57 L256.50 50.79 L259.67 52.98 L262.83 55.13 L266.00 57.26 L269.17 59.35 L272.33 61.41 L275.50 63.44 L278.67 65.44 L281.83 67.41 L285.00 69.35 L288.17 71.27 L291.33 73.16 L294.50 75.02 L297.67 76.86 L300.83 78.67 L304.00 80.46 L307.17 82.22 L310.33 83.96 L313.50 85.68 L316.67 87.37 L319.83 89.04 L323.00 90.69 L326.17 92.31 L329.33 93.92 L332.50 95.51 L335.67 97.07 L338.83 98.62 L342.00 100.14 L345.17 101.65 L348.33 103.13 L351.50 104.60 L354.67 106.06 L357.83 107.49 L361.00 108.90 L364.17 110.30 L367.33 111.68 L370.50 113.05 L373.67 114.40 L376.83 115.73 L380.00 117.05 L383.17 118.35 L386.33 119.64 L389.50 120.91 L392.67 122.17 L395.83 123.41 L399.00 124.64 L402.17 125.85 L405.33 127.06 L408.50 128.24 L411.67 129.42 L414.83 130.58 L418.00 131.73 L421.17 132.87 L424.33 133.99 L427.50 135.10 L430.67 136.20 L433.83 137.29 L437.00 138.37 L440.17 139.43 L443.33 140.49 L446.50 141.53 L449.67 142.56 L452.83 143.59 L456.00 144.60 L459.17 145.60 L462.33 146.59 L465.50 147.57 L468.67 148.54 L471.83 149.50 L475.00 150.45 L478.17 151.39 L481.33 152.33 L484.50 153.25 L487.67 154.17 L490.83 155.07 L494.00 155.97 L497.17 156.86 L500.33 157.74 L503.50 158.61 L506.67 159.47 L509.83 160.32 L513.00 161.17 L516.17 162.01 L519.33 162.84 L522.50 163.66 L525.67 164.48 L528.83 165.29 L532.00 166.09 L535.17 166.88 L538.33 167.67 L541.50 168.45 L544.67 169.22 L547.83 169.98 L551.00 170.74 L554.17 171.49 L557.33 172.24 L560.50 172.98 L563.67 173.71 L566.83 174.43 L570.00 175.15 L573.17 175.86 L576.33 176.57 L579.50 177.27 L582.67 177.97 L585.83 178.66 L589.00 179.34 L592.17 180.02 L595.33 180.69 L598.50 181.35 L601.67 182.01 L604.83 182.67 L608.00 183.32 L611.17 183.96 L614.33 184.60 L617.50 185.23 L620.67 185.86 L623.83 186.49 L627.00 187.11 L630.17 187.72 L633.33 188.33 L636.50 188.93 L639.67 189.53 L642.83 190.12 L646.00 190.71 L649.17 191.30 L652.33 191.88 L655.50 192.45 L658.67 193.03 L661.83 193.59 L665.00 194.16 L668.17 194.71 L671.33 195.27 L674.50 195.82 L677.67 196.36 L680.83 196.90 L684.00 197.44 L687.17 197.98 L690.33 198.51 L693.50 199.03 L696.67 199.55 L699.83 200.07 L703.00 200.58 L706.17 201.09 L709.33 201.60 L712.50 202.10 L715.67 202.60 L718.83 203.10 L722.00 203.59 L725.17 204.08 L728.33 204.56 L731.50 205.05 L734.67 205.52 L737.83 206.00 L741.00 206.47 L744.17 206.94 L747.33 207.40 L750.50 207.86 L753.67 208.32 L756.83 208.78 L760.00 209.23" stroke="var(--lapis-0)" stroke-width="2" fill="none" opacity=".5"/>
+    <line class="pw-s" x1="194.4" y1="-10" x2="194.4" y2="340" stroke="var(--ink-2)" stroke-dasharray="3 5"/>
+    <g class="pw-thr">
+      <line x1="384.4" y1="340" x2="384.4" y2="0.0"
+            stroke="var(--verm)" stroke-width="3" stroke-dasharray="7 8"/>
+      <text class="f-lab min" x="384.4" y="-22" text-anchor="middle">nowhere on this axis to put it</text></g>
+    <g class="pw-ax">
+      <text class="f-lab" x="-18" y="8.0" text-anchor="end">1.00</text>
+      <text class="f-lab" x="-18" y="348.0" text-anchor="end">0</text>
+      <text class="f-lab" x="194.4" y="382" text-anchor="middle">strike S</text>
+      <text class="f-lab" x="760" y="382" text-anchor="end">reference price x &#8594;</text>
+      <text class="f-lab gold pw-lp" x="60" y="197.2">P</text>
+      <text class="f-lab min pw-ln" x="670.0" y="95.2">N</text>
+    </g>
+  </g></svg></div>
+  <div class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span>Medici on Canton</span></div>
+</section>
+<section class="scene r-divest lay-stack" data-dur="17"
+  data-scene="7" style="--d:17s">
+  <div class="meta">scene 7 / 8</div>
+  <div class="txt"><h2 class="claim">P is short a call, and <span class="min">the decline is the income</span></h2><p class="sub">Nine years of backtest: net drift <span class="min">&minus;1.25%/yr</span>. Never a cliff.</p></div>
+  <div class="figw"><div class="duo"><div class="f f-divest"><div class="dv" style="--i:0"><span>mainnet deployment</span></div><div class="dv" style="--i:1"><span>real collateral</span></div><div class="dv" style="--i:2"><span>live users</span></div><div class="dv" style="--i:3"><span>a third-party audit</span></div></div><svg class="f f-payoff m-divest" viewBox="0 0 916 476"><defs>
+  <linearGradient id="q7-pd-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q7-pd-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+  <g transform="translate(108,60)">
+    <g class="pw-grid"><line x1="0" y1="340.0" x2="760" y2="340.0" stroke="var(--rule-soft)"/><line x1="0" y1="255.0" x2="760" y2="255.0" stroke="var(--rule-soft)"/><line x1="0" y1="170.0" x2="760" y2="170.0" stroke="var(--rule-soft)"/><line x1="0" y1="85.0" x2="760" y2="85.0" stroke="var(--rule-soft)"/><line x1="0" y1="0.0" x2="760" y2="0.0" stroke="var(--rule-soft)"/></g>
+    <path class="pw-n" d="M0.00 0.00 L3.17 0.00 L6.33 0.00 L9.50 0.00 L12.67 0.00 L15.83 0.00 L19.00 0.00 L22.17 0.00 L25.33 0.00 L28.50 0.00 L31.67 0.00 L34.83 0.00 L38.00 0.00 L41.17 0.00 L44.33 0.00 L47.50 0.00 L50.67 0.00 L53.83 0.00 L57.00 0.00 L60.17 0.00 L63.33 0.00 L66.50 0.00 L69.67 0.00 L72.83 0.00 L76.00 0.00 L79.17 0.00 L82.33 0.00 L85.50 0.00 L88.67 0.00 L91.83 0.00 L95.00 0.00 L98.17 0.00 L101.33 0.00 L104.50 0.00 L107.67 0.00 L110.83 0.00 L114.00 0.00 L117.17 0.00 L120.33 0.00 L123.50 0.00 L126.67 0.00 L129.83 0.00 L133.00 0.00 L136.17 0.00 L139.33 0.00 L142.50 0.00 L145.67 0.00 L148.83 0.00 L152.00 0.00 L155.17 0.00 L158.33 0.00 L161.50 0.00 L164.67 0.00 L167.83 0.00 L171.00 0.00 L174.17 0.00 L177.33 0.00 L180.50 0.00 L183.67 0.00 L186.83 0.00 L190.00 0.00 L193.17 0.00 L196.33 1.83 L199.50 4.82 L202.67 7.75 L205.83 10.64 L209.00 13.47 L212.17 16.25 L215.33 18.99 L218.50 21.69 L221.67 24.33 L224.83 26.94 L228.00 29.50 L231.17 32.02 L234.33 34.50 L237.50 36.94 L240.67 39.34 L243.83 41.70 L247.00 44.03 L250.17 46.32 L253.33 48.57 L256.50 50.79 L259.67 52.98 L262.83 55.13 L266.00 57.26 L269.17 59.35 L272.33 61.41 L275.50 63.44 L278.67 65.44 L281.83 67.41 L285.00 69.35 L288.17 71.27 L291.33 73.16 L294.50 75.02 L297.67 76.86 L300.83 78.67 L304.00 80.46 L307.17 82.22 L310.33 83.96 L313.50 85.68 L316.67 87.37 L319.83 89.04 L323.00 90.69 L326.17 92.31 L329.33 93.92 L332.50 95.51 L335.67 97.07 L338.83 98.62 L342.00 100.14 L345.17 101.65 L348.33 103.13 L351.50 104.60 L354.67 106.06 L357.83 107.49 L361.00 108.90 L364.17 110.30 L367.33 111.68 L370.50 113.05 L373.67 114.40 L376.83 115.73 L380.00 117.05 L383.17 118.35 L386.33 119.64 L389.50 120.91 L392.67 122.17 L395.83 123.41 L399.00 124.64 L402.17 125.85 L405.33 127.06 L408.50 128.24 L411.67 129.42 L414.83 130.58 L418.00 131.73 L421.17 132.87 L424.33 133.99 L427.50 135.10 L430.67 136.20 L433.83 137.29 L437.00 138.37 L440.17 139.43 L443.33 140.49 L446.50 141.53 L449.67 142.56 L452.83 143.59 L456.00 144.60 L459.17 145.60 L462.33 146.59 L465.50 147.57 L468.67 148.54 L471.83 149.50 L475.00 150.45 L478.17 151.39 L481.33 152.33 L484.50 153.25 L487.67 154.17 L490.83 155.07 L494.00 155.97 L497.17 156.86 L500.33 157.74 L503.50 158.61 L506.67 159.47 L509.83 160.32 L513.00 161.17 L516.17 162.01 L519.33 162.84 L522.50 163.66 L525.67 164.48 L528.83 165.29 L532.00 166.09 L535.17 166.88 L538.33 167.67 L541.50 168.45 L544.67 169.22 L547.83 169.98 L551.00 170.74 L554.17 171.49 L557.33 172.24 L560.50 172.98 L563.67 173.71 L566.83 174.43 L570.00 175.15 L573.17 175.86 L576.33 176.57 L579.50 177.27 L582.67 177.97 L585.83 178.66 L589.00 179.34 L592.17 180.02 L595.33 180.69 L598.50 181.35 L601.67 182.01 L604.83 182.67 L608.00 183.32 L611.17 183.96 L614.33 184.60 L617.50 185.23 L620.67 185.86 L623.83 186.49 L627.00 187.11 L630.17 187.72 L633.33 188.33 L636.50 188.93 L639.67 189.53 L642.83 190.12 L646.00 190.71 L649.17 191.30 L652.33 191.88 L655.50 192.45 L658.67 193.03 L661.83 193.59 L665.00 194.16 L668.17 194.71 L671.33 195.27 L674.50 195.82 L677.67 196.36 L680.83 196.90 L684.00 197.44 L687.17 197.98 L690.33 198.51 L693.50 199.03 L696.67 199.55 L699.83 200.07 L703.00 200.58 L706.17 201.09 L709.33 201.60 L712.50 202.10 L715.67 202.60 L718.83 203.10 L722.00 203.59 L725.17 204.08 L728.33 204.56 L731.50 205.05 L734.67 205.52 L737.83 206.00 L741.00 206.47 L744.17 206.94 L747.33 207.40 L750.50 207.86 L753.67 208.32 L756.83 208.78 L760.00 209.23 L 760.00 0.00 L 0 0.00 Z" fill="url(#q7-pd-min)" opacity=".92"/>
+    <path class="pw-p" d="M0.00 0.00 L3.17 0.00 L6.33 0.00 L9.50 0.00 L12.67 0.00 L15.83 0.00 L19.00 0.00 L22.17 0.00 L25.33 0.00 L28.50 0.00 L31.67 0.00 L34.83 0.00 L38.00 0.00 L41.17 0.00 L44.33 0.00 L47.50 0.00 L50.67 0.00 L53.83 0.00 L57.00 0.00 L60.17 0.00 L63.33 0.00 L66.50 0.00 L69.67 0.00 L72.83 0.00 L76.00 0.00 L79.17 0.00 L82.33 0.00 L85.50 0.00 L88.67 0.00 L91.83 0.00 L95.00 0.00 L98.17 0.00 L101.33 0.00 L104.50 0.00 L107.67 0.00 L110.83 0.00 L114.00 0.00 L117.17 0.00 L120.33 0.00 L123.50 0.00 L126.67 0.00 L129.83 0.00 L133.00 0.00 L136.17 0.00 L139.33 0.00 L142.50 0.00 L145.67 0.00 L148.83 0.00 L152.00 0.00 L155.17 0.00 L158.33 0.00 L161.50 0.00 L164.67 0.00 L167.83 0.00 L171.00 0.00 L174.17 0.00 L177.33 0.00 L180.50 0.00 L183.67 0.00 L186.83 0.00 L190.00 0.00 L193.17 0.00 L196.33 1.83 L199.50 4.82 L202.67 7.75 L205.83 10.64 L209.00 13.47 L212.17 16.25 L215.33 18.99 L218.50 21.69 L221.67 24.33 L224.83 26.94 L228.00 29.50 L231.17 32.02 L234.33 34.50 L237.50 36.94 L240.67 39.34 L243.83 41.70 L247.00 44.03 L250.17 46.32 L253.33 48.57 L256.50 50.79 L259.67 52.98 L262.83 55.13 L266.00 57.26 L269.17 59.35 L272.33 61.41 L275.50 63.44 L278.67 65.44 L281.83 67.41 L285.00 69.35 L288.17 71.27 L291.33 73.16 L294.50 75.02 L297.67 76.86 L300.83 78.67 L304.00 80.46 L307.17 82.22 L310.33 83.96 L313.50 85.68 L316.67 87.37 L319.83 89.04 L323.00 90.69 L326.17 92.31 L329.33 93.92 L332.50 95.51 L335.67 97.07 L338.83 98.62 L342.00 100.14 L345.17 101.65 L348.33 103.13 L351.50 104.60 L354.67 106.06 L357.83 107.49 L361.00 108.90 L364.17 110.30 L367.33 111.68 L370.50 113.05 L373.67 114.40 L376.83 115.73 L380.00 117.05 L383.17 118.35 L386.33 119.64 L389.50 120.91 L392.67 122.17 L395.83 123.41 L399.00 124.64 L402.17 125.85 L405.33 127.06 L408.50 128.24 L411.67 129.42 L414.83 130.58 L418.00 131.73 L421.17 132.87 L424.33 133.99 L427.50 135.10 L430.67 136.20 L433.83 137.29 L437.00 138.37 L440.17 139.43 L443.33 140.49 L446.50 141.53 L449.67 142.56 L452.83 143.59 L456.00 144.60 L459.17 145.60 L462.33 146.59 L465.50 147.57 L468.67 148.54 L471.83 149.50 L475.00 150.45 L478.17 151.39 L481.33 152.33 L484.50 153.25 L487.67 154.17 L490.83 155.07 L494.00 155.97 L497.17 156.86 L500.33 157.74 L503.50 158.61 L506.67 159.47 L509.83 160.32 L513.00 161.17 L516.17 162.01 L519.33 162.84 L522.50 163.66 L525.67 164.48 L528.83 165.29 L532.00 166.09 L535.17 166.88 L538.33 167.67 L541.50 168.45 L544.67 169.22 L547.83 169.98 L551.00 170.74 L554.17 171.49 L557.33 172.24 L560.50 172.98 L563.67 173.71 L566.83 174.43 L570.00 175.15 L573.17 175.86 L576.33 176.57 L579.50 177.27 L582.67 177.97 L585.83 178.66 L589.00 179.34 L592.17 180.02 L595.33 180.69 L598.50 181.35 L601.67 182.01 L604.83 182.67 L608.00 183.32 L611.17 183.96 L614.33 184.60 L617.50 185.23 L620.67 185.86 L623.83 186.49 L627.00 187.11 L630.17 187.72 L633.33 188.33 L636.50 188.93 L639.67 189.53 L642.83 190.12 L646.00 190.71 L649.17 191.30 L652.33 191.88 L655.50 192.45 L658.67 193.03 L661.83 193.59 L665.00 194.16 L668.17 194.71 L671.33 195.27 L674.50 195.82 L677.67 196.36 L680.83 196.90 L684.00 197.44 L687.17 197.98 L690.33 198.51 L693.50 199.03 L696.67 199.55 L699.83 200.07 L703.00 200.58 L706.17 201.09 L709.33 201.60 L712.50 202.10 L715.67 202.60 L718.83 203.10 L722.00 203.59 L725.17 204.08 L728.33 204.56 L731.50 205.05 L734.67 205.52 L737.83 206.00 L741.00 206.47 L744.17 206.94 L747.33 207.40 L750.50 207.86 L753.67 208.32 L756.83 208.78 L760.00 209.23 L 760.00 340 L 0 340 Z" fill="url(#q7-pd-leaf)"/>
+    <path class="pw-top" d="M 0 0.00 L 760.00 0.00" stroke="var(--verd)" stroke-width="4" fill="none"/>
+    <path class="pw-div" d="M0.00 0.00 L3.17 0.00 L6.33 0.00 L9.50 0.00 L12.67 0.00 L15.83 0.00 L19.00 0.00 L22.17 0.00 L25.33 0.00 L28.50 0.00 L31.67 0.00 L34.83 0.00 L38.00 0.00 L41.17 0.00 L44.33 0.00 L47.50 0.00 L50.67 0.00 L53.83 0.00 L57.00 0.00 L60.17 0.00 L63.33 0.00 L66.50 0.00 L69.67 0.00 L72.83 0.00 L76.00 0.00 L79.17 0.00 L82.33 0.00 L85.50 0.00 L88.67 0.00 L91.83 0.00 L95.00 0.00 L98.17 0.00 L101.33 0.00 L104.50 0.00 L107.67 0.00 L110.83 0.00 L114.00 0.00 L117.17 0.00 L120.33 0.00 L123.50 0.00 L126.67 0.00 L129.83 0.00 L133.00 0.00 L136.17 0.00 L139.33 0.00 L142.50 0.00 L145.67 0.00 L148.83 0.00 L152.00 0.00 L155.17 0.00 L158.33 0.00 L161.50 0.00 L164.67 0.00 L167.83 0.00 L171.00 0.00 L174.17 0.00 L177.33 0.00 L180.50 0.00 L183.67 0.00 L186.83 0.00 L190.00 0.00 L193.17 0.00 L196.33 1.83 L199.50 4.82 L202.67 7.75 L205.83 10.64 L209.00 13.47 L212.17 16.25 L215.33 18.99 L218.50 21.69 L221.67 24.33 L224.83 26.94 L228.00 29.50 L231.17 32.02 L234.33 34.50 L237.50 36.94 L240.67 39.34 L243.83 41.70 L247.00 44.03 L250.17 46.32 L253.33 48.57 L256.50 50.79 L259.67 52.98 L262.83 55.13 L266.00 57.26 L269.17 59.35 L272.33 61.41 L275.50 63.44 L278.67 65.44 L281.83 67.41 L285.00 69.35 L288.17 71.27 L291.33 73.16 L294.50 75.02 L297.67 76.86 L300.83 78.67 L304.00 80.46 L307.17 82.22 L310.33 83.96 L313.50 85.68 L316.67 87.37 L319.83 89.04 L323.00 90.69 L326.17 92.31 L329.33 93.92 L332.50 95.51 L335.67 97.07 L338.83 98.62 L342.00 100.14 L345.17 101.65 L348.33 103.13 L351.50 104.60 L354.67 106.06 L357.83 107.49 L361.00 108.90 L364.17 110.30 L367.33 111.68 L370.50 113.05 L373.67 114.40 L376.83 115.73 L380.00 117.05 L383.17 118.35 L386.33 119.64 L389.50 120.91 L392.67 122.17 L395.83 123.41 L399.00 124.64 L402.17 125.85 L405.33 127.06 L408.50 128.24 L411.67 129.42 L414.83 130.58 L418.00 131.73 L421.17 132.87 L424.33 133.99 L427.50 135.10 L430.67 136.20 L433.83 137.29 L437.00 138.37 L440.17 139.43 L443.33 140.49 L446.50 141.53 L449.67 142.56 L452.83 143.59 L456.00 144.60 L459.17 145.60 L462.33 146.59 L465.50 147.57 L468.67 148.54 L471.83 149.50 L475.00 150.45 L478.17 151.39 L481.33 152.33 L484.50 153.25 L487.67 154.17 L490.83 155.07 L494.00 155.97 L497.17 156.86 L500.33 157.74 L503.50 158.61 L506.67 159.47 L509.83 160.32 L513.00 161.17 L516.17 162.01 L519.33 162.84 L522.50 163.66 L525.67 164.48 L528.83 165.29 L532.00 166.09 L535.17 166.88 L538.33 167.67 L541.50 168.45 L544.67 169.22 L547.83 169.98 L551.00 170.74 L554.17 171.49 L557.33 172.24 L560.50 172.98 L563.67 173.71 L566.83 174.43 L570.00 175.15 L573.17 175.86 L576.33 176.57 L579.50 177.27 L582.67 177.97 L585.83 178.66 L589.00 179.34 L592.17 180.02 L595.33 180.69 L598.50 181.35 L601.67 182.01 L604.83 182.67 L608.00 183.32 L611.17 183.96 L614.33 184.60 L617.50 185.23 L620.67 185.86 L623.83 186.49 L627.00 187.11 L630.17 187.72 L633.33 188.33 L636.50 188.93 L639.67 189.53 L642.83 190.12 L646.00 190.71 L649.17 191.30 L652.33 191.88 L655.50 192.45 L658.67 193.03 L661.83 193.59 L665.00 194.16 L668.17 194.71 L671.33 195.27 L674.50 195.82 L677.67 196.36 L680.83 196.90 L684.00 197.44 L687.17 197.98 L690.33 198.51 L693.50 199.03 L696.67 199.55 L699.83 200.07 L703.00 200.58 L706.17 201.09 L709.33 201.60 L712.50 202.10 L715.67 202.60 L718.83 203.10 L722.00 203.59 L725.17 204.08 L728.33 204.56 L731.50 205.05 L734.67 205.52 L737.83 206.00 L741.00 206.47 L744.17 206.94 L747.33 207.40 L750.50 207.86 L753.67 208.32 L756.83 208.78 L760.00 209.23" stroke="var(--lapis-0)" stroke-width="2" fill="none" opacity=".5"/>
+    <line class="pw-s" x1="194.4" y1="-10" x2="194.4" y2="340" stroke="var(--ink-2)" stroke-dasharray="3 5"/>
+    
+    <g class="pw-ax">
+      <text class="f-lab" x="-18" y="8.0" text-anchor="end">1.00</text>
+      <text class="f-lab" x="-18" y="348.0" text-anchor="end">0</text>
+      <text class="f-lab" x="194.4" y="382" text-anchor="middle">strike S</text>
+      <text class="f-lab" x="760" y="382" text-anchor="end">reference price x &#8594;</text>
+      <text class="f-lab gold pw-lp" x="60" y="197.2">P</text>
+      <text class="f-lab min pw-ln" x="670.0" y="95.2">N</text>
+    </g>
+  </g></svg></div></div>
+  <div class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span>Medici on Canton</span></div>
+</section>
+<section class="scene r-cadence lay-center" data-dur="13"
+  data-scene="8" style="--d:13s">
+  <div class="meta">scene 8 / 8</div>
+  <div class="txt"><h2 class="claim">Bring us <span class="rub">the thing you can&#8217;t sell in a hurry</span></h2><p class="sub">There is no liquidation price. The math doesn&#8217;t permit it. On Canton, where your collateral already lives.</p></div>
+  <div class="figw"><svg class="f f-split" viewBox="0 0 820 340"><defs>
+  <linearGradient id="q8-fx-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q8-fx-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+    <rect class="sp-src" x="330" y="80" width="160" height="180" rx="3" fill="url(#q8-fx-leaf)"/>
+    <g class="sp-p"><rect x="120" y="80" width="160" height="180" rx="3" fill="url(#q8-fx-leaf)"/>
+      <text class="f-lab dark" x="200" y="178" text-anchor="middle">P</text>
+      <text class="f-lab" x="200" y="292" text-anchor="middle">protected</text></g>
+    <g class="sp-n"><rect x="540" y="80" width="160" height="180" rx="3" fill="url(#q8-fx-min)"/>
+      <text class="f-lab dark" x="620" y="178" text-anchor="middle">N</text>
+      <text class="f-lab" x="620" y="292" text-anchor="middle">amplified</text></g>
+    <path class="sp-teth" d="M280 170 C 350 170 470 170 540 170" stroke="var(--verd)" stroke-width="2" fill="none" stroke-dasharray="4 6"/>
+      <text class="f-lab verd sp-teth" x="410" y="152" text-anchor="middle">one collateral, never leaves the vault</text></svg></div>
+  <div class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span>Medici on Canton</span></div>
+</section>
+<div id="bar" role="progressbar" aria-label="explainer progress" aria-valuemin="0" aria-valuemax="132"><i></i></div>
+<div id="ticks"><u style="left:9.091%"></u><u style="left:22.727%"></u><u style="left:34.848%"></u><u style="left:43.939%"></u><u style="left:59.091%"></u><u style="left:77.273%"></u><u style="left:90.152%"></u></div>
+</div>
+<script>
+(function(){
+  var st=document.getElementById('stage'), bar=document.querySelector('#bar i');
+  var S=[].slice.call(document.querySelectorAll('.scene'));
+  var D=S.map(function(s){return parseFloat(s.dataset.dur);});
+  var START=[],acc=0; D.forEach(function(d){START.push(acc);acc+=d;});
+  var TOTAL=132;
+  var idx=-1, t=0, last=null, playing=true;
+  function fit(){var k=Math.min(innerWidth/1920,innerHeight/1080);st.style.transform='scale('+k+')';}
+  function paint(n){
+    if(n===idx) return;
+    idx=n;
+    S.forEach(function(s,j){s.classList.remove('on');});
+    // force reflow so CSS animations restart cleanly for the incoming scene
+    void S[idx].offsetWidth;
+    S[idx].classList.add('on');
+  }
+  function at(time){
+    var n=0; for(var j=0;j<START.length;j++){ if(time>=START[j]) n=j; }
+    return n;
+  }
+  function frame(ts){
+    if(last===null) last=ts;
+    var dt=(ts-last)/1000; last=ts;
+    if(playing){ t=Math.min(TOTAL,t+dt); }
+    paint(at(t));
+    bar.style.transform='scaleX('+(t/TOTAL).toFixed(5)+')';
+    requestAnimationFrame(frame);
+  }
+  function seek(n){
+    n=Math.max(1,Math.min(S.length,n|0));
+    t=START[n-1]; idx=-1; paint(n-1); bar.style.transform='scaleX('+(t/TOTAL).toFixed(5)+')';
+  }
+  addEventListener('resize',fit); fit();
+  addEventListener('keydown',function(e){
+    if(e.key===' '||e.key==='ArrowRight'){e.preventDefault();seek(idx+2);}
+    else if(e.key==='ArrowLeft'){e.preventDefault();seek(idx);}
+    else if(e.key==='p'||e.key==='P'){playing=!playing;}
+    else if(e.key==='Home'){seek(1);}
+  });
+  var q=new URLSearchParams(location.search).get('scene');
+  if(q){ seek(parseInt(q,10)); } else { paint(0); }
+  requestAnimationFrame(frame);
+  window.__player={
+    get scene(){return idx+1;},
+    get t(){return t;},
+    total:TOTAL,
+    seek:seek,
+    get playing(){return playing;},
+    set playing(v){playing=!!v;},
+    scenes:[{"id":"1","start":0,"dur":12},{"id":"2","start":12,"dur":18},{"id":"3","start":30,"dur":16},{"id":"4","start":46,"dur":12},{"id":"5","start":58,"dur":20},{"id":"6","start":78,"dur":24},{"id":"7","start":102,"dur":17},{"id":"8","start":119,"dur":13}]
+  };
+})();</script>
+</body></html>

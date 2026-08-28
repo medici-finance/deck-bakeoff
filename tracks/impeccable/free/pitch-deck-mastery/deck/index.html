@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medici — collateral splitting for tokenized RWAs (pitch-deck-mastery)</title>
+<meta name="deck-footer" content="Medici — Proprietary &amp; Confidential">
+<meta name="description" content="Medici — collateral splitting for tokenized real-world assets.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  /* ground — lapis lazuli, ground and levigated. Not parchment. */
+  --lapis-0:#080F2A; --lapis-1:#0B1436; --lapis-2:#132049; --lapis-3:#1B2B5E;
+  /* the scribe's ruling, in lead point */
+  --rule:#2C3E7C; --rule-soft:#1B2A58;
+  /* the lettering is the light on this page */
+  --ink:#F2ECDC; --ink-2:#AEB9DA; --ink-3:#7E8AB6;
+  /* gold leaf — the leg that is kept whole */
+  --gold:#E8B44A; --gold-hi:#F7DC90; --gold-deep:#B8862C;
+  /* vermilion / minium — the rubricator's call-out, and the amplified leg */
+  --verm:#FF6A4D; --verm-deep:#DE3F24;
+  /* verdigris — the total that holds */
+  --verd:#4FB89E; --verd-deep:#2E7D6B;
+  --serif:'Cardo',Georgia,'Times New Roman',serif;
+  --sans:'Alegreya Sans','Optima','Segoe UI',system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--lapis-0);color:var(--ink);font-family:var(--sans);
+  display:grid;place-items:center;overflow:hidden;-webkit-font-smoothing:antialiased}
+#deck{width:1280px;height:720px;position:relative;transform-origin:center center}
+.slide{position:absolute;inset:0;width:1280px;height:720px;overflow:hidden;
+  
+  background:linear-gradient(177deg,#111D4A 0%,#0D1739 42%,#0A1230 100%);
+
+  display:none;flex-direction:column;padding:46px 74px 22px}
+.slide.on{display:flex}
+.slide::before{content:"";position:absolute;inset:0;
+  background-image:repeating-linear-gradient(to bottom,rgba(44,62,124,.34) 0 1px,transparent 1px 28px);
+pointer-events:none;opacity:.55}
+.slide::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(130% 100% at 50% 40%,rgba(0,0,0,0) 55%,rgba(4,8,24,.55) 100%)}
+.page{position:relative;z-index:2;flex:1;display:grid;grid-template-columns:96px 1fr;
+  column-gap:36px;min-height:0}
+
+/* the ruled margin, carrying the illuminated folio and nothing else */
+.marg{border-right:1px solid var(--rule-soft);padding-right:20px;display:flex;
+  flex-direction:column;align-items:flex-end;text-align:right}
+.versal{font-family:var(--serif);font-weight:700;font-size:54px;line-height:.86;
+  color:var(--gold);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.versal-of{margin-top:9px;font-size:14px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3)}
+
+.body{min-width:0;display:flex;flex-direction:column}
+.claim{font-family:var(--serif);font-weight:700;font-size:43px;line-height:1.13;
+  letter-spacing:-.012em;color:var(--ink);text-wrap:balance;max-width:24.5ch}
+.claim .rub{color:var(--gold)}
+.claim .min{color:var(--verm)}
+.slide[data-fn="cover"] .claim{font-size:57px;max-width:20ch;letter-spacing:-.02em}
+.cover-plate{flex:none;grid-template-columns:1fr 300px;gap:34px}
+.cover-plate .pf{max-height:242px}
+.slide[data-fn="mechanism"] .claim,.slide[data-fn="proof"] .claim{font-size:37px;max-width:30ch;line-height:1.14}
+.slide[data-fn="pivot"] .claim,.slide[data-fn="end"] .claim,.slide[data-fn="close"] .claim{font-size:54px;max-width:19ch}
+.content{margin-top:26px;flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:18px}
+
+/* ruled ledger entries — the support layer. No bullets, no cards. */
+.entries{display:flex;flex-direction:column;border-top:1px solid var(--rule-soft)}
+.entry{display:grid;grid-template-columns:22px minmax(0,75ch);gap:14px;align-items:start;
+  padding:11px 0 11px;border-bottom:1px solid var(--rule-soft);font-size:19px;line-height:1.42;
+  color:var(--ink-2);font-family:var(--sans)}
+.entry i{display:block;width:11px;height:1.5px;background:var(--rule);margin-top:12px;font-style:normal}
+.entry.k i{background:var(--gold);height:2px}
+.entry b{color:var(--ink);font-weight:500}
+.entry .num{font-family:var(--serif);font-weight:700;color:var(--gold);font-size:20px;
+  font-variant-numeric:tabular-nums}
+.entry .neg{color:var(--verm);font-family:var(--serif);font-weight:700}
+
+/* the balance table — two facing columns that must foot */
+.balance{display:grid;grid-template-columns:1fr 1px 1fr;column-gap:0;border-top:1px solid var(--rule)}
+.balance .spine{background:var(--rule-soft)}
+.balance .col{padding:0 26px}
+.balance .col:first-child{padding-left:0}
+.bhead{font-size:14px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  padding:12px 0 12px;border-bottom:1px solid var(--rule-soft)}
+.balance .col:first-child .bhead{color:var(--ink-3)}
+.balance .col:last-child .bhead{color:var(--gold)}
+.brow{padding:12px 0;border-bottom:1px solid var(--rule-soft);font-size:19px;line-height:1.4;
+  color:var(--ink-2);min-height:64px;max-width:40ch}
+.balance .col:last-child .brow{color:var(--ink)}
+.brow.concede{color:var(--verm)}
+
+/* the verbatim — a rubricated quotation */
+.verbatim{position:relative;padding-left:56px;font-family:var(--serif);font-style:italic;
+  font-size:33px;line-height:1.32;color:var(--ink);max-width:30ch}
+.paraph{position:absolute;left:0;top:4px;width:34px;height:38px}
+.attrib{margin-top:18px;padding-left:36px;font-size:18px;color:var(--ink-3);letter-spacing:.03em}
+.attrib b{color:var(--ink-2);font-weight:500}
+
+/* the payoff plate */
+.plate{min-height:0;display:grid;grid-template-columns:1fr 268px;gap:30px;align-items:center;flex:1;min-height:0}
+.plate.wide{grid-template-columns:1fr}
+.pf{width:100%;height:100%;max-height:330px;display:block;overflow:visible}
+.pf-ax{fill:var(--ink-2);font-family:var(--sans);font-size:22px;letter-spacing:.03em}
+.pf-thr-t{fill:var(--verm);font-family:var(--sans);font-size:24px;letter-spacing:.03em}
+.footing{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--rule)}
+.foot-row{display:flex;gap:11px;align-items:baseline;padding:11px 0;
+  border-bottom:1px solid var(--rule-soft);font-size:18px;color:var(--ink-2);line-height:1.35}
+.foot-row b{color:var(--ink);font-family:var(--serif);font-size:22px;font-weight:700}
+.chip{flex:none;width:13px;height:13px;border-radius:2px;transform:translateY(1px)}
+.chip-p{background:linear-gradient(120deg,#B8862C,#F7DC90 45%,#E8B44A)}
+.chip-n{background:linear-gradient(120deg,#B92E19,#FF6A4D 50%,#DE3F24)}
+.chip-sum{background:var(--verd);height:3px;border-radius:0;width:16px;transform:translateY(-4px)}
+.foot-sum{color:var(--ink)}
+
+/* the two cases, set as arithmetic */
+.cases{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--rule)}
+.case{padding:16px 24px 16px 0;border-bottom:1px solid var(--rule-soft)}
+.case+.case{padding-left:26px;border-left:1px solid var(--rule-soft)}
+.case h3{font-family:var(--sans);font-size:14px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:700;margin-bottom:9px}
+.case p{font-family:var(--serif);font-size:27px;line-height:1.34;color:var(--ink)}
+.case .p{color:var(--gold)}
+.case .n{color:var(--verm)}
+
+/* two facing statements (removed / present) */
+.ledger2{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid var(--rule)}
+.l2row{display:grid;grid-template-columns:132px minmax(0,75ch);gap:20px;padding:11px 0;
+  border-bottom:1px solid var(--rule-soft);font-size:19px;line-height:1.4;color:var(--ink-2)}
+.l2row .tag{font-size:14px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
+  padding-top:4px}
+.tag.removed{color:var(--verd)}.tag.present{color:var(--verm)}.tag.open{color:var(--ink-3)}
+.tag.unchanged{color:var(--ink-3)}.tag.real{color:var(--gold)}.tag.notreal{color:var(--verm)}
+.tag.phase{color:var(--verd)}.tag.asof{color:var(--ink-3)}
+
+/* the closing seal — the invariant, set as an equation */
+.seal{display:flex;align-items:center;justify-content:center;gap:26px;flex:1}
+.seal .eq{font-family:var(--serif);font-size:76px;letter-spacing:-.01em;color:var(--ink);
+  display:flex;align-items:center;gap:20px}
+.seal .eq .p{color:var(--gold)}.seal .eq .n{color:var(--verm)}
+.seal .eq .op{color:var(--ink-3);font-size:54px}
+.asof{font-size:18px;line-height:1.5;color:var(--ink-3);letter-spacing:.04em;font-style:italic;font-family:var(--serif)}
+
+/* the rupture plate — one dated loss, set as an entry that does not balance */
+.bold{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:34px;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:18px 0}
+.bold-num{font-family:var(--serif);font-weight:700;font-size:92px;line-height:.9;
+  color:var(--verm);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.bold-cap{font-family:var(--serif);font-size:27px;line-height:1.3;color:var(--ink)}
+.bold-cap small{display:block;font-family:var(--sans);font-size:18px;letter-spacing:.05em;
+  color:var(--ink-3);margin-top:9px;font-style:normal}
+.slide.on .bold-num{animation:fall .62s var(--ease) .2s both}
+@keyframes fall{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide.on .bold-num{animation:none}}
+
+/* a trailing consequence line under a balance */
+.after{padding-top:14px;font-size:19px;line-height:1.45;color:var(--ink-2)}
+.after b{color:var(--gold);font-weight:500}
+
+/* the codex apparatus: catchword, rule, folio, footer */
+.appar{position:relative;z-index:2;display:flex;justify-content:space-between;
+  align-items:baseline;gap:44px;padding:14px 0 8px}
+.src{font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.38;
+  color:var(--ink-3);max-width:64ch}
+
+.catch{flex:none;font-family:var(--serif);font-style:italic;font-size:18px;color:var(--ink-3);
+  text-align:right}
+.footrule{position:relative;z-index:2;height:1px;background:var(--rule);opacity:.85}
+.foot{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:baseline;
+  padding-top:9px;font-size:14px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.foot .folio{font-family:var(--serif);letter-spacing:.06em;text-transform:none;font-size:16px;
+  font-variant-numeric:tabular-nums}
+.foot .mark{color:var(--gold);letter-spacing:.2em}
+
+/* navigation affordance — quiet, keyboard-first */
+#hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:9;
+  font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+  transition:opacity .5s var(--ease)}
+#hint.gone{opacity:0}
+
+/* the authored moment: the balance rule draws itself once, on the mechanism plate */
+.slide .pf-p,.slide .pf-n{opacity:0}
+.slide .pf-top{stroke-dasharray:1400;stroke-dashoffset:1400}
+.slide.on .pf-n{animation:ink .5s var(--ease) .12s forwards}
+.slide.on .pf-p{animation:ink .5s var(--ease) .30s forwards}
+.slide.on .pf-top{animation:foot 1.05s var(--ease) .62s forwards}
+.slide .pf-thr{opacity:0}
+.slide.on .pf-thr{animation:ink .6s var(--ease) 1.5s forwards}
+@keyframes ink{to{opacity:1}}
+@keyframes foot{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){
+  .slide .pf-p,.slide .pf-n,.slide .pf-thr{opacity:1}
+  .slide .pf-top{stroke-dashoffset:0}
+  .slide.on .pf-n,.slide.on .pf-p,.slide.on .pf-top,.slide.on .pf-thr,
+  .slide.on .bold-num{animation:none}
+}
+
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:#fff;display:block;overflow:visible;height:auto}
+  #hint{display:none}
+  #deck{width:auto;height:auto;transform:none!important}
+  .slide{display:flex!important;position:relative;inset:auto;break-after:page;page-break-after:always;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  .slide .pf-p,.slide .pf-n,.slide .pf-thr{opacity:1}
+  .slide .pf-top{stroke-dashoffset:0}
+  .slide.on .bold-num{animation:none}
+}</style>
+</head><body>
+<!--
+  IMPECCABLE DIRECTION CONTRACT — free mode
+  THESIS: this deck owns the balance: P and N are the two sides of one entry that must foot,
+    and it refuses both the dark-neon protocol deck and the cream-parchment finance broadsheet.
+  OWN-WORLD: a quattrocento libro segreto in its saturated pigments — lapis ultramarine field,
+    gold leaf for P, vermilion rubrication for N, verdigris for the total, lead-point rulings,
+    Cardo humanist serif over an Alegreya Sans clerk's hand, a ruled margin, foliation, catchwords.
+  STORY: the visitor sees one position split, watches the stacked top edge stay flat at 1.00 at
+    every price, and learns there is nowhere on the axis to put a liquidation line.
+  FIRST VIEWPORT: full-bleed ruled lapis page; the claim in Cardo at 57px across the text block;
+    the P/N balance drawn beneath it in leaf and minium; folio, catchword and footer on the rule.
+  FORM: the libro segreto, candidate 7 of 7 on the grounded list, seed key 275daa63.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the
+    verdict, and DESIGN.md.
+-->
+<div id="deck">
+<section class="slide" data-fn="cover">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">1</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">Medici splits tokenized collateral into <span class="rub">two claims that never liquidate</span></h1>
+      <div class="content"><div class="plate cover-plate"><svg class="pf " viewBox="0 0 772 296" role="img" aria-label="Stacked payoff of P and N against reference price. The two always sum to one whole collateral unit.">
+<defs>
+  <linearGradient id="q1-c3-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q1-c3-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+<g transform="translate(78,56)">
+  <line x1="0" y1="186.0" x2="660" y2="186.0" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="139.5" x2="660" y2="139.5" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="93.0" x2="660" y2="93.0" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="46.5" x2="660" y2="46.5" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="0.0" x2="660" y2="0.0" stroke="var(--rule-soft)" stroke-width="1"/>
+  <path class="pf-n" d="M0.00 0.00 L2.75 0.00 L5.50 0.00 L8.25 0.00 L11.00 0.00 L13.75 0.00 L16.50 0.00 L19.25 0.00 L22.00 0.00 L24.75 0.00 L27.50 0.00 L30.25 0.00 L33.00 0.00 L35.75 0.00 L38.50 0.00 L41.25 0.00 L44.00 0.00 L46.75 0.00 L49.50 0.00 L52.25 0.00 L55.00 0.00 L57.75 0.00 L60.50 0.00 L63.25 0.00 L66.00 0.00 L68.75 0.00 L71.50 0.00 L74.25 0.00 L77.00 0.00 L79.75 0.00 L82.50 0.00 L85.25 0.00 L88.00 0.00 L90.75 0.00 L93.50 0.00 L96.25 0.00 L99.00 0.00 L101.75 0.00 L104.50 0.00 L107.25 0.00 L110.00 0.00 L112.75 0.00 L115.50 0.00 L118.25 0.00 L121.00 0.00 L123.75 0.00 L126.50 0.00 L129.25 0.00 L132.00 0.00 L134.75 0.00 L137.50 0.00 L140.25 0.00 L143.00 0.00 L145.75 0.00 L148.50 0.00 L151.25 0.00 L154.00 0.00 L156.75 0.00 L159.50 0.00 L162.25 0.00 L165.00 0.00 L167.75 0.00 L170.50 1.00 L173.25 2.64 L176.00 4.24 L178.75 5.82 L181.50 7.37 L184.25 8.89 L187.00 10.39 L189.75 11.86 L192.50 13.31 L195.25 14.74 L198.00 16.14 L200.75 17.52 L203.50 18.87 L206.25 20.21 L209.00 21.52 L211.75 22.81 L214.50 24.08 L217.25 25.34 L220.00 26.57 L222.75 27.79 L225.50 28.98 L228.25 30.16 L231.00 31.32 L233.75 32.47 L236.50 33.59 L239.25 34.70 L242.00 35.80 L244.75 36.88 L247.50 37.94 L250.25 38.99 L253.00 40.02 L255.75 41.04 L258.50 42.05 L261.25 43.04 L264.00 44.02 L266.75 44.98 L269.50 45.93 L272.25 46.87 L275.00 47.80 L277.75 48.71 L280.50 49.61 L283.25 50.50 L286.00 51.38 L288.75 52.25 L291.50 53.10 L294.25 53.95 L297.00 54.78 L299.75 55.61 L302.50 56.42 L305.25 57.22 L308.00 58.02 L310.75 58.80 L313.50 59.58 L316.25 60.34 L319.00 61.10 L321.75 61.84 L324.50 62.58 L327.25 63.31 L330.00 64.03 L332.75 64.75 L335.50 65.45 L338.25 66.14 L341.00 66.83 L343.75 67.51 L346.50 68.19 L349.25 68.85 L352.00 69.51 L354.75 70.16 L357.50 70.80 L360.25 71.44 L363.00 72.06 L365.75 72.69 L368.50 73.30 L371.25 73.91 L374.00 74.51 L376.75 75.11 L379.50 75.70 L382.25 76.28 L385.00 76.86 L387.75 77.43 L390.50 77.99 L393.25 78.55 L396.00 79.10 L398.75 79.65 L401.50 80.19 L404.25 80.73 L407.00 81.26 L409.75 81.79 L412.50 82.31 L415.25 82.82 L418.00 83.33 L420.75 83.84 L423.50 84.34 L426.25 84.83 L429.00 85.32 L431.75 85.81 L434.50 86.29 L437.25 86.77 L440.00 87.24 L442.75 87.71 L445.50 88.17 L448.25 88.63 L451.00 89.08 L453.75 89.53 L456.50 89.98 L459.25 90.42 L462.00 90.86 L464.75 91.29 L467.50 91.72 L470.25 92.15 L473.00 92.57 L475.75 92.99 L478.50 93.41 L481.25 93.82 L484.00 94.22 L486.75 94.63 L489.50 95.03 L492.25 95.42 L495.00 95.82 L497.75 96.21 L500.50 96.59 L503.25 96.98 L506.00 97.36 L508.75 97.74 L511.50 98.11 L514.25 98.48 L517.00 98.85 L519.75 99.21 L522.50 99.57 L525.25 99.93 L528.00 100.29 L530.75 100.64 L533.50 100.99 L536.25 101.33 L539.00 101.68 L541.75 102.02 L544.50 102.36 L547.25 102.69 L550.00 103.03 L552.75 103.36 L555.50 103.68 L558.25 104.01 L561.00 104.33 L563.75 104.65 L566.50 104.97 L569.25 105.28 L572.00 105.60 L574.75 105.91 L577.50 106.21 L580.25 106.52 L583.00 106.82 L585.75 107.12 L588.50 107.42 L591.25 107.72 L594.00 108.01 L596.75 108.30 L599.50 108.59 L602.25 108.88 L605.00 109.17 L607.75 109.45 L610.50 109.73 L613.25 110.01 L616.00 110.29 L618.75 110.56 L621.50 110.84 L624.25 111.11 L627.00 111.38 L629.75 111.64 L632.50 111.91 L635.25 112.17 L638.00 112.43 L640.75 112.69 L643.50 112.95 L646.25 113.21 L649.00 113.46 L651.75 113.71 L654.50 113.97 L657.25 114.21 L660.00 114.46 L 660.00 0.00 L 0 0.00 Z" fill="url(#q1-c3-min)" opacity=".92"/>
+  <path class="pf-p" d="M0.00 0.00 L2.75 0.00 L5.50 0.00 L8.25 0.00 L11.00 0.00 L13.75 0.00 L16.50 0.00 L19.25 0.00 L22.00 0.00 L24.75 0.00 L27.50 0.00 L30.25 0.00 L33.00 0.00 L35.75 0.00 L38.50 0.00 L41.25 0.00 L44.00 0.00 L46.75 0.00 L49.50 0.00 L52.25 0.00 L55.00 0.00 L57.75 0.00 L60.50 0.00 L63.25 0.00 L66.00 0.00 L68.75 0.00 L71.50 0.00 L74.25 0.00 L77.00 0.00 L79.75 0.00 L82.50 0.00 L85.25 0.00 L88.00 0.00 L90.75 0.00 L93.50 0.00 L96.25 0.00 L99.00 0.00 L101.75 0.00 L104.50 0.00 L107.25 0.00 L110.00 0.00 L112.75 0.00 L115.50 0.00 L118.25 0.00 L121.00 0.00 L123.75 0.00 L126.50 0.00 L129.25 0.00 L132.00 0.00 L134.75 0.00 L137.50 0.00 L140.25 0.00 L143.00 0.00 L145.75 0.00 L148.50 0.00 L151.25 0.00 L154.00 0.00 L156.75 0.00 L159.50 0.00 L162.25 0.00 L165.00 0.00 L167.75 0.00 L170.50 1.00 L173.25 2.64 L176.00 4.24 L178.75 5.82 L181.50 7.37 L184.25 8.89 L187.00 10.39 L189.75 11.86 L192.50 13.31 L195.25 14.74 L198.00 16.14 L200.75 17.52 L203.50 18.87 L206.25 20.21 L209.00 21.52 L211.75 22.81 L214.50 24.08 L217.25 25.34 L220.00 26.57 L222.75 27.79 L225.50 28.98 L228.25 30.16 L231.00 31.32 L233.75 32.47 L236.50 33.59 L239.25 34.70 L242.00 35.80 L244.75 36.88 L247.50 37.94 L250.25 38.99 L253.00 40.02 L255.75 41.04 L258.50 42.05 L261.25 43.04 L264.00 44.02 L266.75 44.98 L269.50 45.93 L272.25 46.87 L275.00 47.80 L277.75 48.71 L280.50 49.61 L283.25 50.50 L286.00 51.38 L288.75 52.25 L291.50 53.10 L294.25 53.95 L297.00 54.78 L299.75 55.61 L302.50 56.42 L305.25 57.22 L308.00 58.02 L310.75 58.80 L313.50 59.58 L316.25 60.34 L319.00 61.10 L321.75 61.84 L324.50 62.58 L327.25 63.31 L330.00 64.03 L332.75 64.75 L335.50 65.45 L338.25 66.14 L341.00 66.83 L343.75 67.51 L346.50 68.19 L349.25 68.85 L352.00 69.51 L354.75 70.16 L357.50 70.80 L360.25 71.44 L363.00 72.06 L365.75 72.69 L368.50 73.30 L371.25 73.91 L374.00 74.51 L376.75 75.11 L379.50 75.70 L382.25 76.28 L385.00 76.86 L387.75 77.43 L390.50 77.99 L393.25 78.55 L396.00 79.10 L398.75 79.65 L401.50 80.19 L404.25 80.73 L407.00 81.26 L409.75 81.79 L412.50 82.31 L415.25 82.82 L418.00 83.33 L420.75 83.84 L423.50 84.34 L426.25 84.83 L429.00 85.32 L431.75 85.81 L434.50 86.29 L437.25 86.77 L440.00 87.24 L442.75 87.71 L445.50 88.17 L448.25 88.63 L451.00 89.08 L453.75 89.53 L456.50 89.98 L459.25 90.42 L462.00 90.86 L464.75 91.29 L467.50 91.72 L470.25 92.15 L473.00 92.57 L475.75 92.99 L478.50 93.41 L481.25 93.82 L484.00 94.22 L486.75 94.63 L489.50 95.03 L492.25 95.42 L495.00 95.82 L497.75 96.21 L500.50 96.59 L503.25 96.98 L506.00 97.36 L508.75 97.74 L511.50 98.11 L514.25 98.48 L517.00 98.85 L519.75 99.21 L522.50 99.57 L525.25 99.93 L528.00 100.29 L530.75 100.64 L533.50 100.99 L536.25 101.33 L539.00 101.68 L541.75 102.02 L544.50 102.36 L547.25 102.69 L550.00 103.03 L552.75 103.36 L555.50 103.68 L558.25 104.01 L561.00 104.33 L563.75 104.65 L566.50 104.97 L569.25 105.28 L572.00 105.60 L574.75 105.91 L577.50 106.21 L580.25 106.52 L583.00 106.82 L585.75 107.12 L588.50 107.42 L591.25 107.72 L594.00 108.01 L596.75 108.30 L599.50 108.59 L602.25 108.88 L605.00 109.17 L607.75 109.45 L610.50 109.73 L613.25 110.01 L616.00 110.29 L618.75 110.56 L621.50 110.84 L624.25 111.11 L627.00 111.38 L629.75 111.64 L632.50 111.91 L635.25 112.17 L638.00 112.43 L640.75 112.69 L643.50 112.95 L646.25 113.21 L649.00 113.46 L651.75 113.71 L654.50 113.97 L657.25 114.21 L660.00 114.46 L 660.00 186 L 0 186 Z" fill="url(#q1-c3-leaf)"/>
+  <path class="pf-top" d="M 0 0.00 L 660.00 0.00" stroke="var(--verd)" stroke-width="3" fill="none"/>
+  <path class="pf-div" d="M0.00 0.00 L2.75 0.00 L5.50 0.00 L8.25 0.00 L11.00 0.00 L13.75 0.00 L16.50 0.00 L19.25 0.00 L22.00 0.00 L24.75 0.00 L27.50 0.00 L30.25 0.00 L33.00 0.00 L35.75 0.00 L38.50 0.00 L41.25 0.00 L44.00 0.00 L46.75 0.00 L49.50 0.00 L52.25 0.00 L55.00 0.00 L57.75 0.00 L60.50 0.00 L63.25 0.00 L66.00 0.00 L68.75 0.00 L71.50 0.00 L74.25 0.00 L77.00 0.00 L79.75 0.00 L82.50 0.00 L85.25 0.00 L88.00 0.00 L90.75 0.00 L93.50 0.00 L96.25 0.00 L99.00 0.00 L101.75 0.00 L104.50 0.00 L107.25 0.00 L110.00 0.00 L112.75 0.00 L115.50 0.00 L118.25 0.00 L121.00 0.00 L123.75 0.00 L126.50 0.00 L129.25 0.00 L132.00 0.00 L134.75 0.00 L137.50 0.00 L140.25 0.00 L143.00 0.00 L145.75 0.00 L148.50 0.00 L151.25 0.00 L154.00 0.00 L156.75 0.00 L159.50 0.00 L162.25 0.00 L165.00 0.00 L167.75 0.00 L170.50 1.00 L173.25 2.64 L176.00 4.24 L178.75 5.82 L181.50 7.37 L184.25 8.89 L187.00 10.39 L189.75 11.86 L192.50 13.31 L195.25 14.74 L198.00 16.14 L200.75 17.52 L203.50 18.87 L206.25 20.21 L209.00 21.52 L211.75 22.81 L214.50 24.08 L217.25 25.34 L220.00 26.57 L222.75 27.79 L225.50 28.98 L228.25 30.16 L231.00 31.32 L233.75 32.47 L236.50 33.59 L239.25 34.70 L242.00 35.80 L244.75 36.88 L247.50 37.94 L250.25 38.99 L253.00 40.02 L255.75 41.04 L258.50 42.05 L261.25 43.04 L264.00 44.02 L266.75 44.98 L269.50 45.93 L272.25 46.87 L275.00 47.80 L277.75 48.71 L280.50 49.61 L283.25 50.50 L286.00 51.38 L288.75 52.25 L291.50 53.10 L294.25 53.95 L297.00 54.78 L299.75 55.61 L302.50 56.42 L305.25 57.22 L308.00 58.02 L310.75 58.80 L313.50 59.58 L316.25 60.34 L319.00 61.10 L321.75 61.84 L324.50 62.58 L327.25 63.31 L330.00 64.03 L332.75 64.75 L335.50 65.45 L338.25 66.14 L341.00 66.83 L343.75 67.51 L346.50 68.19 L349.25 68.85 L352.00 69.51 L354.75 70.16 L357.50 70.80 L360.25 71.44 L363.00 72.06 L365.75 72.69 L368.50 73.30 L371.25 73.91 L374.00 74.51 L376.75 75.11 L379.50 75.70 L382.25 76.28 L385.00 76.86 L387.75 77.43 L390.50 77.99 L393.25 78.55 L396.00 79.10 L398.75 79.65 L401.50 80.19 L404.25 80.73 L407.00 81.26 L409.75 81.79 L412.50 82.31 L415.25 82.82 L418.00 83.33 L420.75 83.84 L423.50 84.34 L426.25 84.83 L429.00 85.32 L431.75 85.81 L434.50 86.29 L437.25 86.77 L440.00 87.24 L442.75 87.71 L445.50 88.17 L448.25 88.63 L451.00 89.08 L453.75 89.53 L456.50 89.98 L459.25 90.42 L462.00 90.86 L464.75 91.29 L467.50 91.72 L470.25 92.15 L473.00 92.57 L475.75 92.99 L478.50 93.41 L481.25 93.82 L484.00 94.22 L486.75 94.63 L489.50 95.03 L492.25 95.42 L495.00 95.82 L497.75 96.21 L500.50 96.59 L503.25 96.98 L506.00 97.36 L508.75 97.74 L511.50 98.11 L514.25 98.48 L517.00 98.85 L519.75 99.21 L522.50 99.57 L525.25 99.93 L528.00 100.29 L530.75 100.64 L533.50 100.99 L536.25 101.33 L539.00 101.68 L541.75 102.02 L544.50 102.36 L547.25 102.69 L550.00 103.03 L552.75 103.36 L555.50 103.68 L558.25 104.01 L561.00 104.33 L563.75 104.65 L566.50 104.97 L569.25 105.28 L572.00 105.60 L574.75 105.91 L577.50 106.21 L580.25 106.52 L583.00 106.82 L585.75 107.12 L588.50 107.42 L591.25 107.72 L594.00 108.01 L596.75 108.30 L599.50 108.59 L602.25 108.88 L605.00 109.17 L607.75 109.45 L610.50 109.73 L613.25 110.01 L616.00 110.29 L618.75 110.56 L621.50 110.84 L624.25 111.11 L627.00 111.38 L629.75 111.64 L632.50 111.91 L635.25 112.17 L638.00 112.43 L640.75 112.69 L643.50 112.95 L646.25 113.21 L649.00 113.46 L651.75 113.71 L654.50 113.97 L657.25 114.21 L660.00 114.46" stroke="var(--lapis-0)" stroke-width="1.5" fill="none" opacity=".55"/>
+  <line class="pf-s" x1="168.8" y1="0" x2="168.8" y2="186" stroke="var(--ink-2)" stroke-width="1" stroke-dasharray="3 5"/>
+  
+  
+    <text class="pf-ax" x="-14" y="6.0" text-anchor="end">1.00</text>
+    <text class="pf-ax" x="-14" y="99.0" text-anchor="end">0.50</text>
+    <text class="pf-ax" x="-14" y="192.0" text-anchor="end">0</text>
+    <text class="pf-ax" x="168.8" y="220" text-anchor="middle">strike S</text>
+    <text class="pf-ax" x="660" y="220" text-anchor="end">reference price x  &#8594;</text>
+</g></svg>
+  <div class="footing">
+    <div class="foot-row"><span class="chip chip-p"></span><b>P</b> protected &#183; S/x above strike</div>
+    <div class="foot-row"><span class="chip chip-n"></span><b>N</b> amplified &#183; 1 &minus; S/x</div>
+    <div class="foot-row foot-sum"><span class="chip chip-sum"></span><span class="p">P</span>&#8202;+&#8202;<span class="n">N</span> is identically the collateral</div>
+  </div></div><div class="entries"><div class="entry k"><i></i><span>Medici &#8212; collateral splitting for tokenized real-world assets. One position becomes P and N.</span></div><div class="entry"><i></i><span>AAA Flowers S.A. (Panama), operating as Medici. Material as-of July 2026.</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">canton-pitch-deck.md Slides 1, 3</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>One position becomes&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 1 / 14</span></footer>
+</section>
+<section class="slide" data-fn="problem">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">2</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">RWA lending&#8217;s hardest problem is <span class="min">the liquidation nobody can execute</span></h1>
+      <div class="content"><div class="entries"><div class="entry"><i></i><span>Every venue prices your collateral against a liquidation threshold.</span></div><div class="entry"><i></i><span>Tokenized funds cannot be sold in one transaction.</span></div><div class="entry"><i></i><span>So the workout is hand-built: signed liquidation agreements with issuers, formal de-leverage frameworks, curators with a line to the issuer.</span></div><div class="entry"><i></i><span>RedStone, March 2026: these are <b>&#8220;not edge cases but fundamental design constraints&#8221;</b>.</span></div><div class="entry k"><i></i><span>When the threshold does break: Black Thursday, <span class="num">$8M</span> of collateral liquidated for <span class="neg">$0</span>.</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">rwa-redstone-2026.md Part 2 “Liquidation mechanics and risk frameworks”; canton-pitch-deck.md Slide 2; asset-manager-pitch-deck.md Slide 2</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>At maturity, P takes S/x&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 2 / 14</span></footer>
+</section>
+<section class="slide" data-fn="solution">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">3</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">One position becomes two claims that <span class="rub">always sum back to it</span></h1>
+      <div class="content"><div class="cases"><div class="case"><h3>P &#183; the Protected leg</h3><p><span class="p">Full collateral value at or below strike.</span> No margin call, no forced sale.</p></div>
+  <div class="case"><h3>N &#183; the Amplified leg</h3><p><span class="n">Everything above strike.</span></p></div></div><div class="entries"><div class="entry"><i></i><span>P + N is identically the collateral, at every price, by construction.</span></div><div class="entry k"><i></i><span>Split, hold, then recombine or settle at maturity &#8212; <b>atomically</b>.</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">canton-pitch-deck.md Slides 3, 5; asset-manager-pitch-deck.md Slide 3; house-brand-guide.md §8.2</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>No liquidation threshold exists&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 3 / 14</span></footer>
+</section>
+<section class="slide" data-fn="mechanism">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">4</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">At maturity, <span class="rub">P takes S/x</span> and <span class="min">N takes the rest</span></h1>
+      <div class="content"><div class="plate"><svg class="pf " viewBox="0 0 772 410" role="img" aria-label="Stacked payoff of P and N against reference price. The two always sum to one whole collateral unit.">
+<defs>
+  <linearGradient id="q2-d1-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q2-d1-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+<g transform="translate(78,56)">
+  <line x1="0" y1="300.0" x2="660" y2="300.0" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="225.0" x2="660" y2="225.0" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="150.0" x2="660" y2="150.0" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="75.0" x2="660" y2="75.0" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="0.0" x2="660" y2="0.0" stroke="var(--rule-soft)" stroke-width="1"/>
+  <path class="pf-n" d="M0.00 0.00 L2.75 0.00 L5.50 0.00 L8.25 0.00 L11.00 0.00 L13.75 0.00 L16.50 0.00 L19.25 0.00 L22.00 0.00 L24.75 0.00 L27.50 0.00 L30.25 0.00 L33.00 0.00 L35.75 0.00 L38.50 0.00 L41.25 0.00 L44.00 0.00 L46.75 0.00 L49.50 0.00 L52.25 0.00 L55.00 0.00 L57.75 0.00 L60.50 0.00 L63.25 0.00 L66.00 0.00 L68.75 0.00 L71.50 0.00 L74.25 0.00 L77.00 0.00 L79.75 0.00 L82.50 0.00 L85.25 0.00 L88.00 0.00 L90.75 0.00 L93.50 0.00 L96.25 0.00 L99.00 0.00 L101.75 0.00 L104.50 0.00 L107.25 0.00 L110.00 0.00 L112.75 0.00 L115.50 0.00 L118.25 0.00 L121.00 0.00 L123.75 0.00 L126.50 0.00 L129.25 0.00 L132.00 0.00 L134.75 0.00 L137.50 0.00 L140.25 0.00 L143.00 0.00 L145.75 0.00 L148.50 0.00 L151.25 0.00 L154.00 0.00 L156.75 0.00 L159.50 0.00 L162.25 0.00 L165.00 0.00 L167.75 0.00 L170.50 1.62 L173.25 4.25 L176.00 6.84 L178.75 9.38 L181.50 11.88 L184.25 14.34 L187.00 16.76 L189.75 19.13 L192.50 21.47 L195.25 23.77 L198.00 26.03 L200.75 28.25 L203.50 30.44 L206.25 32.59 L209.00 34.71 L211.75 36.79 L214.50 38.85 L217.25 40.87 L220.00 42.86 L222.75 44.82 L225.50 46.75 L228.25 48.65 L231.00 50.52 L233.75 52.36 L236.50 54.18 L239.25 55.97 L242.00 57.74 L244.75 59.48 L247.50 61.19 L250.25 62.88 L253.00 64.55 L255.75 66.20 L258.50 67.82 L261.25 69.42 L264.00 70.99 L266.75 72.55 L269.50 74.08 L272.25 75.60 L275.00 77.09 L277.75 78.56 L280.50 80.02 L283.25 81.45 L286.00 82.87 L288.75 84.27 L291.50 85.65 L294.25 87.01 L297.00 88.36 L299.75 89.69 L302.50 91.00 L305.25 92.30 L308.00 93.58 L310.75 94.84 L313.50 96.09 L316.25 97.33 L319.00 98.55 L321.75 99.75 L324.50 100.94 L327.25 102.12 L330.00 103.28 L332.75 104.43 L335.50 105.56 L338.25 106.69 L341.00 107.79 L343.75 108.89 L346.50 109.98 L349.25 111.05 L352.00 112.11 L354.75 113.16 L357.50 114.19 L360.25 115.22 L363.00 116.23 L365.75 117.24 L368.50 118.23 L371.25 119.21 L374.00 120.18 L376.75 121.14 L379.50 122.09 L382.25 123.03 L385.00 123.96 L387.75 124.88 L390.50 125.79 L393.25 126.69 L396.00 127.59 L398.75 128.47 L401.50 129.34 L404.25 130.21 L407.00 131.07 L409.75 131.91 L412.50 132.75 L415.25 133.58 L418.00 134.41 L420.75 135.22 L423.50 136.03 L426.25 136.83 L429.00 137.62 L431.75 138.40 L434.50 139.18 L437.25 139.95 L440.00 140.71 L442.75 141.46 L445.50 142.21 L448.25 142.95 L451.00 143.68 L453.75 144.41 L456.50 145.13 L459.25 145.84 L462.00 146.55 L464.75 147.25 L467.50 147.94 L470.25 148.63 L473.00 149.31 L475.75 149.98 L478.50 150.65 L481.25 151.32 L484.00 151.97 L486.75 152.63 L489.50 153.27 L492.25 153.91 L495.00 154.55 L497.75 155.17 L500.50 155.80 L503.25 156.42 L506.00 157.03 L508.75 157.64 L511.50 158.24 L514.25 158.84 L517.00 159.43 L519.75 160.02 L522.50 160.60 L525.25 161.18 L528.00 161.75 L530.75 162.32 L533.50 162.88 L536.25 163.44 L539.00 164.00 L541.75 164.55 L544.50 165.09 L547.25 165.63 L550.00 166.17 L552.75 166.70 L555.50 167.23 L558.25 167.76 L561.00 168.28 L563.75 168.79 L566.50 169.30 L569.25 169.81 L572.00 170.32 L574.75 170.82 L577.50 171.31 L580.25 171.81 L583.00 172.30 L585.75 172.78 L588.50 173.26 L591.25 173.74 L594.00 174.21 L596.75 174.68 L599.50 175.15 L602.25 175.62 L605.00 176.08 L607.75 176.53 L610.50 176.99 L613.25 177.44 L616.00 177.88 L618.75 178.33 L621.50 178.77 L624.25 179.20 L627.00 179.64 L629.75 180.07 L632.50 180.50 L635.25 180.92 L638.00 181.34 L640.75 181.76 L643.50 182.18 L646.25 182.59 L649.00 183.00 L651.75 183.41 L654.50 183.81 L657.25 184.22 L660.00 184.62 L 660.00 0.00 L 0 0.00 Z" fill="url(#q2-d1-min)" opacity=".92"/>
+  <path class="pf-p" d="M0.00 0.00 L2.75 0.00 L5.50 0.00 L8.25 0.00 L11.00 0.00 L13.75 0.00 L16.50 0.00 L19.25 0.00 L22.00 0.00 L24.75 0.00 L27.50 0.00 L30.25 0.00 L33.00 0.00 L35.75 0.00 L38.50 0.00 L41.25 0.00 L44.00 0.00 L46.75 0.00 L49.50 0.00 L52.25 0.00 L55.00 0.00 L57.75 0.00 L60.50 0.00 L63.25 0.00 L66.00 0.00 L68.75 0.00 L71.50 0.00 L74.25 0.00 L77.00 0.00 L79.75 0.00 L82.50 0.00 L85.25 0.00 L88.00 0.00 L90.75 0.00 L93.50 0.00 L96.25 0.00 L99.00 0.00 L101.75 0.00 L104.50 0.00 L107.25 0.00 L110.00 0.00 L112.75 0.00 L115.50 0.00 L118.25 0.00 L121.00 0.00 L123.75 0.00 L126.50 0.00 L129.25 0.00 L132.00 0.00 L134.75 0.00 L137.50 0.00 L140.25 0.00 L143.00 0.00 L145.75 0.00 L148.50 0.00 L151.25 0.00 L154.00 0.00 L156.75 0.00 L159.50 0.00 L162.25 0.00 L165.00 0.00 L167.75 0.00 L170.50 1.62 L173.25 4.25 L176.00 6.84 L178.75 9.38 L181.50 11.88 L184.25 14.34 L187.00 16.76 L189.75 19.13 L192.50 21.47 L195.25 23.77 L198.00 26.03 L200.75 28.25 L203.50 30.44 L206.25 32.59 L209.00 34.71 L211.75 36.79 L214.50 38.85 L217.25 40.87 L220.00 42.86 L222.75 44.82 L225.50 46.75 L228.25 48.65 L231.00 50.52 L233.75 52.36 L236.50 54.18 L239.25 55.97 L242.00 57.74 L244.75 59.48 L247.50 61.19 L250.25 62.88 L253.00 64.55 L255.75 66.20 L258.50 67.82 L261.25 69.42 L264.00 70.99 L266.75 72.55 L269.50 74.08 L272.25 75.60 L275.00 77.09 L277.75 78.56 L280.50 80.02 L283.25 81.45 L286.00 82.87 L288.75 84.27 L291.50 85.65 L294.25 87.01 L297.00 88.36 L299.75 89.69 L302.50 91.00 L305.25 92.30 L308.00 93.58 L310.75 94.84 L313.50 96.09 L316.25 97.33 L319.00 98.55 L321.75 99.75 L324.50 100.94 L327.25 102.12 L330.00 103.28 L332.75 104.43 L335.50 105.56 L338.25 106.69 L341.00 107.79 L343.75 108.89 L346.50 109.98 L349.25 111.05 L352.00 112.11 L354.75 113.16 L357.50 114.19 L360.25 115.22 L363.00 116.23 L365.75 117.24 L368.50 118.23 L371.25 119.21 L374.00 120.18 L376.75 121.14 L379.50 122.09 L382.25 123.03 L385.00 123.96 L387.75 124.88 L390.50 125.79 L393.25 126.69 L396.00 127.59 L398.75 128.47 L401.50 129.34 L404.25 130.21 L407.00 131.07 L409.75 131.91 L412.50 132.75 L415.25 133.58 L418.00 134.41 L420.75 135.22 L423.50 136.03 L426.25 136.83 L429.00 137.62 L431.75 138.40 L434.50 139.18 L437.25 139.95 L440.00 140.71 L442.75 141.46 L445.50 142.21 L448.25 142.95 L451.00 143.68 L453.75 144.41 L456.50 145.13 L459.25 145.84 L462.00 146.55 L464.75 147.25 L467.50 147.94 L470.25 148.63 L473.00 149.31 L475.75 149.98 L478.50 150.65 L481.25 151.32 L484.00 151.97 L486.75 152.63 L489.50 153.27 L492.25 153.91 L495.00 154.55 L497.75 155.17 L500.50 155.80 L503.25 156.42 L506.00 157.03 L508.75 157.64 L511.50 158.24 L514.25 158.84 L517.00 159.43 L519.75 160.02 L522.50 160.60 L525.25 161.18 L528.00 161.75 L530.75 162.32 L533.50 162.88 L536.25 163.44 L539.00 164.00 L541.75 164.55 L544.50 165.09 L547.25 165.63 L550.00 166.17 L552.75 166.70 L555.50 167.23 L558.25 167.76 L561.00 168.28 L563.75 168.79 L566.50 169.30 L569.25 169.81 L572.00 170.32 L574.75 170.82 L577.50 171.31 L580.25 171.81 L583.00 172.30 L585.75 172.78 L588.50 173.26 L591.25 173.74 L594.00 174.21 L596.75 174.68 L599.50 175.15 L602.25 175.62 L605.00 176.08 L607.75 176.53 L610.50 176.99 L613.25 177.44 L616.00 177.88 L618.75 178.33 L621.50 178.77 L624.25 179.20 L627.00 179.64 L629.75 180.07 L632.50 180.50 L635.25 180.92 L638.00 181.34 L640.75 181.76 L643.50 182.18 L646.25 182.59 L649.00 183.00 L651.75 183.41 L654.50 183.81 L657.25 184.22 L660.00 184.62 L 660.00 300 L 0 300 Z" fill="url(#q2-d1-leaf)"/>
+  <path class="pf-top" d="M 0 0.00 L 660.00 0.00" stroke="var(--verd)" stroke-width="3" fill="none"/>
+  <path class="pf-div" d="M0.00 0.00 L2.75 0.00 L5.50 0.00 L8.25 0.00 L11.00 0.00 L13.75 0.00 L16.50 0.00 L19.25 0.00 L22.00 0.00 L24.75 0.00 L27.50 0.00 L30.25 0.00 L33.00 0.00 L35.75 0.00 L38.50 0.00 L41.25 0.00 L44.00 0.00 L46.75 0.00 L49.50 0.00 L52.25 0.00 L55.00 0.00 L57.75 0.00 L60.50 0.00 L63.25 0.00 L66.00 0.00 L68.75 0.00 L71.50 0.00 L74.25 0.00 L77.00 0.00 L79.75 0.00 L82.50 0.00 L85.25 0.00 L88.00 0.00 L90.75 0.00 L93.50 0.00 L96.25 0.00 L99.00 0.00 L101.75 0.00 L104.50 0.00 L107.25 0.00 L110.00 0.00 L112.75 0.00 L115.50 0.00 L118.25 0.00 L121.00 0.00 L123.75 0.00 L126.50 0.00 L129.25 0.00 L132.00 0.00 L134.75 0.00 L137.50 0.00 L140.25 0.00 L143.00 0.00 L145.75 0.00 L148.50 0.00 L151.25 0.00 L154.00 0.00 L156.75 0.00 L159.50 0.00 L162.25 0.00 L165.00 0.00 L167.75 0.00 L170.50 1.62 L173.25 4.25 L176.00 6.84 L178.75 9.38 L181.50 11.88 L184.25 14.34 L187.00 16.76 L189.75 19.13 L192.50 21.47 L195.25 23.77 L198.00 26.03 L200.75 28.25 L203.50 30.44 L206.25 32.59 L209.00 34.71 L211.75 36.79 L214.50 38.85 L217.25 40.87 L220.00 42.86 L222.75 44.82 L225.50 46.75 L228.25 48.65 L231.00 50.52 L233.75 52.36 L236.50 54.18 L239.25 55.97 L242.00 57.74 L244.75 59.48 L247.50 61.19 L250.25 62.88 L253.00 64.55 L255.75 66.20 L258.50 67.82 L261.25 69.42 L264.00 70.99 L266.75 72.55 L269.50 74.08 L272.25 75.60 L275.00 77.09 L277.75 78.56 L280.50 80.02 L283.25 81.45 L286.00 82.87 L288.75 84.27 L291.50 85.65 L294.25 87.01 L297.00 88.36 L299.75 89.69 L302.50 91.00 L305.25 92.30 L308.00 93.58 L310.75 94.84 L313.50 96.09 L316.25 97.33 L319.00 98.55 L321.75 99.75 L324.50 100.94 L327.25 102.12 L330.00 103.28 L332.75 104.43 L335.50 105.56 L338.25 106.69 L341.00 107.79 L343.75 108.89 L346.50 109.98 L349.25 111.05 L352.00 112.11 L354.75 113.16 L357.50 114.19 L360.25 115.22 L363.00 116.23 L365.75 117.24 L368.50 118.23 L371.25 119.21 L374.00 120.18 L376.75 121.14 L379.50 122.09 L382.25 123.03 L385.00 123.96 L387.75 124.88 L390.50 125.79 L393.25 126.69 L396.00 127.59 L398.75 128.47 L401.50 129.34 L404.25 130.21 L407.00 131.07 L409.75 131.91 L412.50 132.75 L415.25 133.58 L418.00 134.41 L420.75 135.22 L423.50 136.03 L426.25 136.83 L429.00 137.62 L431.75 138.40 L434.50 139.18 L437.25 139.95 L440.00 140.71 L442.75 141.46 L445.50 142.21 L448.25 142.95 L451.00 143.68 L453.75 144.41 L456.50 145.13 L459.25 145.84 L462.00 146.55 L464.75 147.25 L467.50 147.94 L470.25 148.63 L473.00 149.31 L475.75 149.98 L478.50 150.65 L481.25 151.32 L484.00 151.97 L486.75 152.63 L489.50 153.27 L492.25 153.91 L495.00 154.55 L497.75 155.17 L500.50 155.80 L503.25 156.42 L506.00 157.03 L508.75 157.64 L511.50 158.24 L514.25 158.84 L517.00 159.43 L519.75 160.02 L522.50 160.60 L525.25 161.18 L528.00 161.75 L530.75 162.32 L533.50 162.88 L536.25 163.44 L539.00 164.00 L541.75 164.55 L544.50 165.09 L547.25 165.63 L550.00 166.17 L552.75 166.70 L555.50 167.23 L558.25 167.76 L561.00 168.28 L563.75 168.79 L566.50 169.30 L569.25 169.81 L572.00 170.32 L574.75 170.82 L577.50 171.31 L580.25 171.81 L583.00 172.30 L585.75 172.78 L588.50 173.26 L591.25 173.74 L594.00 174.21 L596.75 174.68 L599.50 175.15 L602.25 175.62 L605.00 176.08 L607.75 176.53 L610.50 176.99 L613.25 177.44 L616.00 177.88 L618.75 178.33 L621.50 178.77 L624.25 179.20 L627.00 179.64 L629.75 180.07 L632.50 180.50 L635.25 180.92 L638.00 181.34 L640.75 181.76 L643.50 182.18 L646.25 182.59 L649.00 183.00 L651.75 183.41 L654.50 183.81 L657.25 184.22 L660.00 184.62" stroke="var(--lapis-0)" stroke-width="1.5" fill="none" opacity=".55"/>
+  <line class="pf-s" x1="168.8" y1="0" x2="168.8" y2="300" stroke="var(--ink-2)" stroke-width="1" stroke-dasharray="3 5"/>
+  
+  
+    <text class="pf-ax" x="-14" y="6.0" text-anchor="end">1.00</text>
+    <text class="pf-ax" x="-14" y="156.0" text-anchor="end">0.50</text>
+    <text class="pf-ax" x="-14" y="306.0" text-anchor="end">0</text>
+    <text class="pf-ax" x="168.8" y="334" text-anchor="middle">strike S</text>
+    <text class="pf-ax" x="660" y="334" text-anchor="end">reference price x  &#8594;</text>
+</g></svg><div class="footing">
+          <div class="foot-row"><span class="chip chip-p"></span>x &#8804; S &#8194;<b>P</b>&#8202;1.00 &#183; <b>N</b>&#8202;0.00</div>
+          <div class="foot-row"><span class="chip chip-n"></span>x &gt; S &#8194;<b>P</b>&#8202;S/x &#183; <b>N</b>&#8202;1&minus;S/x</div>
+          <div class="foot-row foot-sum"><span class="chip chip-sum"></span>Every row sums to exactly the collateral. Above strike, P declines continuously &#8212; a slope, never a cliff.</div>
+          <div class="foot-row" style="border-bottom:0">The oracle is read once, at settlement, not continuously.</div>
+        </div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">canton-pitch-deck.md Slide 5; asset-manager-pitch-deck.md Slide 4</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>Two legs, two holders&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 4 / 14</span></footer>
+</section>
+<section class="slide" data-fn="proof">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">5</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">No liquidation threshold exists because <span class="rub">no under-collateralization condition exists</span></h1>
+      <div class="content"><div class="plate"><svg class="pf " viewBox="0 0 772 410" role="img" aria-label="Stacked payoff of P and N against reference price. The two always sum to one whole collateral unit.">
+<defs>
+  <linearGradient id="q3-d2-leaf" x1="0" y1="0" x2="1" y2="0.35">
+    <stop offset="0%" stop-color="#B8862C"/><stop offset="34%" stop-color="#F7DC90"/>
+    <stop offset="58%" stop-color="#E8B44A"/><stop offset="100%" stop-color="#C08F2E"/>
+  </linearGradient>
+  <linearGradient id="q3-d2-min" x1="0" y1="0" x2="1" y2="0.4">
+    <stop offset="0%" stop-color="#B92E19"/><stop offset="45%" stop-color="#FF6A4D"/>
+    <stop offset="100%" stop-color="#DE3F24"/>
+  </linearGradient>
+</defs>
+<g transform="translate(78,56)">
+  <line x1="0" y1="300.0" x2="660" y2="300.0" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="225.0" x2="660" y2="225.0" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="150.0" x2="660" y2="150.0" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="75.0" x2="660" y2="75.0" stroke="var(--rule-soft)" stroke-width="1"/><line x1="0" y1="0.0" x2="660" y2="0.0" stroke="var(--rule-soft)" stroke-width="1"/>
+  <path class="pf-n" d="M0.00 0.00 L2.75 0.00 L5.50 0.00 L8.25 0.00 L11.00 0.00 L13.75 0.00 L16.50 0.00 L19.25 0.00 L22.00 0.00 L24.75 0.00 L27.50 0.00 L30.25 0.00 L33.00 0.00 L35.75 0.00 L38.50 0.00 L41.25 0.00 L44.00 0.00 L46.75 0.00 L49.50 0.00 L52.25 0.00 L55.00 0.00 L57.75 0.00 L60.50 0.00 L63.25 0.00 L66.00 0.00 L68.75 0.00 L71.50 0.00 L74.25 0.00 L77.00 0.00 L79.75 0.00 L82.50 0.00 L85.25 0.00 L88.00 0.00 L90.75 0.00 L93.50 0.00 L96.25 0.00 L99.00 0.00 L101.75 0.00 L104.50 0.00 L107.25 0.00 L110.00 0.00 L112.75 0.00 L115.50 0.00 L118.25 0.00 L121.00 0.00 L123.75 0.00 L126.50 0.00 L129.25 0.00 L132.00 0.00 L134.75 0.00 L137.50 0.00 L140.25 0.00 L143.00 0.00 L145.75 0.00 L148.50 0.00 L151.25 0.00 L154.00 0.00 L156.75 0.00 L159.50 0.00 L162.25 0.00 L165.00 0.00 L167.75 0.00 L170.50 1.62 L173.25 4.25 L176.00 6.84 L178.75 9.38 L181.50 11.88 L184.25 14.34 L187.00 16.76 L189.75 19.13 L192.50 21.47 L195.25 23.77 L198.00 26.03 L200.75 28.25 L203.50 30.44 L206.25 32.59 L209.00 34.71 L211.75 36.79 L214.50 38.85 L217.25 40.87 L220.00 42.86 L222.75 44.82 L225.50 46.75 L228.25 48.65 L231.00 50.52 L233.75 52.36 L236.50 54.18 L239.25 55.97 L242.00 57.74 L244.75 59.48 L247.50 61.19 L250.25 62.88 L253.00 64.55 L255.75 66.20 L258.50 67.82 L261.25 69.42 L264.00 70.99 L266.75 72.55 L269.50 74.08 L272.25 75.60 L275.00 77.09 L277.75 78.56 L280.50 80.02 L283.25 81.45 L286.00 82.87 L288.75 84.27 L291.50 85.65 L294.25 87.01 L297.00 88.36 L299.75 89.69 L302.50 91.00 L305.25 92.30 L308.00 93.58 L310.75 94.84 L313.50 96.09 L316.25 97.33 L319.00 98.55 L321.75 99.75 L324.50 100.94 L327.25 102.12 L330.00 103.28 L332.75 104.43 L335.50 105.56 L338.25 106.69 L341.00 107.79 L343.75 108.89 L346.50 109.98 L349.25 111.05 L352.00 112.11 L354.75 113.16 L357.50 114.19 L360.25 115.22 L363.00 116.23 L365.75 117.24 L368.50 118.23 L371.25 119.21 L374.00 120.18 L376.75 121.14 L379.50 122.09 L382.25 123.03 L385.00 123.96 L387.75 124.88 L390.50 125.79 L393.25 126.69 L396.00 127.59 L398.75 128.47 L401.50 129.34 L404.25 130.21 L407.00 131.07 L409.75 131.91 L412.50 132.75 L415.25 133.58 L418.00 134.41 L420.75 135.22 L423.50 136.03 L426.25 136.83 L429.00 137.62 L431.75 138.40 L434.50 139.18 L437.25 139.95 L440.00 140.71 L442.75 141.46 L445.50 142.21 L448.25 142.95 L451.00 143.68 L453.75 144.41 L456.50 145.13 L459.25 145.84 L462.00 146.55 L464.75 147.25 L467.50 147.94 L470.25 148.63 L473.00 149.31 L475.75 149.98 L478.50 150.65 L481.25 151.32 L484.00 151.97 L486.75 152.63 L489.50 153.27 L492.25 153.91 L495.00 154.55 L497.75 155.17 L500.50 155.80 L503.25 156.42 L506.00 157.03 L508.75 157.64 L511.50 158.24 L514.25 158.84 L517.00 159.43 L519.75 160.02 L522.50 160.60 L525.25 161.18 L528.00 161.75 L530.75 162.32 L533.50 162.88 L536.25 163.44 L539.00 164.00 L541.75 164.55 L544.50 165.09 L547.25 165.63 L550.00 166.17 L552.75 166.70 L555.50 167.23 L558.25 167.76 L561.00 168.28 L563.75 168.79 L566.50 169.30 L569.25 169.81 L572.00 170.32 L574.75 170.82 L577.50 171.31 L580.25 171.81 L583.00 172.30 L585.75 172.78 L588.50 173.26 L591.25 173.74 L594.00 174.21 L596.75 174.68 L599.50 175.15 L602.25 175.62 L605.00 176.08 L607.75 176.53 L610.50 176.99 L613.25 177.44 L616.00 177.88 L618.75 178.33 L621.50 178.77 L624.25 179.20 L627.00 179.64 L629.75 180.07 L632.50 180.50 L635.25 180.92 L638.00 181.34 L640.75 181.76 L643.50 182.18 L646.25 182.59 L649.00 183.00 L651.75 183.41 L654.50 183.81 L657.25 184.22 L660.00 184.62 L 660.00 0.00 L 0 0.00 Z" fill="url(#q3-d2-min)" opacity=".92"/>
+  <path class="pf-p" d="M0.00 0.00 L2.75 0.00 L5.50 0.00 L8.25 0.00 L11.00 0.00 L13.75 0.00 L16.50 0.00 L19.25 0.00 L22.00 0.00 L24.75 0.00 L27.50 0.00 L30.25 0.00 L33.00 0.00 L35.75 0.00 L38.50 0.00 L41.25 0.00 L44.00 0.00 L46.75 0.00 L49.50 0.00 L52.25 0.00 L55.00 0.00 L57.75 0.00 L60.50 0.00 L63.25 0.00 L66.00 0.00 L68.75 0.00 L71.50 0.00 L74.25 0.00 L77.00 0.00 L79.75 0.00 L82.50 0.00 L85.25 0.00 L88.00 0.00 L90.75 0.00 L93.50 0.00 L96.25 0.00 L99.00 0.00 L101.75 0.00 L104.50 0.00 L107.25 0.00 L110.00 0.00 L112.75 0.00 L115.50 0.00 L118.25 0.00 L121.00 0.00 L123.75 0.00 L126.50 0.00 L129.25 0.00 L132.00 0.00 L134.75 0.00 L137.50 0.00 L140.25 0.00 L143.00 0.00 L145.75 0.00 L148.50 0.00 L151.25 0.00 L154.00 0.00 L156.75 0.00 L159.50 0.00 L162.25 0.00 L165.00 0.00 L167.75 0.00 L170.50 1.62 L173.25 4.25 L176.00 6.84 L178.75 9.38 L181.50 11.88 L184.25 14.34 L187.00 16.76 L189.75 19.13 L192.50 21.47 L195.25 23.77 L198.00 26.03 L200.75 28.25 L203.50 30.44 L206.25 32.59 L209.00 34.71 L211.75 36.79 L214.50 38.85 L217.25 40.87 L220.00 42.86 L222.75 44.82 L225.50 46.75 L228.25 48.65 L231.00 50.52 L233.75 52.36 L236.50 54.18 L239.25 55.97 L242.00 57.74 L244.75 59.48 L247.50 61.19 L250.25 62.88 L253.00 64.55 L255.75 66.20 L258.50 67.82 L261.25 69.42 L264.00 70.99 L266.75 72.55 L269.50 74.08 L272.25 75.60 L275.00 77.09 L277.75 78.56 L280.50 80.02 L283.25 81.45 L286.00 82.87 L288.75 84.27 L291.50 85.65 L294.25 87.01 L297.00 88.36 L299.75 89.69 L302.50 91.00 L305.25 92.30 L308.00 93.58 L310.75 94.84 L313.50 96.09 L316.25 97.33 L319.00 98.55 L321.75 99.75 L324.50 100.94 L327.25 102.12 L330.00 103.28 L332.75 104.43 L335.50 105.56 L338.25 106.69 L341.00 107.79 L343.75 108.89 L346.50 109.98 L349.25 111.05 L352.00 112.11 L354.75 113.16 L357.50 114.19 L360.25 115.22 L363.00 116.23 L365.75 117.24 L368.50 118.23 L371.25 119.21 L374.00 120.18 L376.75 121.14 L379.50 122.09 L382.25 123.03 L385.00 123.96 L387.75 124.88 L390.50 125.79 L393.25 126.69 L396.00 127.59 L398.75 128.47 L401.50 129.34 L404.25 130.21 L407.00 131.07 L409.75 131.91 L412.50 132.75 L415.25 133.58 L418.00 134.41 L420.75 135.22 L423.50 136.03 L426.25 136.83 L429.00 137.62 L431.75 138.40 L434.50 139.18 L437.25 139.95 L440.00 140.71 L442.75 141.46 L445.50 142.21 L448.25 142.95 L451.00 143.68 L453.75 144.41 L456.50 145.13 L459.25 145.84 L462.00 146.55 L464.75 147.25 L467.50 147.94 L470.25 148.63 L473.00 149.31 L475.75 149.98 L478.50 150.65 L481.25 151.32 L484.00 151.97 L486.75 152.63 L489.50 153.27 L492.25 153.91 L495.00 154.55 L497.75 155.17 L500.50 155.80 L503.25 156.42 L506.00 157.03 L508.75 157.64 L511.50 158.24 L514.25 158.84 L517.00 159.43 L519.75 160.02 L522.50 160.60 L525.25 161.18 L528.00 161.75 L530.75 162.32 L533.50 162.88 L536.25 163.44 L539.00 164.00 L541.75 164.55 L544.50 165.09 L547.25 165.63 L550.00 166.17 L552.75 166.70 L555.50 167.23 L558.25 167.76 L561.00 168.28 L563.75 168.79 L566.50 169.30 L569.25 169.81 L572.00 170.32 L574.75 170.82 L577.50 171.31 L580.25 171.81 L583.00 172.30 L585.75 172.78 L588.50 173.26 L591.25 173.74 L594.00 174.21 L596.75 174.68 L599.50 175.15 L602.25 175.62 L605.00 176.08 L607.75 176.53 L610.50 176.99 L613.25 177.44 L616.00 177.88 L618.75 178.33 L621.50 178.77 L624.25 179.20 L627.00 179.64 L629.75 180.07 L632.50 180.50 L635.25 180.92 L638.00 181.34 L640.75 181.76 L643.50 182.18 L646.25 182.59 L649.00 183.00 L651.75 183.41 L654.50 183.81 L657.25 184.22 L660.00 184.62 L 660.00 300 L 0 300 Z" fill="url(#q3-d2-leaf)"/>
+  <path class="pf-top" d="M 0 0.00 L 660.00 0.00" stroke="var(--verd)" stroke-width="3" fill="none"/>
+  <path class="pf-div" d="M0.00 0.00 L2.75 0.00 L5.50 0.00 L8.25 0.00 L11.00 0.00 L13.75 0.00 L16.50 0.00 L19.25 0.00 L22.00 0.00 L24.75 0.00 L27.50 0.00 L30.25 0.00 L33.00 0.00 L35.75 0.00 L38.50 0.00 L41.25 0.00 L44.00 0.00 L46.75 0.00 L49.50 0.00 L52.25 0.00 L55.00 0.00 L57.75 0.00 L60.50 0.00 L63.25 0.00 L66.00 0.00 L68.75 0.00 L71.50 0.00 L74.25 0.00 L77.00 0.00 L79.75 0.00 L82.50 0.00 L85.25 0.00 L88.00 0.00 L90.75 0.00 L93.50 0.00 L96.25 0.00 L99.00 0.00 L101.75 0.00 L104.50 0.00 L107.25 0.00 L110.00 0.00 L112.75 0.00 L115.50 0.00 L118.25 0.00 L121.00 0.00 L123.75 0.00 L126.50 0.00 L129.25 0.00 L132.00 0.00 L134.75 0.00 L137.50 0.00 L140.25 0.00 L143.00 0.00 L145.75 0.00 L148.50 0.00 L151.25 0.00 L154.00 0.00 L156.75 0.00 L159.50 0.00 L162.25 0.00 L165.00 0.00 L167.75 0.00 L170.50 1.62 L173.25 4.25 L176.00 6.84 L178.75 9.38 L181.50 11.88 L184.25 14.34 L187.00 16.76 L189.75 19.13 L192.50 21.47 L195.25 23.77 L198.00 26.03 L200.75 28.25 L203.50 30.44 L206.25 32.59 L209.00 34.71 L211.75 36.79 L214.50 38.85 L217.25 40.87 L220.00 42.86 L222.75 44.82 L225.50 46.75 L228.25 48.65 L231.00 50.52 L233.75 52.36 L236.50 54.18 L239.25 55.97 L242.00 57.74 L244.75 59.48 L247.50 61.19 L250.25 62.88 L253.00 64.55 L255.75 66.20 L258.50 67.82 L261.25 69.42 L264.00 70.99 L266.75 72.55 L269.50 74.08 L272.25 75.60 L275.00 77.09 L277.75 78.56 L280.50 80.02 L283.25 81.45 L286.00 82.87 L288.75 84.27 L291.50 85.65 L294.25 87.01 L297.00 88.36 L299.75 89.69 L302.50 91.00 L305.25 92.30 L308.00 93.58 L310.75 94.84 L313.50 96.09 L316.25 97.33 L319.00 98.55 L321.75 99.75 L324.50 100.94 L327.25 102.12 L330.00 103.28 L332.75 104.43 L335.50 105.56 L338.25 106.69 L341.00 107.79 L343.75 108.89 L346.50 109.98 L349.25 111.05 L352.00 112.11 L354.75 113.16 L357.50 114.19 L360.25 115.22 L363.00 116.23 L365.75 117.24 L368.50 118.23 L371.25 119.21 L374.00 120.18 L376.75 121.14 L379.50 122.09 L382.25 123.03 L385.00 123.96 L387.75 124.88 L390.50 125.79 L393.25 126.69 L396.00 127.59 L398.75 128.47 L401.50 129.34 L404.25 130.21 L407.00 131.07 L409.75 131.91 L412.50 132.75 L415.25 133.58 L418.00 134.41 L420.75 135.22 L423.50 136.03 L426.25 136.83 L429.00 137.62 L431.75 138.40 L434.50 139.18 L437.25 139.95 L440.00 140.71 L442.75 141.46 L445.50 142.21 L448.25 142.95 L451.00 143.68 L453.75 144.41 L456.50 145.13 L459.25 145.84 L462.00 146.55 L464.75 147.25 L467.50 147.94 L470.25 148.63 L473.00 149.31 L475.75 149.98 L478.50 150.65 L481.25 151.32 L484.00 151.97 L486.75 152.63 L489.50 153.27 L492.25 153.91 L495.00 154.55 L497.75 155.17 L500.50 155.80 L503.25 156.42 L506.00 157.03 L508.75 157.64 L511.50 158.24 L514.25 158.84 L517.00 159.43 L519.75 160.02 L522.50 160.60 L525.25 161.18 L528.00 161.75 L530.75 162.32 L533.50 162.88 L536.25 163.44 L539.00 164.00 L541.75 164.55 L544.50 165.09 L547.25 165.63 L550.00 166.17 L552.75 166.70 L555.50 167.23 L558.25 167.76 L561.00 168.28 L563.75 168.79 L566.50 169.30 L569.25 169.81 L572.00 170.32 L574.75 170.82 L577.50 171.31 L580.25 171.81 L583.00 172.30 L585.75 172.78 L588.50 173.26 L591.25 173.74 L594.00 174.21 L596.75 174.68 L599.50 175.15 L602.25 175.62 L605.00 176.08 L607.75 176.53 L610.50 176.99 L613.25 177.44 L616.00 177.88 L618.75 178.33 L621.50 178.77 L624.25 179.20 L627.00 179.64 L629.75 180.07 L632.50 180.50 L635.25 180.92 L638.00 181.34 L640.75 181.76 L643.50 182.18 L646.25 182.59 L649.00 183.00 L651.75 183.41 L654.50 183.81 L657.25 184.22 L660.00 184.62" stroke="var(--lapis-0)" stroke-width="1.5" fill="none" opacity=".55"/>
+  <line class="pf-s" x1="168.8" y1="0" x2="168.8" y2="300" stroke="var(--ink-2)" stroke-width="1" stroke-dasharray="3 5"/>
+  
+    <g class="pf-thr">
+      <line x1="286.8" y1="300" x2="286.8" y2="0.0"
+            stroke="var(--verm)" stroke-width="2" stroke-dasharray="7 8"/>
+      <text class="pf-thr-t" x="286.8" y="-18" text-anchor="middle">no liquidation line fits here</text>
+    </g>
+  
+    <text class="pf-ax" x="-14" y="6.0" text-anchor="end">1.00</text>
+    <text class="pf-ax" x="-14" y="156.0" text-anchor="end">0.50</text>
+    <text class="pf-ax" x="-14" y="306.0" text-anchor="end">0</text>
+    <text class="pf-ax" x="168.8" y="334" text-anchor="middle">strike S</text>
+    <text class="pf-ax" x="660" y="334" text-anchor="end">reference price x  &#8594;</text>
+</g></svg><div class="footing">
+          <div class="foot-row foot-sum">&#8220;No forced liquidation&#8221; is a <b>theorem</b>, not a risk parameter.</div>
+          <div class="foot-row">Closed-form invariant, verified as pure math &#8212; not a runtime assert.</div>
+          <div class="foot-row">There is no price x at which the vault is short of collateral.</div>
+          <div class="foot-row" style="color:var(--verm);border-bottom:0">Nothing to breach, so nothing to seize, so no liquidation agreement to sign.</div>
+        </div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">canton-pitch-deck.md Slide 5; asset-manager-pitch-deck.md Slide 4</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>The asset side arrived&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 5 / 14</span></footer>
+</section>
+<section class="slide" data-fn="application">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">6</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">Two legs, two holders, <span class="rub">each with an intrinsic reason</span></h1>
+      <div class="content"><div class="cases"><div class="case"><h3>Fund treasury or issuer takes P</h3><p><span class="p">Income on an asset they keep</span> &#8212; never sold, never called.</p></div>
+  <div class="case"><h3>Allocator or speculator takes N</h3><p><span class="n">Amplified exposure</span> &#8212; no liquidation price, no funding rate.</p></div></div><div class="entries"><div class="entry"><i></i><span>Volatile collateral plus two intrinsic holders equals endogenous two-sided demand. Selling P is the liquidity, with no repayment schedule.</span></div><div class="entry k"><i></i><span>The split needs volatility to price N: <b>treasuries have least of it, gold and equity-linked most</b>.</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">canton-pitch-deck.md Slide 6; asset-manager-pitch-deck.md Slide 5; rwa-redstone-2026.md Part 2 “Who lends against what”</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>Canton already holds&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 6 / 14</span></footer>
+</section>
+<section class="slide" data-fn="timing">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">7</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">The asset side arrived; <span class="min">the lending side still liquidates</span></h1>
+      <div class="content"><div class="entries"><div class="entry"><i></i><span>Tokenized treasuries <span class="num">$12.9B</span>, up roughly <span class="num">300%</span> year on year (rwa.xyz, July 2026).</span></div><div class="entry"><i></i><span><span class="num">$840M+</span> of tokenized RWA already deposited into DeFi lending protocols.</span></div><div class="entry"><i></i><span>Every one of those venues prices against a liquidation threshold.</span></div><div class="entry k"><i></i><span>Nobody in RedStone&#8217;s 2026 report offers a no-liquidation design.</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">asset-manager-pitch-deck.md Slide 14; rwa-redstone-2026.md Part 1 (a), Part 2</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>Not a better lending rate&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 7 / 14</span></footer>
+</section>
+<section class="slide" data-fn="context">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">8</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">Canton already holds the collateral, <span class="rub">the privacy, and the settlement</span></h1>
+      <div class="content"><div class="entries"><div class="entry"><i></i><span><span class="num">$344B</span> represented on Canton, <span class="num">$2T</span> per month in repo.</span></div><div class="entry"><i></i><span>Sub-transaction privacy &#8212; a position is visible to its counterparties, not the network.</span></div><div class="entry"><i></i><span>No gas, no MEV, no mempool: cost is the spread, not an infrastructure tax.</span></div><div class="entry"><i></i><span>Atomic settlement &#8212; split, roll and settle are single transactions.</span></div><div class="entry k"><i></i><span>Franklin Templeton, WisdomTree, Invesco and BlockBooster already issue here (May&#8211;July 2026).</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">canton-pitch-deck.md Slides 4, 7</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>The mechanism is built&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 8 / 14</span></footer>
+</section>
+<section class="slide" data-fn="comparison">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">9</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">Not a better lending rate &#8212; <span class="rub">a different risk category</span></h1>
+      <div class="content"><div class="balance">
+    <div class="col"><div class="bhead">Lending</div><div class="brow">The borrower carries price risk until a threshold breaches</div><div class="brow">Paid for supplying liquidity</div><div class="brow concede">Aave Horizon is the honest benchmark &#8212; $423.5M market, $106M borrowed, 269 addresses &#8212; and it still liquidates</div></div>
+    <div class="spine"></div>
+    <div class="col"><div class="bhead">Medici</div><div class="brow">The P holder carries it continuously and computably</div><div class="brow">P is paid for selling upside above the strike</div><div class="brow concede">No live market yet</div></div>
+  </div><div class="after">Two axes that matter here: <b>is there a liquidation pathway</b>, and <b>is the venue permissioned</b>.</div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">asset-manager-pitch-deck.md Slide 8; rwa-redstone-2026.md Part 2 Aave Horizon and Morpho sections</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>Every risk we removed&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 9 / 14</span></footer>
+</section>
+<section class="slide" data-fn="evidence">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">10</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">The mechanism is built and backtested; <span class="min">the mainnet is not</span></h1>
+      <div class="content"><div class="ledger2"><div class="l2row"><span class="tag real">Real</span><span>54 DAML templates across 9 modules, about 5,700 lines. 12 TypeScript agents behind a Go Ledger Service; 6 core agents live. Closed-form invariant proofs; deployed on Canton single-node and int clusters.</span></div><div class="l2row"><span class="tag real">Real</span><span>9-year backtest, Aug 2017 to Jun 2026 (Hypercall), ETH underlying, Deribit data.</span></div><div class="l2row"><span class="tag notreal">Not real</span><span>Mainnet, real collateral, live users, third-party audit, revenue.</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">canton-pitch-deck.md Slides 8, 9; asset-manager-pitch-deck.md Slide 12</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>Five to ten basis points&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 10 / 14</span></footer>
+</section>
+<section class="slide" data-fn="risk">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">11</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">Every risk we removed, and <span class="min">every risk we did not</span></h1>
+      <div class="content"><div class="ledger2"><div class="l2row"><span class="tag removed">Removed</span><span>Forced liquidation, structurally. Counterparty risk to Medici &#8212; the vault holds your deposit.</span></div><div class="l2row"><span class="tag present">Present</span><span>Principal risk above strike: P is short a call, P = S/x, no floor. Net drift &minus;1.25% per year over the backtest; P ends at $0.895 on $1.00.</span></div><div class="l2row"><span class="tag present">Present</span><span>Smart-contract risk, not yet audited &#8212; two independent DAML audits are Phase 1. N liquidity.</span></div><div class="l2row"><span class="tag open">Open</span><span>Regulatory classification; counsel review not yet done.</span></div><div class="l2row"><span class="tag unchanged">Unchanged</span><span>The collateral&#8217;s own custody chain sits upstream of the vault.</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">asset-manager-pitch-deck.md Slides 3, 7; canton-pitch-deck.md Slide 3</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>Bring one position&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 11 / 14</span></footer>
+</section>
+<section class="slide" data-fn="commercial">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">12</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim"><span class="rub">Five to ten basis points</span> on flow. No token.</h1>
+      <div class="content"><div class="entries"><div class="entry"><i></i><span>Commission on each split, roll and settlement, in the settlement currency.</span></div><div class="entry"><i></i><span>Fee schedule set by multi-sig governance, within circuit-breaker bounds.</span></div><div class="entry"><i></i><span>No Medici token, no inflationary incentives.</span></div><div class="entry k"><i></i><span>No bridge &#8212; each chain is a self-contained deployment.</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">canton-pitch-deck.md Slide 7; asset-manager-pitch-deck.md Slide 10</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>Roadmap, compliance path&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 12 / 14</span></footer>
+</section>
+<section class="slide" data-fn="close">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">13</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">Bring one position; <span class="rub">we will model the split with you</span></h1>
+      <div class="content"><div class="entries"><div class="entry"><i></i><span>Pick one tokenized position and a strike; we return the payoff at every price.</span></div><div class="entry"><i></i><span>What we need: the instrument, the maturity you want, your compliance constraints.</span></div><div class="entry"><i></i><span>What we are <b>not</b> asking for: capital, custody, or a commitment.</span></div><div class="entry"><i></i><span>Ian, technical lead &#183; Co-founder, RWA tokenization &#183; Co-founder, growth.</span></div><div class="entry k"><i></i><span>Institutional deployment moves to a purpose-built SPV.</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">canton-pitch-deck.md Slides 10, 11; asset-manager-pitch-deck.md Slide 11</div>
+    <div class="catch"><span style="opacity:.55">catchword&#8202;&#183;&#8202;</span>Roadmap, compliance path&#8202;&#8230;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 13 / 14</span></footer>
+</section>
+<section class="slide" data-fn="appendix">
+  <div class="page">
+    <div class="marg">
+      <div class="versal">14</div>
+      <div class="versal-of">of 14</div>
+    </div>
+    <div class="body">
+      <h1 class="claim">Roadmap, compliance path and identity control plane &#8212; <span class="rub">as of July 2026</span></h1>
+      <div class="content"><div class="entries"><div class="entry"><i></i><span>Audits and legal Q3 2026; mainnet Q4 2026; compliance layer H1 2027; first institutional pilot H2 2027.</span></div><div class="entry"><i></i><span>ERC-3643 (T-REX) at the EVM edge on Medici&#8217;s own Identity Registry &#8212; the standard BUIDL uses.</span></div><div class="entry k"><i></i><span>Declarative identity manifest, 60-second convergence, full recovery from a wiped environment in 4&#8211;6 minutes.</span></div></div></div>
+    </div>
+  </div>
+  <div class="appar">
+    <div class="src">canton-pitch-deck.md Slide 12; asset-manager-pitch-deck.md Slide 6; authorization-pitch-deck.md Slides 7, 8</div>
+    <div class="catch">&#8212; explicit&#8202;&#183;&#8202;here ends the account &#8212;</div>
+  </div>
+  <div class="footrule"></div>
+  <footer class="foot"><span>Medici — Proprietary &amp; Confidential</span><span class="mark">&#9670;</span><span class="folio">fol. 14 / 14</span></footer>
+</section>
+</div>
+<div id="hint">&#8592; &#8594; or click to turn the leaf &#183; 14 folios</div>
+<script>
+(function(){
+  var deck=document.getElementById('deck');
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var i=0, hint=document.getElementById('hint');
+  function fit(){
+    var k=Math.min(innerWidth/1280,innerHeight/720);
+    deck.style.transform='scale('+k+')';
+  }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(s,j){s.classList.toggle('on',j===i);});
+    location.hash='#'+(i+1);
+  }
+  function go(d){show(i+d); if(hint)hint.classList.add('gone');}
+  addEventListener('resize',fit); fit();
+  addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(-1);}
+    else if(e.key==='Home'){show(0);} else if(e.key==='End'){show(slides.length-1);}
+  });
+  addEventListener('click',function(e){go(e.clientX < innerWidth*0.22 ? -1 : 1);});
+  var start=parseInt((location.hash||'').slice(1),10);
+  show(isNaN(start)?0:start-1);
+  setTimeout(function(){if(hint)hint.classList.add('gone');},5200);
+  window.__deck={get slide(){return i+1;},total:slides.length,go:show};
+})();</script>
+</body></html>

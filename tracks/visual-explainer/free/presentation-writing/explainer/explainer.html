@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medici for RWA tokens &mdash; explainer (presentation-writing)</title>
+<meta name="description" content="132-second animated explainer, presentation-writing video lane, 8 scenes.">
+<meta name="deck-footer" content="Medici &mdash; Proprietary &amp; Confidential">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230B0E13'/%3E%3Crect x='5' y='6' width='22' height='11' fill='%23E0A32E'/%3E%3Crect x='5' y='17' width='22' height='9' fill='%235B8DEF'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ink:#0B0E13; --plate:#141922; --plate2:#1B2230; --rule:#2A3341;
+  --paper:#E8E6E1; --dim:#8D97A6;
+  --brass:#E0A32E; --cobalt:#5B8DEF; --ember:#E2563A;
+  --font-display:'Bricolage Grotesque','Trebuchet MS',Verdana,sans-serif;
+  --font-mono:'JetBrains Mono','SF Mono',ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--ink);color:var(--paper);
+  font-family:var(--font-display);-webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility}
+::selection{background:var(--brass);color:var(--ink)}
+
+body{overflow:hidden;background:#06090D}
+.viewport{position:fixed;inset:0;overflow:hidden;background:#06090D}
+.stage{width:1920px;height:1080px;position:absolute;left:50%;top:50%;overflow:hidden;
+  background:var(--ink);transform-origin:center center;transform:translate(-50%,-50%);
+  background-image:linear-gradient(rgba(42,51,65,.26) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(42,51,65,.26) 1px,transparent 1px);
+  background-size:60px 60px}
+.scene{position:absolute;inset:0;padding:96px 120px 132px;display:none;flex-direction:column;
+  justify-content:center}
+.scene.on{display:flex}
+.scene .eyebrow{font-family:var(--font-mono);font-size:28px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--dim);margin-bottom:34px}
+.scene .eyebrow i{font-style:normal;color:var(--brass)}
+.headline{font-size:76px;font-weight:600;line-height:1.06;letter-spacing:-.028em;max-width:1480px;
+  text-wrap:balance}
+.headline em{font-style:normal;color:var(--brass)}
+.headline u{text-decoration:none;color:var(--cobalt)}
+.headline .no{color:var(--ember)}
+.sub{font-size:36px;line-height:1.35;color:#CFD4DC;max-width:1180px;margin-top:34px}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.big{font-family:var(--font-mono);font-size:200px;font-weight:700;line-height:.92;
+  letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:64px;align-items:center}
+.row.wide{gap:96px}
+.grow{flex:1;min-width:0}
+.chip{font-family:var(--font-mono);font-size:28px;color:var(--dim);border:1px solid var(--rule);
+  padding:12px 20px;display:inline-block}
+.chip.e{color:var(--ember);border-color:rgba(226,86,58,.5)}
+.chip.b{color:var(--brass);border-color:rgba(224,163,46,.45)}
+.stack{display:flex;flex-direction:column;gap:22px}
+.readout{font-family:var(--font-mono);font-size:34px;letter-spacing:.04em;display:flex;gap:48px}
+.readout b{font-weight:500}
+.readout .p{color:var(--brass)} .readout .n{color:var(--cobalt)} .readout .s{color:var(--paper)}
+.readout .vp{color:var(--brass)} .readout .vn{color:var(--cobalt)}
+.readout .vs{color:var(--paper);font-weight:500}
+.foot{position:absolute;left:120px;right:120px;bottom:52px;border-top:1px solid var(--rule);
+  padding-top:20px;display:flex;justify-content:space-between;font-family:var(--font-mono);
+  font-size:22px;letter-spacing:.10em;text-transform:uppercase;color:#8D97A6}
+.prog{position:absolute;left:0;bottom:0;height:5px;background:var(--brass);width:0;z-index:5}
+.chrome{position:absolute;right:24px;bottom:20px;font-family:var(--font-mono);font-size:20px;
+  color:#5C6675;z-index:6;letter-spacing:.08em}
+body.nochrome .chrome{display:none}
+
+/* ---------- motion vocabulary ---------- */
+.scene.run .in{animation:appear .7s cubic-bezier(.2,.75,.25,1) both}
+.scene.run .in.d1{animation-delay:.35s} .scene.run .in.d2{animation-delay:.8s}
+.scene.run .in.d3{animation-delay:1.3s} .scene.run .in.d4{animation-delay:1.9s}
+.scene.run .in.d5{animation-delay:2.6s} .scene.run .in.d6{animation-delay:3.4s}
+@keyframes appear{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* accumulate: grows for the whole scene, because the growth is the claim */
+.scene.run .acc{transform-origin:bottom center;
+  animation:accgrow calc(var(--d) * .82) cubic-bezier(.35,.05,.4,1) both}
+@keyframes accgrow{from{transform:scaleY(.02)}to{transform:scaleY(1)}}
+
+/* strain: load rises and the arrangement stops coping */
+.scene.run .strain{animation:strain calc(var(--d) * .95) ease-in both}
+@keyframes strain{
+  0%{transform:none} 35%{transform:translateX(-2px) rotate(-.25deg)}
+  60%{transform:translateX(3px) rotate(.45deg)} 78%{transform:translateX(-5px) rotate(-.8deg)}
+  90%{transform:translateX(6px) rotate(1.1deg)} 100%{transform:translateX(-7px) rotate(-1.4deg)}}
+.scene.run .press{animation:press calc(var(--d) * .95) ease-in both}
+@keyframes press{from{transform:translateX(0)}to{transform:translateX(112px)}}
+
+/* rupture: one break, with stillness after it */
+.scene.run .rupt{animation:rupt calc(var(--d) * .55) cubic-bezier(.7,0,.9,.4) both;
+  animation-delay:calc(var(--d) * .18)}
+@keyframes rupt{0%{transform:none;opacity:1}
+  22%{transform:translateY(6px)}
+  100%{transform:translateY(430px) rotate(9deg);opacity:.06}}
+.scene.run .crack{animation:crack calc(var(--d) * .25) steps(2,end) both;
+  animation-delay:calc(var(--d) * .18)}
+@keyframes crack{from{opacity:0}to{opacity:1}}
+
+/* assemble: everything that arrives stays */
+.scene.run .draw{stroke-dasharray:2400;stroke-dashoffset:2400;
+  animation:draw calc(var(--d) * .30) ease-out both}
+.scene.run .draw.a1{animation-delay:calc(var(--d) * .16)}
+.scene.run .draw.a2{animation-delay:calc(var(--d) * .40)}
+.scene.run .draw.a3{animation-delay:calc(var(--d) * .62)}
+@keyframes draw{to{stroke-dashoffset:0}}
+.scene.run .fadein{opacity:0;animation:fin calc(var(--d) * .18) ease-out both}
+.scene.run .fadein.a1{animation-delay:calc(var(--d) * .22)}
+.scene.run .fadein.a2{animation-delay:calc(var(--d) * .44)}
+.scene.run .fadein.a3{animation-delay:calc(var(--d) * .66)}
+.scene.run .fadein.a4{animation-delay:calc(var(--d) * .80)}
+@keyframes fin{to{opacity:1}}
+.scene.run .splitP{animation:splitP calc(var(--d) * .34) cubic-bezier(.2,.8,.3,1) both;
+  animation-delay:calc(var(--d) * .26)}
+.scene.run .splitN{animation:splitN calc(var(--d) * .34) cubic-bezier(.2,.8,.3,1) both;
+  animation-delay:calc(var(--d) * .26)}
+@keyframes splitP{from{transform:translateY(-52px)}to{transform:none}}
+@keyframes splitN{from{transform:translateY(52px)}to{transform:none}}
+
+/* arrest: the gesture starts and stops, and the stillness is the argument */
+.scene.run .reach{animation:reach calc(var(--d) * .42) cubic-bezier(.25,.9,.3,1) both;
+  animation-delay:calc(var(--d) * .22)}
+@keyframes reach{0%{opacity:0;transform:translateX(300px)}
+  62%{opacity:1;transform:translateX(24px)}
+  100%{opacity:1;transform:translateX(0)}}
+.scene.run .refuse{animation:refuse calc(var(--d) * .22) ease-in both;
+  animation-delay:calc(var(--d) * .68)}
+@keyframes refuse{0%{opacity:1}70%{opacity:.15}100%{opacity:0}}
+
+/* arrest: the gesture is begun and stops short; it never completes */
+.scene.run .arrest{animation:arrest calc(var(--d) * .30) cubic-bezier(.05,.85,.2,1) both;
+  animation-delay:calc(var(--d) * .26)}
+@keyframes arrest{0%{opacity:0;transform:translateX(420px)}
+  74%{opacity:1;transform:translateX(78px)}
+  100%{opacity:.9;transform:translateX(62px)}}
+.scene.run .stopped{opacity:0;animation:fin calc(var(--d) * .10) ease-out both;
+  animation-delay:calc(var(--d) * .62)}
+
+/* divest: subtractive only */
+.scene.run .out1{animation:goaway calc(var(--d) * .14) ease-in both;
+  animation-delay:calc(var(--d) * .34)}
+.scene.run .out2{animation:goaway calc(var(--d) * .14) ease-in both;
+  animation-delay:calc(var(--d) * .48)}
+.scene.run .out3{animation:goaway calc(var(--d) * .14) ease-in both;
+  animation-delay:calc(var(--d) * .62)}
+.scene.run .out4{animation:goaway calc(var(--d) * .14) ease-in both;
+  animation-delay:calc(var(--d) * .76)}
+@keyframes goaway{from{opacity:1;filter:none}
+  to{opacity:.14;filter:grayscale(1);text-decoration:line-through}}
+
+/* cadence: one gesture, then stop */
+.scene.run .cad{animation:cad calc(var(--d) * .40) cubic-bezier(.2,.8,.25,1) both;
+  animation-delay:calc(var(--d) * .12)}
+@keyframes cad{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+
+/* staggered accumulate members */
+.scene.run .acc.b1{animation-delay:calc(var(--d) * .04)}
+.scene.run .acc.b2{animation-delay:calc(var(--d) * .12)}
+.scene.run .acc.b3{animation-delay:calc(var(--d) * .20)}
+.scene.run .acc.b4{animation-delay:calc(var(--d) * .28)}
+.scene.run .acc.b5{animation-delay:calc(var(--d) * .36)}
+.scene.run .acc.b6{animation-delay:calc(var(--d) * .44)}
+.sweepline,.sweepdot{transition:opacity .2s}
+
+body.paused .scene *{animation-play-state:paused!important}
+@media (prefers-reduced-motion:reduce){
+  .scene.run *{animation-duration:.01ms!important;animation-delay:0ms!important}
+}
+</style>
+</head>
+<body>
+<div class="viewport">
+  <div class="stage" id="stage">
+<section class="scene" data-dur="12" data-scene="1" aria-label="Scene 1"><div class="eyebrow in"><i>01</i> &nbsp;intro &middot; hold</div><h2 class="headline in">Real collateral, on a ledger, that <span class="no">nobody can sell in one transaction</span></h2><div class="row in d2" style="margin-top:52px"><svg viewBox="0 0 620 300" width="620" height="300" class="" role="img" aria-label="a tokenized fund share"><rect x="40" y="46" width="540" height="168" fill="#141922" stroke="#E8E6E1" stroke-width="2.5"/><line x1="40" y1="88" x2="580" y2="88" stroke="#E8E6E1" stroke-opacity=".22"/><line x1="40" y1="130" x2="580" y2="130" stroke="#E8E6E1" stroke-opacity=".22"/><line x1="40" y1="172" x2="580" y2="172" stroke="#E8E6E1" stroke-opacity=".22"/><text x="310" y="248" fill="#E8E6E1" font-family="'JetBrains Mono',monospace" font-size="28" text-anchor="middle">a tokenized fund share</text><text x="310" y="284" fill="#8D97A6" font-family="'JetBrains Mono',monospace" font-size="24" text-anchor="middle">a gold bar with a ticker</text></svg><div class="stack"><span class="chip">real collateral</span><span class="chip">on a ledger</span><span class="chip e">not sellable inside a single transaction</span></div></div><div class="foot"><span>Medici &mdash; Proprietary &amp; Confidential</span><span>t = 0s</span></div></section>
+<section class="scene" data-dur="18" data-scene="2" aria-label="Scene 2"><div class="eyebrow in"><i>02</i> &nbsp;claim &middot; strain</div><h2 class="headline in">Every venue prices that loan against <span class="no">a liquidation threshold</span> anyway</h2><div class="row" style="margin-top:34px"><svg viewBox="0 0 820 380" width="820" height="380" role="img" aria-label="The position is pushed against a redemption window that does not open: NAV pricing, monthly windows, no sale in a single transaction."><g class="strain"><g class="press"><rect x="70" y="110" width="330" height="190" fill="#141922" stroke="#E8E6E1" stroke-width="2.5"/><text x="235" y="215" fill="#E8E6E1" font-family="'JetBrains Mono',monospace" font-size="28" text-anchor="middle">the position</text></g></g><line x1="620" y1="64" x2="620" y2="348" stroke="#E2563A" stroke-width="6" stroke-opacity=".62"/><line x1="654" y1="64" x2="654" y2="348" stroke="#E2563A" stroke-width="6" stroke-opacity=".62"/><line x1="688" y1="64" x2="688" y2="348" stroke="#E2563A" stroke-width="6" stroke-opacity=".62"/><line x1="722" y1="64" x2="722" y2="348" stroke="#E2563A" stroke-width="6" stroke-opacity=".62"/><line x1="756" y1="64" x2="756" y2="348" stroke="#E2563A" stroke-width="6" stroke-opacity=".62"/><line x1="790" y1="64" x2="790" y2="348" stroke="#E2563A" stroke-width="6" stroke-opacity=".62"/><line x1="824" y1="64" x2="824" y2="348" stroke="#E2563A" stroke-width="6" stroke-opacity=".62"/><text x="720" y="388" fill="#E2563A" font-family="'JetBrains Mono',monospace" font-size="26" text-anchor="middle">redemption window</text></svg><div class="stack"><span class="chip e in d2">signed liquidation agreements</span><span class="chip e in d3">curator-run de-leverage frameworks</span><span class="chip e in d4">NAV instead of a market price</span><span class="chip in d5">&ldquo;fundamental design constraints&rdquo; &mdash; RedStone</span></div></div><div class="foot"><span>Medici &mdash; Proprietary &amp; Confidential</span><span>t = 12s</span></div></section>
+<section class="scene" data-dur="16" data-scene="3" aria-label="Scene 3"><div class="eyebrow in"><i>03</i> &nbsp;evidence &middot; accumulate &middot; peak</div><h2 class="headline in">When the pathway runs, <span class="no">it runs at zero</span></h2><div class="row" style="margin-top:30px"><svg viewBox="0 0 760 380" width="760" height="380" role="img" aria-label="Tokenized collateral deposits climbing from nothing to over six hundred and twenty million dollars in a year."><g class="acc b1" style="transform-box:fill-box;transform-origin:bottom"><rect x="70.0" y="309.4" width="71.0" height="4.6" fill="#E2563A" fill-opacity="0.31"/></g><g class="acc b2" style="transform-box:fill-box;transform-origin:bottom"><rect x="187.8" y="300.3" width="71.0" height="13.7" fill="#E2563A" fill-opacity="0.33"/></g><g class="acc b3" style="transform-box:fill-box;transform-origin:bottom"><rect x="305.6" y="277.5" width="71.0" height="36.5" fill="#E2563A" fill-opacity="0.39"/></g><g class="acc b4" style="transform-box:fill-box;transform-origin:bottom"><rect x="423.4" y="231.8" width="71.0" height="82.2" fill="#E2563A" fill-opacity="0.51"/></g><g class="acc b5" style="transform-box:fill-box;transform-origin:bottom"><rect x="541.2" y="158.7" width="71.0" height="155.3" fill="#E2563A" fill-opacity="0.70"/></g><g class="acc b6" style="transform-box:fill-box;transform-origin:bottom"><rect x="659.0" y="40.0" width="71.0" height="274.0" fill="#E2563A" fill-opacity="1.00"/></g><text x="694.5" y="356" fill="#8D97A6" font-family="'JetBrains Mono',monospace" font-size="24" text-anchor="middle">forced sales</text><line x1="70" y1="314" x2="730" y2="314" stroke="#2A3341" stroke-width="2"/></svg><div class="stack"><div class="big" style="font-size:150px;color:var(--ember)">$<span data-count="1" data-from="8" data-to="0" data-fmt="int" data-delay="0.30" data-span="0.45">8</span>M</div><span class="chip e">Black Thursday: MakerDAO collateral auctioned for zero dollars</span><span class="chip in d4">one forced sale sets off the next</span></div></div><div class="foot"><span>Medici &mdash; Proprietary &amp; Confidential</span><span>t = 30s</span></div></section>
+<section class="scene" data-dur="12" data-scene="4" aria-label="Scene 4"><div class="eyebrow in"><i>04</i> &nbsp;pivot &middot; hold</div><h2 class="headline in">Medici asks <em>a different question</em></h2><p class="sub in d2">Not how do we liquidate this safely &mdash; what if there were nothing to liquidate?</p><p class="sub in d4"><span style="color:var(--brass)">Split the collateral instead.</span></p><div class="foot"><span>Medici &mdash; Proprietary &amp; Confidential</span><span>t = 46s</span></div></section>
+<section class="scene" data-dur="20" data-scene="5" aria-label="Scene 5"><div class="eyebrow in"><i>05</i> &nbsp;mechanism &middot; assemble</div><h2 class="headline in">One position becomes <em>two claims</em> that always add back to it</h2><div class="row wide" style="margin-top:28px;align-items:center"><svg viewBox="0 0 880 400" width="880" height="400" role="img" aria-label="The collateral splits into P and N; both stay claims on collateral that never leaves the vault, and the stacked height is unchanged."><rect x="60" y="70" width="170" height="240" fill="#1B2230" stroke="#E8E6E1" stroke-width="2.5" class="fadein"/><text x="145" y="346" fill="#E8E6E1" font-family="'JetBrains Mono',monospace" font-size="26" text-anchor="middle" class="fadein">collateral</text><line x1="268" y1="190" x2="398" y2="190" stroke="#8D97A6" stroke-width="2" class="fadein a1"/><polygon points="420,190 396,180 396,200" fill="#8D97A6" class="fadein a1"/><g class="splitN"><rect x="460" y="70" width="170" height="86" fill="#5B8DEF" fill-opacity=".55" stroke="#5B8DEF" stroke-width="2.5"/></g><g class="splitP"><rect x="460" y="156" width="170" height="154" fill="#E0A32E" fill-opacity=".45" stroke="#E0A32E" stroke-width="2.5"/></g><text x="654" y="122" fill="#5B8DEF" font-family="'JetBrains Mono',monospace" font-size="28" class="fadein a2">N &mdash; amplified</text><text x="654" y="242" fill="#E0A32E" font-family="'JetBrains Mono',monospace" font-size="28" class="fadein a2">P &mdash; protected</text><line x1="60" y1="330" x2="630" y2="330" stroke="#E8E6E1" stroke-dasharray="5 7" class="fadein a3"/><text x="345" y="372" fill="#E8E6E1" font-family="'JetBrains Mono',monospace" font-size="28" text-anchor="middle" class="fadein a3">same height, never leaves the vault</text></svg><div class="stack"><span class="chip b in d3">P &mdash; capped, income-bearing</span><span class="chip in d4" style="color:var(--cobalt);border-color:rgba(91,141,239,.5)">N &mdash; everything above the strike</span><span class="chip in d5">P + N = the collateral, closed form, at every price</span><span class="chip in d6">the oracle isn&rsquo;t read until settlement</span></div></div><div class="foot"><span>Medici &mdash; Proprietary &amp; Confidential</span><span>t = 58s</span></div></section>
+<section class="scene" data-dur="24" data-scene="6" aria-label="Scene 6"><div class="eyebrow in"><i>06</i> &nbsp;mechanism &middot; rupture &middot; bold moment</div><h2 class="headline in">The liquidation line has <span class="no">nowhere to sit</span></h2><div class="row wide" style="margin-top:22px;align-items:center"><svg viewBox="0 0 880 430" width="880" height="430" role="img" aria-label="The two claims stacked against reference price: P flat at 1.00 to the strike then S/x, N the remainder, and a top edge that is flat at 1.00 at every price."><rect x="92" y="34" width="748" height="334" fill="#10151E" class="fadein"/><line x1="92" y1="284.5" x2="840" y2="284.5" stroke="#2A3341" stroke-dasharray="3 8"/><line x1="92" y1="201.0" x2="840" y2="201.0" stroke="#2A3341" stroke-dasharray="3 8"/><line x1="92" y1="117.5" x2="840" y2="117.5" stroke="#2A3341" stroke-dasharray="3 8"/><polygon points="92.0,34.0 92.0,34.0 95.1,34.0 98.2,34.0 101.3,34.0 104.5,34.0 107.6,34.0 110.7,34.0 113.8,34.0 116.9,34.0 120.0,34.0 123.2,34.0 126.3,34.0 129.4,34.0 132.5,34.0 135.6,34.0 138.8,34.0 141.9,34.0 145.0,34.0 148.1,34.0 151.2,34.0 154.3,34.0 157.4,34.0 160.6,34.0 163.7,34.0 166.8,34.0 169.9,34.0 173.0,34.0 176.2,34.0 179.3,34.0 182.4,34.0 185.5,34.0 188.6,34.0 191.7,34.0 194.9,34.0 198.0,34.0 201.1,34.0 204.2,34.0 207.3,34.0 210.4,34.0 213.6,34.0 216.7,34.0 219.8,34.0 222.9,34.0 226.0,34.0 229.1,34.0 232.2,34.0 235.4,34.0 238.5,34.0 241.6,34.0 244.7,34.0 247.8,34.0 250.9,34.0 254.1,34.0 257.2,34.0 260.3,34.0 263.4,34.0 266.5,34.0 269.6,34.0 272.8,34.0 275.9,34.0 279.0,34.0 282.1,34.0 285.2,34.0 288.4,34.0 291.5,34.0 294.6,34.0 297.7,34.0 300.8,34.0 303.9,34.0 307.0,34.0 310.2,34.0 313.3,34.0 316.4,34.0 319.5,34.0 322.6,34.0 325.8,34.0 328.9,34.0 332.0,34.0 335.1,34.0 338.2,34.0 341.3,34.0 344.5,38.1 347.6,42.1 350.7,46.1 353.8,49.9 356.9,53.6 360.0,57.3 363.1,60.9 366.3,64.4 369.4,67.8 372.5,71.1 375.6,74.4 378.7,77.6 381.9,80.7 385.0,83.7 388.1,86.7 391.2,89.7 394.3,92.5 397.4,95.3 400.6,98.1 403.7,100.8 406.8,103.4 409.9,106.0 413.0,108.6 416.1,111.1 419.2,113.5 422.4,115.9 425.5,118.3 428.6,120.6 431.7,122.9 434.8,125.1 437.9,127.3 441.1,129.4 444.2,131.5 447.3,133.6 450.4,135.7 453.5,137.7 456.7,139.6 459.8,141.6 462.9,143.5 466.0,145.3 469.1,147.2 472.2,149.0 475.3,150.8 478.5,152.5 481.6,154.2 484.7,155.9 487.8,157.6 490.9,159.2 494.1,160.9 497.2,162.5 500.3,164.0 503.4,165.6 506.5,167.1 509.6,168.6 512.8,170.1 515.9,171.5 519.0,173.0 522.1,174.4 525.2,175.8 528.3,177.1 531.5,178.5 534.6,179.8 537.7,181.1 540.8,182.4 543.9,183.7 547.0,185.0 550.2,186.2 553.3,187.5 556.4,188.7 559.5,189.9 562.6,191.0 565.7,192.2 568.8,193.4 572.0,194.5 575.1,195.6 578.2,196.7 581.3,197.8 584.4,198.9 587.5,199.9 590.7,201.0 593.8,202.0 596.9,203.1 600.0,204.1 603.1,205.1 606.2,206.1 609.4,207.0 612.5,208.0 615.6,209.0 618.7,209.9 621.8,210.8 625.0,211.7 628.1,212.7 631.2,213.5 634.3,214.4 637.4,215.3 640.5,216.2 643.6,217.0 646.8,217.9 649.9,218.7 653.0,219.6 656.1,220.4 659.2,221.2 662.4,222.0 665.5,222.8 668.6,223.6 671.7,224.3 674.8,225.1 677.9,225.9 681.0,226.6 684.2,227.4 687.3,228.1 690.4,228.8 693.5,229.6 696.6,230.3 699.8,231.0 702.9,231.7 706.0,232.4 709.1,233.1 712.2,233.7 715.3,234.4 718.5,235.1 721.6,235.7 724.7,236.4 727.8,237.0 730.9,237.7 734.0,238.3 737.1,238.9 740.3,239.5 743.4,240.2 746.5,240.8 749.6,241.4 752.7,242.0 755.9,242.6 759.0,243.1 762.1,243.7 765.2,244.3 768.3,244.9 771.4,245.4 774.5,246.0 777.7,246.5 780.8,247.1 783.9,247.6 787.0,248.2 790.1,248.7 793.2,249.2 796.4,249.8 799.5,250.3 802.6,250.8 805.7,251.3 808.8,251.8 811.9,252.3 815.1,252.8 818.2,253.3 821.3,253.8 824.4,254.3 827.5,254.8 830.6,255.3 833.8,255.7 836.9,256.2 840.0,256.7 840.0,34.0" fill="#5B8DEF" fill-opacity=".30" class="fadein a2"/><polygon points="92.0,368.0 92.0,34.0 95.1,34.0 98.2,34.0 101.3,34.0 104.5,34.0 107.6,34.0 110.7,34.0 113.8,34.0 116.9,34.0 120.0,34.0 123.2,34.0 126.3,34.0 129.4,34.0 132.5,34.0 135.6,34.0 138.8,34.0 141.9,34.0 145.0,34.0 148.1,34.0 151.2,34.0 154.3,34.0 157.4,34.0 160.6,34.0 163.7,34.0 166.8,34.0 169.9,34.0 173.0,34.0 176.2,34.0 179.3,34.0 182.4,34.0 185.5,34.0 188.6,34.0 191.7,34.0 194.9,34.0 198.0,34.0 201.1,34.0 204.2,34.0 207.3,34.0 210.4,34.0 213.6,34.0 216.7,34.0 219.8,34.0 222.9,34.0 226.0,34.0 229.1,34.0 232.2,34.0 235.4,34.0 238.5,34.0 241.6,34.0 244.7,34.0 247.8,34.0 250.9,34.0 254.1,34.0 257.2,34.0 260.3,34.0 263.4,34.0 266.5,34.0 269.6,34.0 272.8,34.0 275.9,34.0 279.0,34.0 282.1,34.0 285.2,34.0 288.4,34.0 291.5,34.0 294.6,34.0 297.7,34.0 300.8,34.0 303.9,34.0 307.0,34.0 310.2,34.0 313.3,34.0 316.4,34.0 319.5,34.0 322.6,34.0 325.8,34.0 328.9,34.0 332.0,34.0 335.1,34.0 338.2,34.0 341.3,34.0 344.5,38.1 347.6,42.1 350.7,46.1 353.8,49.9 356.9,53.6 360.0,57.3 363.1,60.9 366.3,64.4 369.4,67.8 372.5,71.1 375.6,74.4 378.7,77.6 381.9,80.7 385.0,83.7 388.1,86.7 391.2,89.7 394.3,92.5 397.4,95.3 400.6,98.1 403.7,100.8 406.8,103.4 409.9,106.0 413.0,108.6 416.1,111.1 419.2,113.5 422.4,115.9 425.5,118.3 428.6,120.6 431.7,122.9 434.8,125.1 437.9,127.3 441.1,129.4 444.2,131.5 447.3,133.6 450.4,135.7 453.5,137.7 456.7,139.6 459.8,141.6 462.9,143.5 466.0,145.3 469.1,147.2 472.2,149.0 475.3,150.8 478.5,152.5 481.6,154.2 484.7,155.9 487.8,157.6 490.9,159.2 494.1,160.9 497.2,162.5 500.3,164.0 503.4,165.6 506.5,167.1 509.6,168.6 512.8,170.1 515.9,171.5 519.0,173.0 522.1,174.4 525.2,175.8 528.3,177.1 531.5,178.5 534.6,179.8 537.7,181.1 540.8,182.4 543.9,183.7 547.0,185.0 550.2,186.2 553.3,187.5 556.4,188.7 559.5,189.9 562.6,191.0 565.7,192.2 568.8,193.4 572.0,194.5 575.1,195.6 578.2,196.7 581.3,197.8 584.4,198.9 587.5,199.9 590.7,201.0 593.8,202.0 596.9,203.1 600.0,204.1 603.1,205.1 606.2,206.1 609.4,207.0 612.5,208.0 615.6,209.0 618.7,209.9 621.8,210.8 625.0,211.7 628.1,212.7 631.2,213.5 634.3,214.4 637.4,215.3 640.5,216.2 643.6,217.0 646.8,217.9 649.9,218.7 653.0,219.6 656.1,220.4 659.2,221.2 662.4,222.0 665.5,222.8 668.6,223.6 671.7,224.3 674.8,225.1 677.9,225.9 681.0,226.6 684.2,227.4 687.3,228.1 690.4,228.8 693.5,229.6 696.6,230.3 699.8,231.0 702.9,231.7 706.0,232.4 709.1,233.1 712.2,233.7 715.3,234.4 718.5,235.1 721.6,235.7 724.7,236.4 727.8,237.0 730.9,237.7 734.0,238.3 737.1,238.9 740.3,239.5 743.4,240.2 746.5,240.8 749.6,241.4 752.7,242.0 755.9,242.6 759.0,243.1 762.1,243.7 765.2,244.3 768.3,244.9 771.4,245.4 774.5,246.0 777.7,246.5 780.8,247.1 783.9,247.6 787.0,248.2 790.1,248.7 793.2,249.2 796.4,249.8 799.5,250.3 802.6,250.8 805.7,251.3 808.8,251.8 811.9,252.3 815.1,252.8 818.2,253.3 821.3,253.8 824.4,254.3 827.5,254.8 830.6,255.3 833.8,255.7 836.9,256.2 840.0,256.7 840.0,368.0" fill="#E0A32E" fill-opacity=".30" class="fadein a1"/><line x1="341.3" y1="34" x2="341.3" y2="368" stroke="#8D97A6" stroke-width="2" stroke-dasharray="7 6" class="fadein a1"/><polyline points="92.0,34.0 95.1,34.0 98.2,34.0 101.3,34.0 104.5,34.0 107.6,34.0 110.7,34.0 113.8,34.0 116.9,34.0 120.0,34.0 123.2,34.0 126.3,34.0 129.4,34.0 132.5,34.0 135.6,34.0 138.8,34.0 141.9,34.0 145.0,34.0 148.1,34.0 151.2,34.0 154.3,34.0 157.4,34.0 160.6,34.0 163.7,34.0 166.8,34.0 169.9,34.0 173.0,34.0 176.2,34.0 179.3,34.0 182.4,34.0 185.5,34.0 188.6,34.0 191.7,34.0 194.9,34.0 198.0,34.0 201.1,34.0 204.2,34.0 207.3,34.0 210.4,34.0 213.6,34.0 216.7,34.0 219.8,34.0 222.9,34.0 226.0,34.0 229.1,34.0 232.2,34.0 235.4,34.0 238.5,34.0 241.6,34.0 244.7,34.0 247.8,34.0 250.9,34.0 254.1,34.0 257.2,34.0 260.3,34.0 263.4,34.0 266.5,34.0 269.6,34.0 272.8,34.0 275.9,34.0 279.0,34.0 282.1,34.0 285.2,34.0 288.4,34.0 291.5,34.0 294.6,34.0 297.7,34.0 300.8,34.0 303.9,34.0 307.0,34.0 310.2,34.0 313.3,34.0 316.4,34.0 319.5,34.0 322.6,34.0 325.8,34.0 328.9,34.0 332.0,34.0 335.1,34.0 338.2,34.0 341.3,34.0 344.5,38.1 347.6,42.1 350.7,46.1 353.8,49.9 356.9,53.6 360.0,57.3 363.1,60.9 366.3,64.4 369.4,67.8 372.5,71.1 375.6,74.4 378.7,77.6 381.9,80.7 385.0,83.7 388.1,86.7 391.2,89.7 394.3,92.5 397.4,95.3 400.6,98.1 403.7,100.8 406.8,103.4 409.9,106.0 413.0,108.6 416.1,111.1 419.2,113.5 422.4,115.9 425.5,118.3 428.6,120.6 431.7,122.9 434.8,125.1 437.9,127.3 441.1,129.4 444.2,131.5 447.3,133.6 450.4,135.7 453.5,137.7 456.7,139.6 459.8,141.6 462.9,143.5 466.0,145.3 469.1,147.2 472.2,149.0 475.3,150.8 478.5,152.5 481.6,154.2 484.7,155.9 487.8,157.6 490.9,159.2 494.1,160.9 497.2,162.5 500.3,164.0 503.4,165.6 506.5,167.1 509.6,168.6 512.8,170.1 515.9,171.5 519.0,173.0 522.1,174.4 525.2,175.8 528.3,177.1 531.5,178.5 534.6,179.8 537.7,181.1 540.8,182.4 543.9,183.7 547.0,185.0 550.2,186.2 553.3,187.5 556.4,188.7 559.5,189.9 562.6,191.0 565.7,192.2 568.8,193.4 572.0,194.5 575.1,195.6 578.2,196.7 581.3,197.8 584.4,198.9 587.5,199.9 590.7,201.0 593.8,202.0 596.9,203.1 600.0,204.1 603.1,205.1 606.2,206.1 609.4,207.0 612.5,208.0 615.6,209.0 618.7,209.9 621.8,210.8 625.0,211.7 628.1,212.7 631.2,213.5 634.3,214.4 637.4,215.3 640.5,216.2 643.6,217.0 646.8,217.9 649.9,218.7 653.0,219.6 656.1,220.4 659.2,221.2 662.4,222.0 665.5,222.8 668.6,223.6 671.7,224.3 674.8,225.1 677.9,225.9 681.0,226.6 684.2,227.4 687.3,228.1 690.4,228.8 693.5,229.6 696.6,230.3 699.8,231.0 702.9,231.7 706.0,232.4 709.1,233.1 712.2,233.7 715.3,234.4 718.5,235.1 721.6,235.7 724.7,236.4 727.8,237.0 730.9,237.7 734.0,238.3 737.1,238.9 740.3,239.5 743.4,240.2 746.5,240.8 749.6,241.4 752.7,242.0 755.9,242.6 759.0,243.1 762.1,243.7 765.2,244.3 768.3,244.9 771.4,245.4 774.5,246.0 777.7,246.5 780.8,247.1 783.9,247.6 787.0,248.2 790.1,248.7 793.2,249.2 796.4,249.8 799.5,250.3 802.6,250.8 805.7,251.3 808.8,251.8 811.9,252.3 815.1,252.8 818.2,253.3 821.3,253.8 824.4,254.3 827.5,254.8 830.6,255.3 833.8,255.7 836.9,256.2 840.0,256.7" fill="none" stroke="#E0A32E" stroke-width="3.5" class="draw a2"/><line x1="92" y1="34.0" x2="840" y2="34.0" stroke="#E8E6E1" stroke-width="3" class="draw a3"/><text x="106" y="18.0" fill="#E8E6E1" font-family="'JetBrains Mono',monospace" font-size="26" class="fadein a4">P + N &equiv; collateral</text><text x="341.3" y="402" fill="#8D97A6" font-family="'JetBrains Mono',monospace" font-size="26" text-anchor="middle">S</text><text x="78" y="43.0" fill="#8D97A6" font-family="'JetBrains Mono',monospace" font-size="24" text-anchor="end">1.00</text><text x="78" y="377.0" fill="#8D97A6" font-family="'JetBrains Mono',monospace" font-size="24" text-anchor="end">0.00</text><text x="92" y="416" fill="#8D97A6" font-family="'JetBrains Mono',monospace" font-size="24">reference price x &rarr;</text><text x="171.8" y="227.7" fill="#E0A32E" font-family="'JetBrains Mono',monospace" font-size="30">P</text><text x="677.9" y="100.8" fill="#5B8DEF" font-family="'JetBrains Mono',monospace" font-size="30">N</text><g data-sweep="1" data-x0="92.0" data-x1="840.0" data-y0="34.0" data-y1="368.0" data-readout="ro6" data-delay="0.30" data-span="0.55"><line class="sweepline" x1="92.0" y1="34" x2="92.0" y2="368" stroke="#E8E6E1" stroke-width="2" opacity="0"/><circle class="sweepdot" cx="92.0" cy="34.0" r="7" fill="#E8E6E1" opacity="0"/></g><g class="reach"><g class="refuse"><line x1="615.6" y1="34" x2="615.6" y2="368" stroke="#E2563A" stroke-width="3" stroke-dasharray="9 7"/><text x="615.6" y="24" fill="#E2563A" font-family="'JetBrains Mono',monospace" font-size="24" text-anchor="middle">liquidation threshold</text></g></g></svg><div class="stack"><span class="chip b in d3">at or below the strike: P is the whole collateral, N is nothing</span><span class="chip in d4" style="color:var(--cobalt);border-color:rgba(91,141,239,.5)">above it: P is the strike over the price, N is the rest</span><div class="readout" id="ro6" style="opacity:0;transition:opacity .3s"><span><b class="p">P</b> <span class="vp mono">1.00</span></span><span><b class="n">N</b> <span class="vn mono">0.00</span></span><span><b class="s">&Sigma;</b> <span class="vs mono">1.00</span></span><span style="color:#8D97A6">x <span class="vx mono">0.00&times;S</span></span></div><span class="chip e in d6">no price under-collateralizes the vault</span></div></div><div class="foot"><span>Medici &mdash; Proprietary &amp; Confidential</span><span>t = 78s</span></div></section>
+<section class="scene" data-dur="17" data-scene="7" aria-label="Scene 7"><div class="eyebrow in"><i>07</i> &nbsp;objection &middot; divest</div><h2 class="headline in">P is short a call, and <em>the decline is the income</em></h2><div class="row wide" style="margin-top:30px;align-items:center"><svg viewBox="0 0 760 380" width="760" height="380" role="img" aria-label="Above the strike P declines continuously as S over x: no floor, no cliff."><rect x="80" y="40" width="650" height="280" fill="#10151E"/><polyline points="80.0,40.0 83.6,40.0 87.2,40.0 90.8,40.0 94.4,40.0 98.1,40.0 101.7,40.0 105.3,40.0 108.9,40.0 112.5,40.0 116.1,40.0 119.7,40.0 123.3,40.0 126.9,40.0 130.6,40.0 134.2,40.0 137.8,40.0 141.4,40.0 145.0,40.0 148.6,40.0 152.2,40.0 155.8,40.0 159.4,40.0 163.1,40.0 166.7,40.0 170.3,40.0 173.9,40.0 177.5,40.0 181.1,40.0 184.7,40.0 188.3,40.0 191.9,40.0 195.6,40.0 199.2,40.0 202.8,40.0 206.4,40.0 210.0,40.0 213.6,40.0 217.2,40.0 220.8,40.0 224.4,40.0 228.1,40.0 231.7,40.0 235.3,40.0 238.9,40.0 242.5,40.0 246.1,40.0 249.7,40.0 253.3,40.0 256.9,40.0 260.6,40.0 264.2,40.0 267.8,40.0 271.4,40.0 275.0,40.0 278.6,40.0 282.2,40.0 285.8,40.0 289.4,40.0 293.1,40.0 296.7,40.0 300.3,44.6 303.9,49.0 307.5,53.3 311.1,57.5 314.7,61.5 318.3,65.5 321.9,69.3 325.6,72.9 329.2,76.5 332.8,80.0 336.4,83.4 340.0,86.7 343.6,89.9 347.2,93.0 350.8,96.0 354.4,98.9 358.1,101.8 361.7,104.6 365.3,107.3 368.9,110.0 372.5,112.6 376.1,115.1 379.7,117.6 383.3,120.0 386.9,122.4 390.6,124.7 394.2,126.9 397.8,129.1 401.4,131.2 405.0,133.3 408.6,135.4 412.2,137.4 415.8,139.4 419.4,141.3 423.1,143.2 426.7,145.0 430.3,146.8 433.9,148.6 437.5,150.3 441.1,152.0 444.7,153.7 448.3,155.3 451.9,156.9 455.6,158.5 459.2,160.0 462.8,161.5 466.4,163.0 470.0,164.4 473.6,165.9 477.2,167.3 480.8,168.6 484.4,170.0 488.1,171.3 491.7,172.6 495.3,173.9 498.9,175.2 502.5,176.4 506.1,177.6 509.7,178.8 513.3,180.0 516.9,181.2 520.6,182.3 524.2,183.4 527.8,184.5 531.4,185.6 535.0,186.7 538.6,187.7 542.2,188.8 545.8,189.8 549.4,190.8 553.1,191.8 556.7,192.7 560.3,193.7 563.9,194.6 567.5,195.6 571.1,196.5 574.7,197.4 578.3,198.3 581.9,199.1 585.6,200.0 589.2,200.9 592.8,201.7 596.4,202.5 600.0,203.3 603.6,204.1 607.2,204.9 610.8,205.7 614.4,206.5 618.1,207.2 621.7,208.0 625.3,208.7 628.9,209.5 632.5,210.2 636.1,210.9 639.7,211.6 643.3,212.3 646.9,213.0 650.6,213.7 654.2,214.3 657.8,215.0 661.4,215.7 665.0,216.3 668.6,216.9 672.2,217.6 675.8,218.2 679.4,218.8 683.1,219.4 686.7,220.0 690.3,220.6 693.9,221.2 697.5,221.8 701.1,222.3 704.7,222.9 708.3,223.4 711.9,224.0 715.6,224.5 719.2,225.1 722.8,225.6 726.4,226.1 730.0,226.7" fill="none" stroke="#E0A32E" stroke-width="3.5" class="draw a1"/><line x1="296.7" y1="40" x2="296.7" y2="320" stroke="#8D97A6" stroke-width="2" stroke-dasharray="6 6"/><text x="296.7" y="354" fill="#8D97A6" font-family="'JetBrains Mono',monospace" font-size="24" text-anchor="middle">S</text><text x="68" y="48.0" fill="#8D97A6" font-family="'JetBrains Mono',monospace" font-size="22" text-anchor="end">1.00</text><text x="459.2" y="112.8" fill="#E0A32E" font-family="'JetBrains Mono',monospace" font-size="30" class="fadein a2">P = S/x</text></svg><div class="stack" style="font-family:var(--font-mono);font-size:32px;color:#CFD4DC;gap:18px"><span class="out1">no cliff</span><span class="out2">no margin call</span><span class="out3">no forced sale</span><span class="in d4" style="color:var(--brass)">what is left: &minus;1.25%/yr net drift, nine years of backtest</span></div></div><div class="foot"><span>Medici &mdash; Proprietary &amp; Confidential</span><span>t = 102s</span></div></section>
+<section class="scene" data-dur="13" data-scene="8" aria-label="Scene 8"><div class="eyebrow in"><i>08</i> &nbsp;end &middot; cadence</div><div class="row wide" style="align-items:center"><div class="grow"><h2 class="headline in">Bring us the thing you <em>can&rsquo;t sell in a hurry</em></h2><p class="sub in d3">There is no liquidation price. The math doesn&rsquo;t permit it.</p><p class="sub in d4" style="font-family:var(--font-mono);font-size:30px;color:#8D97A6">Medici &mdash; on Canton, where your collateral already lives.</p></div><div class="cad"><svg viewBox="0 0 620 300" width="620" height="300" class="" role="img" aria-label="the same asset"><rect x="40" y="46" width="540" height="168" fill="#141922" stroke="#E0A32E" stroke-width="2.5"/><line x1="40" y1="88" x2="580" y2="88" stroke="#E0A32E" stroke-opacity=".22"/><line x1="40" y1="130" x2="580" y2="130" stroke="#E0A32E" stroke-opacity=".22"/><line x1="40" y1="172" x2="580" y2="172" stroke="#E0A32E" stroke-opacity=".22"/><text x="310" y="248" fill="#E0A32E" font-family="'JetBrains Mono',monospace" font-size="28" text-anchor="middle">the same asset</text><text x="310" y="284" fill="#8D97A6" font-family="'JetBrains Mono',monospace" font-size="24" text-anchor="middle">split, and still held</text></svg></div></div><div class="foot"><span>Medici &mdash; Proprietary &amp; Confidential</span><span>t = 119s</span></div></section>
+    <div class="prog" id="prog"></div>
+    <div class="chrome" id="chrome"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var stage=document.getElementById('stage');
+  var scenes=[].slice.call(document.querySelectorAll('.scene'));
+  var durs=scenes.map(function(s){return parseFloat(s.dataset.dur)});
+  var starts=[],acc=0;
+  durs.forEach(function(d){starts.push(acc);acc+=d});
+  var total=acc, idx=0, t0=0, paused=false, within=0, done=false;
+  var prog=document.getElementById('prog'), chrome=document.getElementById('chrome');
+
+  function fit(){
+    var k=Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    stage.style.transform='translate(-50%,-50%) scale('+k+')';
+  }
+  window.addEventListener('resize',fit); fit();
+
+  function show(n){
+    idx=Math.max(0,Math.min(scenes.length-1,n));
+    scenes.forEach(function(s,k){s.classList.toggle('on',k===idx)});
+    var s=scenes[idx];
+    s.classList.remove('run'); void s.offsetWidth;
+    s.style.setProperty('--d',durs[idx]+'s');
+    s.classList.add('run');
+    t0=performance.now(); within=0; done=false;
+    update(0);
+  }
+  function fmt(v,f){
+    if(f==='m2')return v.toFixed(2);
+    if(f==='int')return Math.round(v).toLocaleString('en-US');
+    if(f==='usdm')return '$'+Math.round(v)+'M';
+    if(f==='usdb')return '$'+Math.round(v)+'B';
+    return String(Math.round(v));
+  }
+  function ease(q){return q<0?0:q>1?1:1-Math.pow(1-q,2.2)}
+
+  function update(p){
+    var s=scenes[idx];
+    s.querySelectorAll('[data-count]').forEach(function(el){
+      var a=parseFloat(el.dataset.from),b=parseFloat(el.dataset.to);
+      var d0=parseFloat(el.dataset.delay||'0.15'),sp=parseFloat(el.dataset.span||'0.6');
+      var q=ease((p-d0)/sp);
+      el.textContent=fmt(a+(b-a)*q, el.dataset.fmt||'int');
+    });
+    var sw=s.querySelector('[data-sweep]');
+    if(sw){
+      var d0=parseFloat(sw.dataset.delay||'0.30'),sp=parseFloat(sw.dataset.span||'0.55');
+      var q=(p-d0)/sp;
+      var vis=q>=0&&q<=1.08, lit=q>=0;
+      var line=sw.querySelector('.sweepline'), dot=sw.querySelector('.sweepdot');
+      var x0=parseFloat(sw.dataset.x0),x1=parseFloat(sw.dataset.x1),y0=parseFloat(sw.dataset.y0),
+          y1=parseFloat(sw.dataset.y1);
+      var u=Math.max(0,Math.min(1,q))*3;
+      var X=x0+(x1-x0)*(u/3);
+      var P=u<=1?1:1/u, N=1-P;
+      if(line){line.setAttribute('x1',X);line.setAttribute('x2',X);
+        line.style.opacity=vis?1:0;}
+      if(dot){dot.setAttribute('cx',X);dot.setAttribute('cy',y0+(y1-y0)*(1-P));
+        dot.style.opacity=vis?1:0;}
+      var ro=document.getElementById(sw.dataset.readout);
+      if(ro){
+        ro.style.opacity=lit?1:0;
+        ro.querySelector('.vp').textContent=P.toFixed(2);
+        ro.querySelector('.vn').textContent=N.toFixed(2);
+        ro.querySelector('.vs').textContent=(P+N).toFixed(2);
+        var vx=ro.querySelector('.vx'); if(vx)vx.textContent=(u).toFixed(2)+'×S';
+      }
+    }
+  }
+
+  function tick(now){
+    if(!paused&&!done){
+      within=(now-t0)/1000;
+      if(within>=durs[idx]){
+        if(idx<scenes.length-1){show(idx+1);}
+        else{within=durs[idx];done=true;}
+      }
+    }
+    var t=starts[idx]+Math.min(within,durs[idx]);
+    prog.style.width=(t/total*100)+'%';
+    if(chrome)chrome.textContent='scene '+(idx+1)+'/'+scenes.length+
+      '  ·  '+t.toFixed(1)+'s / '+total.toFixed(0)+'s'+(paused?'  ·  paused':'');
+    P.scene=idx+1; P.t=t;
+    if(!paused&&!done)update(within/durs[idx]);
+    requestAnimationFrame(tick);
+  }
+
+  var P={scene:1,t:0,total:total,seek:function(n){show((n|0)-1);paused=false;
+    document.body.classList.remove('paused');}};
+  window.__player=P;
+
+  document.addEventListener('keydown',function(e){
+    if(e.key===' '){paused=!paused;document.body.classList.toggle('paused',paused);
+      if(!paused){t0=performance.now()-within*1000;}e.preventDefault();}
+    else if(e.key==='ArrowRight'){show(idx+1);e.preventDefault();}
+    else if(e.key==='ArrowLeft'){show(idx-1);e.preventDefault();}
+    else if(e.key==='r'||e.key==='R'){show(0);}
+    else if(e.key==='c'||e.key==='C'){document.body.classList.toggle('nochrome');}
+  });
+
+  var q=new URLSearchParams(location.search);
+  if(q.get('chrome')==='0')document.body.classList.add('nochrome');
+  var s0=parseInt(q.get('scene')||'1',10); if(isNaN(s0)||s0<1)s0=1;
+  show(s0-1);
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

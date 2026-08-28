@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conserved Entry — plate explorer</title>
+<style>
+@font-face{font-family:'IBM Plex Sans';src:url('staging/deck/fonts/ipx-sans.woff2') format('woff2');font-weight:100 700;font-style:normal}
+@font-face{font-family:'IBM Plex Mono';src:url('staging/deck/fonts/ipx-mono-400.woff2') format('woff2');font-weight:400;font-style:normal}
+@font-face{font-family:'IBM Plex Mono';src:url('staging/deck/fonts/ipx-mono-500.woff2') format('woff2');font-weight:500;font-style:normal}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#000;--surface:#0A0A0A;--line:#1A1A1A;--white:#FFF;--text:#AAA;--muted:#666;
+  --blue:#3366FF;--blue-light:#5C85FF;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
+html,body{height:100%;background:var(--black)}
+body{font-family:var(--sans);color:var(--text);display:flex;gap:22px;padding:22px}
+.side{width:318px;flex-shrink:0;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:22px;overflow-y:auto}
+.side h1{font-size:19px;font-weight:600;color:var(--white);letter-spacing:-.01em}
+.side .sub{font-size:13px;color:var(--muted);margin-top:7px;line-height:1.45}
+.sec{margin-top:26px}
+.sec h3{font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:13px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+button{background:transparent;border:1px solid var(--line);color:var(--white);
+  border-radius:8px;padding:9px 12px;font-family:var(--sans);font-size:13px;font-weight:500;
+  cursor:pointer;transition:border-color .15s ease-out;width:100%}
+button:hover{border-color:#333}
+button.pri{background:var(--blue);border-color:var(--blue);color:#000;font-weight:600}
+button.pri:hover{background:var(--blue-light);border-color:var(--blue-light)}
+input[type=number],input[type=text],select{background:var(--black);border:1px solid var(--line);
+  border-radius:8px;padding:8px 11px;color:var(--white);font-family:var(--mono);font-size:13px;width:100%}
+input:focus,select:focus{outline:none;border-color:rgba(51,102,255,.5)}
+.ctl{margin-bottom:15px}
+.ctl label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--text);margin-bottom:7px}
+.ctl label span{font-family:var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;height:3px;background:var(--line);border-radius:2px;
+  outline:none;-webkit-appearance:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;
+  background:var(--blue);border-radius:50%;cursor:pointer}
+.stagewrap{flex:1;display:flex;align-items:center;justify-content:center;min-width:0}
+#plate{width:100%;max-width:1280px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000}
+#plate canvas{display:block;width:100%!important;height:auto!important}
+.census{margin-top:14px;font-family:var(--mono);font-size:12.5px;color:var(--blue-light);
+  letter-spacing:.05em;font-variant-numeric:tabular-nums}
+.foot{margin-top:24px;font-size:11px;color:var(--muted);letter-spacing:.08em;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="side">
+  <h1>Conserved Entry</h1>
+  <div class="sub">The generative system behind every backplate in this track. 1000 particles,
+  fixed before the first frame. The census is counted from the population, never from the formula.</div>
+
+  <div class="sec">
+    <h3>Seed</h3>
+    <input type="number" id="seed" value="12345" onchange="jump()">
+    <div class="row" style="margin-top:8px">
+      <button onclick="step(-1)">← Prev</button>
+      <button onclick="step(1)">Next →</button>
+    </div>
+    <button onclick="rnd()">↻ Random seed</button>
+  </div>
+
+  <div class="sec">
+    <h3>Register</h3>
+    <select id="preset" onchange="preset()">
+      <option value="whole">whole — one undivided population</option>
+      <option value="split" selected>split — two basins, P and N</option>
+      <option value="ledger">ledger — the payoff across price</option>
+      <option value="strain">strain — load, not coping</option>
+      <option value="rupture">rupture — the one broken law</option>
+      <option value="seek">seek — a search that finds nothing</option>
+      <option value="scope">scope — stakeholder-scoped lenses</option>
+      <option value="drift">drift — luminance leaves, count stays</option>
+    </select>
+  </div>
+
+  <div class="sec">
+    <h3>Parameters</h3>
+    <div class="ctl"><label>Price / strike (x ÷ S)<span id="v-drive">1.56</span></label>
+      <input type="range" id="drive" min="0.5" max="3" step="0.01" value="1.56" oninput="set('drive',this.value)"></div>
+    <div class="ctl"><label>Split<span id="v-split">1.00</span></label>
+      <input type="range" id="split" min="0" max="1" step="0.01" value="1" oninput="set('split',this.value)"></div>
+    <div class="ctl"><label>Turbulence<span id="v-turb">0.28</span></label>
+      <input type="range" id="turb" min="0" max="1" step="0.01" value="0.28" oninput="set('turb',this.value)"></div>
+    <div class="ctl"><label>Energy<span id="v-energy">0.48</span></label>
+      <input type="range" id="energy" min="0.05" max="1" step="0.01" value="0.48" oninput="set('energy',this.value)"></div>
+    <div class="ctl"><label>Divestment (drift)<span id="v-dim">0.00</span></label>
+      <input type="range" id="dim" min="0" max="2" step="0.01" value="0" oninput="set('dim',this.value)"></div>
+    <div class="ctl"><label>Scoping<span id="v-scope">0.00</span></label>
+      <input type="range" id="scope" min="0" max="1" step="0.01" value="0" oninput="set('scope',this.value)"></div>
+    <div class="ctl"><label>Rupture (annihilation)<span id="v-rupture">0.00</span></label>
+      <input type="range" id="rupture" min="0" max="1" step="0.01" value="0" oninput="set('rupture',this.value)"></div>
+    <div class="ctl"><label>Seek<span id="v-seek">0.00</span></label>
+      <input type="range" id="seek" min="0" max="1" step="0.01" value="0" oninput="set('seek',this.value)"></div>
+    <div class="ctl"><label>Trail alpha<span id="v-alpha">50</span></label>
+      <input type="range" id="alpha" min="8" max="90" step="1" value="50" oninput="set('alpha',this.value)"></div>
+    <div class="ctl"><label>Passes<span id="v-steps">205</span></label>
+      <input type="range" id="steps" min="40" max="400" step="5" value="205" oninput="set('steps',this.value)"></div>
+    <div class="ctl"><label>Veil<span id="v-veil">0.20</span></label>
+      <input type="range" id="veil" min="0" max="0.7" step="0.01" value="0.2" oninput="set('veil',this.value)"></div>
+  </div>
+
+  <div class="sec">
+    <h3>Actions</h3>
+    <button class="pri" onclick="render()">Regenerate</button>
+    <div class="row" style="margin-top:8px">
+      <button onclick="reset()">Reset</button>
+      <button onclick="dl()">Download PNG</button>
+    </div>
+    <div class="census" id="census">census · P — · N — · Σ —</div>
+  </div>
+
+  <div class="foot">Medici — Proprietary &amp; Confidential<br>
+  Same seed, same plate — every time.</div>
+</div>
+
+<div class="stagewrap"><div id="plate"></div></div>
+
+<script src="../vendor/p5.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONSERVED ENTRY — the generative engine
+   Philosophy: brand/PHILOSOPHY.md. p5.js instance mode, seeded, deterministic.
+
+   ONE LAW: the population is fixed at POP before the first frame and is never
+   grown. Particles are RETURNED at the boundary, never respawned. A fade is a
+   fade of luminance, never of population. Exactly one register (RUPTURE) is
+   permitted to break the law, and when it does the census falls and says so.
+
+   TWO GEOMETRIES, one conservation solver:
+     basin  — a two-well potential over layered noise. The population settles
+              between the wells in the closed-form ratio min(1, S/x). One cloud
+              becomes two of unequal density; nothing is created between them.
+     ledger — the frame's vertical extent is one unit of collateral and every
+              particle holds a stable rank u in [0,1) as its row. A particle is
+              P if u < min(1, S/x) at ITS OWN x, else N. The boundary between
+              the two colours is therefore the payoff curve S/x, drawn by no
+              one; the top edge is flat at 1.000 because the count is fixed.
+              That flat top edge IS the invariant.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+
+  var POP = 1000;                       // the collateral, as a conserved count
+  var BLUE = [64, 112, 255];            // P — the protected leg (Electric Blue)
+  var GREY = [162, 162, 162];           // N — the amplified leg
+  var RED  = [255, 68, 68];             // functional only: the broken law
+
+  var DEFAULTS = {
+    seed: 1,
+    geom: 'basin',          // 'basin' | 'ledger'
+    drive: 1.0,             // x / S — the driving price over the strike
+    sweep: null,            // [lo,hi]: price varies across the x axis instead
+    split: 1.0,             // well separation, 0 = one basin (unsplit collateral)
+    turb: 0.35,             // noise amplitude
+    energy: 0.5,            // advection speed
+    swirl: 0.34,            // circulation inside a basin
+    dim: 0.0,               // divestment: luminance leaks from P (theta / drift)
+    scope: 0.0,             // stakeholder scoping: each basin clipped to its lens
+    threshold: 0.0,         // a liquidation rule, drawn where one exists
+    seek: 0.0,              // the scan that looks for a breach and finds none
+    rupture: 0.0,           // fraction annihilated (the one broken law)
+    veil: 0.30,             // black wash laid over the finished plate
+    mask: 'none',           // 'left' | 'right' | 'center' | 'bottom' | 'none'
+    alpha: 30,              // per-segment alpha
+    gain: 1,                // render gain (the live film accumulates fewer passes)
+    weight: 0.8,
+    box: [0.0, 0.0, 1.0, 1.0]
+  };
+
+  function cfg(o) {
+    var c = {}, k;
+    for (k in DEFAULTS) c[k] = DEFAULTS[k];
+    for (k in (o || {})) c[k] = o[k];
+    return c;
+  }
+
+  // closed form. This is the payoff, and it is the only place it is expressed.
+  function pFraction(drive) { return drive <= 1 ? 1 : 1 / drive; }
+
+  /* ── the system ─────────────────────────────────────────────────────── */
+  function System(p, w, h, o) {
+    this.p = p; this.w = w; this.h = h; this.o = o;
+    this.z = 0; this.alive = POP; this.t = 0;
+    p.randomSeed(o.seed); p.noiseSeed(o.seed);
+
+    this.parts = new Array(POP);
+    for (var i = 0; i < POP; i++) {
+      this.parts[i] = {
+        u: (i + 0.5) / POP,                    // stable rank: the ledger row
+        x: p.random(w), y: p.random(h),
+        px: 0, py: 0,
+        leg: 0, lum: 1, on: true,
+        jx: p.random(-1, 1), jy: p.random(-1, 1),
+        ph: p.random(6.283)
+      };
+    }
+    // deal the ranks out spatially at random so basins are never banded
+    for (var j = POP - 1; j > 0; j--) {
+      var k = Math.floor(p.random(j + 1));
+      var a = this.parts[j].u; this.parts[j].u = this.parts[k].u; this.parts[k].u = a;
+    }
+    if (o.geom === 'ledger') {
+      var bb = { x: o.box[0] * w, y: o.box[1] * h, w: o.box[2] * w, h: o.box[3] * h };
+      for (i = 0; i < POP; i++) {
+        this.parts[i].x = bb.x + (this.parts[i].x / w) * bb.w;
+        this.parts[i].y = bb.y + bb.h * (1 - this.parts[i].u) + this.parts[i].jy * 3.4;
+      }
+    }
+    for (i = 0; i < POP; i++) { this.parts[i].px = this.parts[i].x; this.parts[i].py = this.parts[i].y; }
+    // annihilation order for a rupture — seeded, so a rupture is reproducible
+    this.order = [];
+    for (i = 0; i < POP; i++) this.order.push(i);
+    for (j = POP - 1; j > 0; j--) { k = Math.floor(p.random(j + 1)); a = this.order[j]; this.order[j] = this.order[k]; this.order[k] = a; }
+  }
+
+  System.prototype.box = function () {
+    var b = this.o.box;
+    return { x: b[0] * this.w, y: b[1] * this.h, w: b[2] * this.w, h: b[3] * this.h };
+  };
+
+  // the drive a particle actually experiences: global, or read off the x axis
+  System.prototype.driveAt = function (x) {
+    var o = this.o;
+    if (!o.sweep) return o.drive;
+    var b = this.box();
+    var f = Math.min(1, Math.max(0, (x - b.x) / b.w));
+    return o.sweep[0] + (o.sweep[1] - o.sweep[0]) * f;
+  };
+
+  System.prototype.assign = function () {
+    var o = this.o, i, pt;
+    for (i = 0; i < POP; i++) {
+      pt = this.parts[i];
+      if (!pt.on) continue;
+      var pf = pFraction(o.sweep ? this.driveAt(pt.x) : o.drive);
+      pt.leg = pt.u < pf ? 0 : 1;
+    }
+  };
+
+  // the trial balance, struck from the population itself — never from the formula
+  System.prototype.census = function () {
+    var cp = 0, cn = 0;
+    for (var i = 0; i < POP; i++) {
+      if (!this.parts[i].on) continue;
+      if (this.parts[i].leg === 0) cp++; else cn++;
+    }
+    return { p: cp / POP, n: cn / POP, sum: (cp + cn) / POP, alive: cp + cn };
+  };
+
+  System.prototype.annihilate = function (frac) {
+    var target = Math.round(POP * (1 - Math.min(1, Math.max(0, frac))));
+    while (this.alive > target) { this.parts[this.order[POP - this.alive]].on = false; this.alive--; }
+  };
+
+  // the law restored for a new sequence — never mid-sequence, never as relief
+  System.prototype.revive = function () {
+    for (var i = 0; i < POP; i++) { this.parts[i].on = true; this.parts[i].lum = 1; }
+    this.alive = POP;
+  };
+
+  /* ── one integration step ───────────────────────────────────────────── */
+  System.prototype.step = function (dt) {
+    var p = this.p, o = this.o, b = this.box(), i, pt;
+    this.t += dt;
+    this.z += 0.0016 * dt * (0.4 + o.energy);
+    this.assign();
+
+    var spd = 2.1 * o.energy * dt;
+    var ns = 0.0017 + 0.0011 * o.turb;
+
+    for (i = 0; i < POP; i++) {
+      pt = this.parts[i];
+      if (!pt.on) continue;
+      pt.px = pt.x; pt.py = pt.y;
+
+      var ang = p.noise(pt.x * ns, pt.y * ns, this.z) * 12.566;
+      var vx = Math.cos(ang) * (0.35 + 0.85 * o.turb);
+      var vy = Math.sin(ang) * (0.35 + 0.85 * o.turb);
+
+      if (o.geom === 'ledger') {
+        // rows are held; the population drifts along the price axis
+        var ty = b.y + b.h * (1 - pt.u) + pt.jy * 3.4;
+        vy = vy * 0.17 + Math.max(-2.2, Math.min(2.2, (ty - pt.y) * 0.10));
+        vx = vx * 0.16 + 0.92 + 0.10 * pt.jx;
+      } else {
+        var wx = b.x + b.w * (0.5 + o.split * (pt.leg ? 0.185 : -0.185));
+        var wy = b.y + b.h * (0.5 + (pt.leg ? 0.02 : -0.02) * o.split);
+        var dx = wx - pt.x, dy = wy - pt.y;
+        var d = Math.sqrt(dx * dx + dy * dy) + 0.0001;
+        // a basin is a lens, not a well: attract from outside, hold off the centre
+        var R = b.h * (0.30 + 0.10 * (pt.leg ? 1 : 0));
+        var pull = (d - R * 0.55) / R;
+        pull = Math.max(-0.55, Math.min(1.5, pull)) * (0.55 + 0.85 * o.split);
+        vx += (dx / d) * pull; vy += (dy / d) * pull;
+        vx += (-dy / d) * o.swirl; vy += (dx / d) * o.swirl;
+      }
+
+      pt.x += vx * spd; pt.y += vy * spd;
+
+      // conservation at the boundary: RETURN the particle, never respawn it
+      if (pt.x < b.x) { pt.x += b.w; pt.px = pt.x; }
+      if (pt.x > b.x + b.w) { pt.x -= b.w; pt.px = pt.x; }
+      if (pt.y < b.y) { pt.y = b.y + (b.y - pt.y); pt.py = pt.y; }
+      if (pt.y > b.y + b.h) { pt.y = b.y + b.h - (pt.y - b.y - b.h); pt.py = pt.y; }
+
+      if (o.dim > 0 && pt.leg === 0) pt.lum = Math.max(0.18, pt.lum - 0.0016 * o.dim * dt);
+    }
+  };
+
+  /* ── one rendered pass ──────────────────────────────────────────────── */
+  System.prototype.paint = function () {
+    var p = this.p, o = this.o, b = this.box(), i, pt, c;
+    p.strokeWeight(o.weight);
+    for (i = 0; i < POP; i++) {
+      pt = this.parts[i];
+      if (!pt.on) continue;
+      var a = o.alpha * (o.gain || 1) * pt.lum;
+      if (o.scope > 0) {
+        // stakeholder scoping: a position is visible inside its own lens only
+        var cx = b.x + b.w * (0.5 + o.split * (pt.leg ? 0.185 : -0.185));
+        var cy = b.y + b.h * 0.5;
+        var dd = Math.sqrt((pt.x - cx) * (pt.x - cx) + (pt.y - cy) * (pt.y - cy));
+        var lens = b.h * 0.40;
+        if (dd > lens) a *= Math.max(0, 1 - o.scope) * Math.max(0, 1 - (dd - lens) / (b.h * 0.25));
+      }
+      c = pt.leg === 0 ? BLUE : GREY;
+      if (pt.leg === 0) a *= 1.15; else a *= 0.92;
+      p.stroke(c[0], c[1], c[2], a);
+      if (Math.abs(pt.x - pt.px) < b.w * 0.5) p.line(pt.px, pt.py, pt.x, pt.y);
+    }
+  };
+
+  /* ── the threshold that exists (problem side) ───────────────────────── */
+  System.prototype.paintThreshold = function (k) {
+    if (k <= 0) return;
+    var p = this.p, b = this.box();
+    var x = b.x + b.w * 0.62;
+    p.strokeWeight(1);
+    for (var i = 0; i < 26; i++) {
+      var y = b.y + b.h * (i / 26);
+      p.stroke(GREY[0], GREY[1], GREY[2], 60 * k);
+      p.line(x, y + b.h * 0.012, x, y + b.h * 0.026);
+    }
+  };
+
+  /* ── the seek: a scan for a breach that is not there ────────────────── */
+  System.prototype.paintSeek = function (prog) {
+    if (prog <= 0) return;
+    var p = this.p, b = this.box();
+    // decelerating: it never reaches the end of the axis
+    var e = 1 - Math.pow(1 - Math.min(1, prog), 2.6);
+    var x = b.x + b.w * (0.06 + 0.74 * e);
+    var fade = Math.max(0, 1 - Math.max(0, prog - 0.72) / 0.28);
+    p.noStroke();
+    for (var i = 0; i < 30; i++) {
+      var t = i / 30;
+      p.fill(BLUE[0], BLUE[1], BLUE[2], 26 * (1 - t) * fade);
+      p.rect(x - t * 26, b.y, 1.4, b.h);
+    }
+    p.stroke(BLUE[0], BLUE[1], BLUE[2], 130 * fade);
+    p.strokeWeight(1);
+    p.line(x, b.y, x, b.y + b.h);
+  };
+
+  /* ── masks: the field must fall to nothing where words live ─────────── */
+  function layMask(p, w, h, o) {
+    var g = p.drawingContext, grad;
+    if (o.veil > 0) { p.noStroke(); p.fill(0, 0, 0, 255 * o.veil); p.rect(0, 0, w, h); }
+    if (o.mask === 'left-tight') {
+      grad = g.createLinearGradient(0, 0, w * 0.40, 0);
+      grad.addColorStop(0, 'rgba(0,0,0,0.99)'); grad.addColorStop(0.55, 'rgba(0,0,0,0.86)');
+      grad.addColorStop(0.86, 'rgba(0,0,0,0.26)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    } else if (o.mask === 'left') {
+      grad = g.createLinearGradient(0, 0, w * 0.72, 0);
+      grad.addColorStop(0, 'rgba(0,0,0,0.99)'); grad.addColorStop(0.42, 'rgba(0,0,0,0.90)');
+      grad.addColorStop(0.78, 'rgba(0,0,0,0.34)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    } else if (o.mask === 'right') {
+      grad = g.createLinearGradient(w, 0, w * 0.28, 0);
+      grad.addColorStop(0, 'rgba(0,0,0,0.99)'); grad.addColorStop(0.42, 'rgba(0,0,0,0.90)');
+      grad.addColorStop(0.78, 'rgba(0,0,0,0.34)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    } else if (o.mask === 'center') {
+      grad = g.createRadialGradient(w * 0.5, h * 0.5, 0, w * 0.5, h * 0.5, w * 0.62);
+      grad.addColorStop(0, 'rgba(0,0,0,0.86)'); grad.addColorStop(0.46, 'rgba(0,0,0,0.60)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+    } else if (o.mask === 'top') {
+      grad = g.createLinearGradient(0, 0, 0, h * 0.72);
+      grad.addColorStop(0, 'rgba(0,0,0,0.99)'); grad.addColorStop(0.44, 'rgba(0,0,0,0.90)');
+      grad.addColorStop(0.80, 'rgba(0,0,0,0.32)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    } else if (o.mask === 'bottom') {
+      grad = g.createLinearGradient(0, h, 0, h * 0.18);
+      grad.addColorStop(0, 'rgba(0,0,0,0.97)'); grad.addColorStop(0.55, 'rgba(0,0,0,0.55)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+    }
+    if (grad) { g.fillStyle = grad; g.fillRect(0, 0, w, h); }
+    // edge vignette — the field always falls to true black at the frame
+    grad = g.createLinearGradient(0, 0, 0, h * 0.16);
+    grad.addColorStop(0, 'rgba(0,0,0,1)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grad; g.fillRect(0, 0, w, h * 0.16);
+    grad = g.createLinearGradient(0, h, 0, h * 0.86);
+    grad.addColorStop(0, 'rgba(0,0,0,1)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grad; g.fillRect(0, h * 0.86, w, h * 0.14);
+  }
+
+  /* ═══ PLATE — a deck backplate. Deterministic, drawn once, then still. ═══ */
+  function plate(parent, w, h, opts) {
+    var o = cfg(opts);
+    var api = { done: false, census: null, render: null };
+    new p5(function (p) {
+      var sys, steps = o.steps || 130, i;
+      p.setup = function () {
+        p.pixelDensity(1);
+        var c = p.createCanvas(w, h);
+        c.parent(parent);
+        p.noLoop();
+        p.background(0);
+        api.render = run;
+      };
+      function run() {
+        if (api.done) return api.census;
+        sys = new System(p, w, h, o);
+        p.background(0);
+        p.blendMode(p.ADD);
+        var sweepSteps = o.rupture > 0 ? Math.floor(steps * 0.62) : steps;
+        for (i = 0; i < sweepSteps; i++) { sys.step(1); sys.paint(); }
+        if (o.rupture > 0) {
+          // the one broken law: the population is removed, its trails are not
+          var frames = steps - sweepSteps;
+          for (i = 0; i < frames; i++) {
+            sys.annihilate(o.rupture * ((i + 1) / frames));
+            sys.o.energy = o.energy * (1 + 2.4 * (i / frames));
+            sys.step(1); sys.paint();
+          }
+          sys.o.energy = o.energy;
+        }
+        p.blendMode(p.BLEND);
+        sys.paintThreshold(o.threshold);
+        sys.paintSeek(o.seek);
+        if (o.rupture > 0) {
+          // functional colour, once: the count that stopped balancing
+          p.noStroke(); p.fill(RED[0], RED[1], RED[2], 30);
+          var b = sys.box(); p.rect(b.x, b.y + b.h * 0.52, b.w, 1.4);
+        }
+        layMask(p, w, h, o);
+        api.census = sys.census();
+        api.done = true;
+        return api.census;
+      }
+    });
+    return api;
+  }
+
+  /* ═══ FILM — a live field. One instance, driven by the player clock. ═══ */
+  function film(parent, w, h, hooks) {
+    var cur = cfg({}), tgt = cfg({}), sys = null, inst = null;
+    // a live frame accumulates ~1/3 the passes a static plate does; the gain
+    // buys that back so film and deck read at the same density
+    cur.gain = tgt.gain = (hooks && hooks.gain) || 4.3;
+    var morph = 1, morphRate = 0.02, sceneClock = 0;
+    var NUM = ['drive', 'split', 'turb', 'energy', 'swirl', 'dim', 'scope', 'threshold', 'seek', 'rupture', 'veil', 'alpha', 'weight'];
+
+    var api = {
+      set: function (params, opts) {
+        opts = opts || {};
+        var k;
+        for (k in params) tgt[k] = params[k];
+        if (opts.hard || !sys) {
+          for (k in tgt) cur[k] = tgt[k];
+          if (inst && sys) { sys = new System(inst, w, h, cur); inst.background(0); }
+          morph = 1;
+        } else {
+          morph = 0; morphRate = 1 / Math.max(1, (opts.morphFrames || 45));
+          cur.geom = tgt.geom; cur.sweep = tgt.sweep; cur.mask = tgt.mask; cur.box = tgt.box;
+          if (sys) { sys.o = cur; }
+        }
+        if (params.reseed && sys) { sys = new System(inst, w, h, cur); }
+        if (sys && (tgt.rupture || 0) === 0 && sys.alive < 1000) sys.revive();
+      },
+      // per-frame parameter drive: lerp cur toward params (rate 0..1, 1 = snap)
+      push: function (params, rate) {
+        var r = rate === undefined ? 0.10 : rate, k;
+        for (k in params) {
+          if (typeof params[k] === 'number' && typeof cur[k] === 'number' && r < 1) {
+            cur[k] = cur[k] + (params[k] - cur[k]) * r;
+          } else {
+            cur[k] = params[k];
+          }
+        }
+        if (sys) sys.o = cur;
+        if (sys && (cur.rupture || 0) <= 0.001 && sys.alive < POP) sys.revive();
+      },
+      params: function () { return cur; },
+      // a geometry change is a cut: the population is re-homed, never grown
+      rebuild: function () { if (inst) sys = new System(inst, w, h, cur); },
+      // advance the solver without drawing — lets a field settle before it paints
+      settle: function (n) { if (sys) { for (var i = 0; i < (n || 60); i++) sys.step(1); } },
+      // pre-accumulate a scene's trails so no frame is ever an empty field
+      warm: function (n) {
+        if (!sys || !inst) return;
+        inst.blendMode(inst.ADD);
+        for (var i = 0; i < (n || 30); i++) { sys.step(1); sys.paint(); }
+        inst.blendMode(inst.BLEND);
+      },
+      system: function () { return sys; },
+      census: function () { return sys ? sys.census() : null; },
+      clear: function () { if (inst && sys) inst.background(0); },
+      reset: function () { if (inst) { sys = new System(inst, w, h, cur); inst.background(0); } }
+    };
+
+    new p5(function (p) {
+      inst = p;
+      p.setup = function () {
+        p.pixelDensity(1);
+        p.createCanvas(w, h).parent(parent);
+        p.background(0);
+        sys = new System(p, w, h, cur);
+        p.frameRate(60);
+        // p5 may defer setup to the load event; nothing may touch the canvas
+        // before this point, so the caller is told when the field is live.
+        if (hooks && hooks.ready) hooks.ready(api);
+      };
+      p.draw = function () {
+        if (hooks && hooks.beforeFrame) hooks.beforeFrame(api);
+        if (morph < 1) {
+          morph = Math.min(1, morph + morphRate);
+          var e = morph < 0.5 ? 2 * morph * morph : 1 - Math.pow(-2 * morph + 2, 2) / 2;
+          for (var i = 0; i < NUM.length; i++) {
+            var k = NUM[i];
+            cur[k] = morph >= 1 ? tgt[k] : cur[k] + (tgt[k] - cur[k]) * (0.10 + 0.20 * e);
+          }
+        }
+        sys.o = cur;
+        // persistence: the trail decays, the population does not
+        p.noStroke();
+        p.fill(0, 0, 0, 255 * (0.030 + 0.055 * (1 - Math.min(1, cur.energy))));
+        p.rect(0, 0, w, h);
+        p.blendMode(p.ADD);
+        sys.step(1);
+        sys.paint();
+        p.blendMode(p.BLEND);
+        sys.paintThreshold(cur.threshold);
+        sys.paintSeek(cur.seek);
+        if (cur.rupture > 0) sys.annihilate(cur.rupture);
+        layMask(p, w, h, cur);
+        if (hooks && hooks.afterFrame) hooks.afterFrame(api);
+      };
+    });
+    return api;
+  }
+
+  global.CE = { POP: POP, plate: plate, film: film, pFraction: pFraction };
+})(window);
+
+</script>
+<script>
+var PRESETS = {
+  whole:  {geom:'basin', split:0,    drive:1,    turb:0.30, energy:0.45, dim:0, scope:0, rupture:0, seek:0, alpha:46, veil:0.26},
+  split:  {geom:'basin', split:1,    drive:1.56, turb:0.28, energy:0.48, dim:0, scope:0, rupture:0, seek:0, alpha:50, veil:0.26},
+  ledger: {geom:'ledger',split:1,    drive:1,    turb:0.24, energy:0.30, dim:0, scope:0, rupture:0, seek:0, alpha:52, veil:0.10, sweep:[0.55,2.45]},
+  strain: {geom:'basin', split:0.10, drive:1,    turb:0.95, energy:0.88, dim:0, scope:0, rupture:0, seek:0, alpha:36, veil:0.34},
+  rupture:{geom:'basin', split:0.10, drive:1,    turb:0.86, energy:0.78, dim:0, scope:0, rupture:1, seek:0, alpha:46, veil:0.26},
+  seek:   {geom:'ledger',split:1,    drive:1,    turb:0.24, energy:0.30, dim:0, scope:0, rupture:0, seek:1, alpha:52, veil:0.10, sweep:[0.55,2.45]},
+  scope:  {geom:'basin', split:1,    drive:1.56, turb:0.20, energy:0.34, dim:0, scope:1, rupture:0, seek:0, alpha:58, veil:0.24},
+  drift:  {geom:'ledger',split:1,    drive:1.45, turb:0.20, energy:0.30, dim:1, scope:0, rupture:0, seek:0, alpha:48, veil:0.20}
+};
+var DEFAULT = {seed:12345, steps:205, swirl:0.34, mask:'none', box:[0.02,0.03,0.96,0.94], weight:0.8};
+var params = Object.assign({}, DEFAULT, PRESETS.split);
+var plate = null, busy = false;
+
+function show(){
+  ['drive','split','turb','energy','dim','scope','rupture','seek','alpha','steps','veil'].forEach(function(k){
+    var el = document.getElementById(k), out = document.getElementById('v-'+k);
+    if(el){ el.value = params[k]; }
+    if(out){ out.textContent = (k==='alpha'||k==='steps') ? params[k] : Number(params[k]).toFixed(2); }
+  });
+  document.getElementById('seed').value = params.seed;
+}
+function set(k,v){ params[k] = parseFloat(v); show(); render(); }
+function preset(){
+  var p = PRESETS[document.getElementById('preset').value];
+  params = Object.assign({}, DEFAULT, {seed: params.seed}, p);
+  if(!p.sweep) params.sweep = null;
+  show(); render();
+}
+function step(d){ params.seed = Math.max(1, params.seed + d); show(); render(); }
+function rnd(){ params.seed = Math.floor(Math.random()*999999)+1; show(); render(); }
+function jump(){ var v = parseInt(document.getElementById('seed').value,10); if(v>0){ params.seed = v; render(); } }
+function reset(){ params = Object.assign({}, DEFAULT, PRESETS[document.getElementById('preset').value]); show(); render(); }
+function dl(){ var c = document.querySelector('#plate canvas'); if(!c) return;
+  var a = document.createElement('a'); a.download = 'conserved-entry-' + params.seed + '.png';
+  a.href = c.toDataURL('image/png'); a.click(); }
+
+function render(){
+  if(busy) return; busy = true;
+  var host = document.getElementById('plate');
+  host.innerHTML = '';
+  plate = CE.plate(host, 1280, 720, params);
+  var tick = function(){
+    if(!plate.render){ setTimeout(tick, 25); return; }
+    var c = plate.render();
+    document.getElementById('census').textContent = c
+      ? 'census · P ' + c.p.toFixed(3) + ' · N ' + c.n.toFixed(3) + ' · Σ ' + c.sum.toFixed(3)
+      : 'census · —';
+    busy = false;
+  };
+  setTimeout(tick, 0);
+}
+show(); render();
+document.addEventListener('keydown', function(e){
+  if(e.key==='ArrowRight'){ step(1); } else if(e.key==='ArrowLeft'){ step(-1); }
+});
+</script>
+</body>
+</html>

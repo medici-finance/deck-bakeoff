@@ -14,18 +14,25 @@ agents from one prompt (below); Ian judged separately.
 | `DESIGN-TASK.md` | the task spec every design agent followed |
 | `bakeoff/PROTOCOL.md` · `CONTENDERS.md` | contenders, origins/URLs/licences, rules, judging axes |
 | `messaging/<skill>/` | 4 messaging contenders: native artifact + `messaging.md` + normalized `staging.yaml` + `NOTES.md` |
-| `tracks/<tool>/<brand|free>/<messaging>/deck/index.html` | 36 decks (1280×720, self-contained, prints one slide per page) |
-| `tracks/<tool>/<brand|free>/<messaging>/explainer/{explainer.html,SCRIPT.md}` | 36 timed explainers (1920×1080, auto-play, `window.__player`) + talk tracks |
+| `tracks/<tool>/<mode>/<messaging>/deck/index.html` | 36 decks (1280×720, self-contained, prints one slide per page) |
+| `tracks/<tool>/<mode>/<messaging>/explainer/{explainer.html,SCRIPT.md}` | 36 timed explainers (1920×1080, auto-play, `window.__player`) + talk tracks |
 | `tracks/<tool>/NOTES.md` | each tool's time-to-artifact, friction, overrides, refusals |
+
+`<mode>` is `brand` (pinned Medici house brand) or `free` (no brand limits); `<messaging>` is one of `staging`, `presentation-writing`, `pitch-deck-mastery`.
+
+| Path | What |
+|---|---|
 | `reviews/messaging/by-<rubric>.md` | each messaging skill reviewing every messaging output (itself included) |
 | `reviews/design/by-<rubric>.md` | 4 independent design rubrics + the 4 messaging rubrics over every rendered track |
 | `bakeoff/JUDGING-*-claude.md` | Claude's verdicts (messaging, design), formed before Ian's |
 | `shots/` | contact sheets + `INDEX.md` (per-slide PNGs are git-ignored) |
-| `report.pdf` · `video/` | the final report and the bake-off video source (SCRIPT.md + explainer.html; the mp4 is rendered by the house `explainer-video` pipeline and not committed) |
+| `winner/` | the ship-tomorrow artifact (canvas-design / brand / staging) after the judge's fix list — `deck/index.html`, `explainer/{explainer.html,SCRIPT.md}`, `FIXES.md`, frames in `shots/` |
+| `report.pdf` (source `report.html`, build `bakeoff/report-build.py`) | the final report: brief, contenders + URLs, both legs' cross-review matrices, issues found, verdicts, pipeline, the winning explainer + its talk track |
+| `video/explainer.html` · `video/SCRIPT.md` | the ONE bake-off video source: unbranded report segment → lead-in → the winning explainer in full; rendered to mp4 by the house `explainer-video` pipeline (mp4 not committed) |
+| `social/` | reddit post + LinkedIn teaser drafts (`{{YT_URL}}` placeholder) |
 | `source/` | the input corpus (Medici pitch/research docs, house brand guide) — read-only inputs, names anonymized |
 
-Vendored third-party skills lived under `skills/` during the run and are
-git-ignored; their URLs and licences are in `bakeoff/CONTENDERS.md`.
+The house skills used in the run are committed under `skills/` — `messaging/staging`, `messaging/house-guide`, `deck-author` (with the Medici `brand.toml` contract and linter), `video-author`, `video/video-design`, `video/explainer-video` (the render pipeline; its `node_modules`, `out/` and voice-clone samples are excluded), `social/linkedin-post`, `social/humanizer`. Vendored third-party skills are git-ignored; their URLs and licences are in `bakeoff/CONTENDERS.md`.
 
 ## Contenders
 
@@ -79,6 +86,12 @@ Follow-up instructions given during the run:
 2. Stage 2 — 10 design agents (5 tools × 2 brand modes), each rendering all 3 original messaging contracts as deck + explainer (6 artifacts each); `impeccable-polish` ran after `html-ppt` as a refine-only pass.
 3. Reviews — each messaging skill reviewed every messaging output including its own; 4 independent design rubrics + the messaging rubrics reviewed every rendered track; two Claude judges (messaging, design) wrote verdicts before Ian's.
 4. Report + video — built with the winning messaging skill and design tool.
+
+## Results (Claude judges; Ian's verdict recorded separately)
+
+- **Messaging** — rank-sum across the four rubrics: house messaging-guide 8 · pitch-deck-mastery 9 · staging 10 · presentation-writing 13. Recommendation: `staging` as the transport contract + the house messaging-guide as the content gate. Details: `bakeoff/JUDGING-messaging-claude.md`.
+- **Design** — brand mode: canvas-design (1st on 4 of 5 rubrics); free mode: impeccable (on ceiling; html-ppt/free the most robust); overall: canvas-design (rank sum 19 vs impeccable 22.5, visual-explainer 23.5 — close). Ship-tomorrow artifact: canvas-design / brand / staging, fixed in `winner/`. Details: `bakeoff/JUDGING-design-claude.md`.
+- **Consensus issues** — no design skill has a timeline concept (all six built the explainer engine themselves); provenance/citation lines rendered below 4.5:1 contrast almost everywhere; messaging-contract vocabulary leaked onto slides in 4 of 6 tools; the brand linter false-errors on honest source citations; `polish` bought the craft floor but closed no composition finding; the review rubrics disagree by design (concept-led vs fidelity-led vs a11y-led).
 
 ## Licence
 

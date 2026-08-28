@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medici for RWA tokens — pitch-deck-mastery</title>
+<meta name="deck-footer" content="Medici &mdash; Proprietary &amp; Confidential">
+<style>
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans.woff2') format('woff2');font-weight:100 700;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#000000; --white:#FFFFFF; --text:#AAAAAA; --muted:#666666;
+  --blue:#3366FF; --blue-light:#5C85FF; --red:#FF4444;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+html,body{height:100%;background:#000;overflow:hidden}
+body{font-family:var(--sans);color:var(--text)}
+.stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;
+  transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:50% 50%;background:#000;overflow:hidden}
+#field{position:absolute;left:0;top:0;width:1920px;height:1080px;z-index:0}
+#field canvas{display:block;width:1920px;height:1080px}
+.scene{position:absolute;inset:0;padding:104px 132px 120px;display:flex;flex-direction:column;
+  justify-content:flex-end;opacity:0;transition:opacity .5s ease-out;z-index:2;pointer-events:none}
+.scene.on{opacity:1}
+.scene.mid{justify-content:center}
+.scene .kick{font-size:20px;font-weight:600;letter-spacing:.20em;text-transform:uppercase;color:var(--blue);margin-bottom:26px}
+.scene .kick.mute{color:var(--muted)}
+.scene h2{font-size:64px;line-height:1.1;font-weight:600;letter-spacing:-.015em;color:#FFFFFF;max-width:1420px}
+.scene h2.sm{font-size:52px}
+.scene p{font-size:31px;line-height:1.42;color:var(--text);max-width:1180px;margin-top:26px}
+.scene .num{font-family:var(--mono);font-size:34px;font-weight:500;color:#FFFFFF;letter-spacing:.02em;
+  margin-top:30px;font-variant-numeric:tabular-nums}
+.scene .num.warn{color:var(--red)}
+.readout{position:absolute;left:132px;bottom:64px;font-family:var(--mono);font-size:19px;letter-spacing:.06em;
+  color:#6E6E6E;z-index:3;font-variant-numeric:tabular-nums}
+.foot{position:absolute;left:0;right:0;bottom:26px;text-align:center;font-size:16px;letter-spacing:.09em;
+  color:var(--muted);z-index:3}
+.bar{position:absolute;left:0;top:0;height:3px;background:var(--blue);width:0;z-index:6}
+.marks{position:absolute;left:0;top:0;height:3px;width:100%;z-index:5}
+.marks i{position:absolute;top:0;width:1px;height:3px;background:#242424}
+.annot{position:absolute;font-family:var(--mono);font-size:22px;letter-spacing:.06em;color:#8A8A8A;
+  z-index:2;opacity:0;transition:opacity .45s ease-out}
+.annot.on{opacity:1}
+.annot.p{color:var(--blue-light)}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div id="field"></div>
+  <div class="marks" id="marks"></div>
+  <div class="bar" id="bar"></div>
+<div class="scene mid on" data-n="1">
+<div class="kick mute">Your position</div>
+<h2 class="">Your tokenized collateral has a price at which someone else sells it.</h2>
+</div>
+<div class="scene" data-n="2">
+<div class="kick ">The seizure</div>
+<h2 class="">When the threshold breaks, the position is sold at the worst price.</h2>
+<div class="num warn">$8M of collateral cleared for $0</div>
+</div>
+<div class="scene" data-n="3">
+<div class="kick ">The split</div>
+<h2 class="">Medici splits one position into two claims: Protected and Amplified.</h2>
+</div>
+<div class="scene" data-n="4">
+<div class="kick ">The sweep</div>
+<h2 class="">At maturity, P takes S/x, N takes the rest, and the two still sum to the collateral.</h2>
+</div>
+<div class="scene" data-n="5">
+<div class="kick ">The line that is not there</div>
+<h2 class="">The price rises, and the liquidation that would fire does not exist.</h2>
+</div>
+<div class="scene" data-n="6">
+<div class="kick mute">Two holders</div>
+<h2 class="">Two holders, two reasons: income kept, exposure amplified.</h2>
+</div>
+<div class="scene" data-n="7">
+<div class="kick mute">What is built</div>
+<h2 class="">What is built is real; what is not built is named.</h2>
+<div class="num ">no mainnet · no audit · no live collateral · no customer</div>
+</div>
+<div class="scene mid" data-n="8">
+<div class="kick ">The conversation</div>
+<h2 class="">Bring one position, and the split is modelled against it.</h2>
+</div>
+<span class="annot " data-scene="4" style="left:84%;top:16%">N</span>
+<span class="annot p" data-scene="4" style="left:84%;top:44%">P</span>
+<span class="annot " data-scene="4" style="left:6%;top:8%">Σ = 1.000</span>
+<span class="annot " data-scene="5" style="left:8%;top:8%">nothing fires</span>
+  <div class="readout mono" id="readout">census · P 1.000 · N 0.000 · Σ 1.000</div>
+  <div class="foot">Medici — Proprietary &amp; Confidential</div>
+</div>
+<script src="../../../vendor/p5.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONSERVED ENTRY — the generative engine
+   Philosophy: brand/PHILOSOPHY.md. p5.js instance mode, seeded, deterministic.
+
+   ONE LAW: the population is fixed at POP before the first frame and is never
+   grown. Particles are RETURNED at the boundary, never respawned. A fade is a
+   fade of luminance, never of population. Exactly one register (RUPTURE) is
+   permitted to break the law, and when it does the census falls and says so.
+
+   TWO GEOMETRIES, one conservation solver:
+     basin  — a two-well potential over layered noise. The population settles
+              between the wells in the closed-form ratio min(1, S/x). One cloud
+              becomes two of unequal density; nothing is created between them.
+     ledger — the frame's vertical extent is one unit of collateral and every
+              particle holds a stable rank u in [0,1) as its row. A particle is
+              P if u < min(1, S/x) at ITS OWN x, else N. The boundary between
+              the two colours is therefore the payoff curve S/x, drawn by no
+              one; the top edge is flat at 1.000 because the count is fixed.
+              That flat top edge IS the invariant.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function (global) {
+  'use strict';
+
+  var POP = 1000;                       // the collateral, as a conserved count
+  var BLUE = [64, 112, 255];            // P — the protected leg (Electric Blue)
+  var GREY = [162, 162, 162];           // N — the amplified leg
+  var RED  = [255, 68, 68];             // functional only: the broken law
+
+  var DEFAULTS = {
+    seed: 1,
+    geom: 'basin',          // 'basin' | 'ledger'
+    drive: 1.0,             // x / S — the driving price over the strike
+    sweep: null,            // [lo,hi]: price varies across the x axis instead
+    split: 1.0,             // well separation, 0 = one basin (unsplit collateral)
+    turb: 0.35,             // noise amplitude
+    energy: 0.5,            // advection speed
+    swirl: 0.34,            // circulation inside a basin
+    dim: 0.0,               // divestment: luminance leaks from P (theta / drift)
+    scope: 0.0,             // stakeholder scoping: each basin clipped to its lens
+    threshold: 0.0,         // a liquidation rule, drawn where one exists
+    seek: 0.0,              // the scan that looks for a breach and finds none
+    rupture: 0.0,           // fraction annihilated (the one broken law)
+    veil: 0.30,             // black wash laid over the finished plate
+    mask: 'none',           // 'left' | 'right' | 'center' | 'bottom' | 'none'
+    alpha: 30,              // per-segment alpha
+    gain: 1,                // render gain (the live film accumulates fewer passes)
+    weight: 0.8,
+    box: [0.0, 0.0, 1.0, 1.0]
+  };
+
+  function cfg(o) {
+    var c = {}, k;
+    for (k in DEFAULTS) c[k] = DEFAULTS[k];
+    for (k in (o || {})) c[k] = o[k];
+    return c;
+  }
+
+  // closed form. This is the payoff, and it is the only place it is expressed.
+  function pFraction(drive) { return drive <= 1 ? 1 : 1 / drive; }
+
+  /* ── the system ─────────────────────────────────────────────────────── */
+  function System(p, w, h, o) {
+    this.p = p; this.w = w; this.h = h; this.o = o;
+    this.z = 0; this.alive = POP; this.t = 0;
+    p.randomSeed(o.seed); p.noiseSeed(o.seed);
+
+    this.parts = new Array(POP);
+    for (var i = 0; i < POP; i++) {
+      this.parts[i] = {
+        u: (i + 0.5) / POP,                    // stable rank: the ledger row
+        x: p.random(w), y: p.random(h),
+        px: 0, py: 0,
+        leg: 0, lum: 1, on: true,
+        jx: p.random(-1, 1), jy: p.random(-1, 1),
+        ph: p.random(6.283)
+      };
+    }
+    // deal the ranks out spatially at random so basins are never banded
+    for (var j = POP - 1; j > 0; j--) {
+      var k = Math.floor(p.random(j + 1));
+      var a = this.parts[j].u; this.parts[j].u = this.parts[k].u; this.parts[k].u = a;
+    }
+    if (o.geom === 'ledger') {
+      var bb = { x: o.box[0] * w, y: o.box[1] * h, w: o.box[2] * w, h: o.box[3] * h };
+      for (i = 0; i < POP; i++) {
+        this.parts[i].x = bb.x + (this.parts[i].x / w) * bb.w;
+        this.parts[i].y = bb.y + bb.h * (1 - this.parts[i].u) + this.parts[i].jy * 3.4;
+      }
+    }
+    for (i = 0; i < POP; i++) { this.parts[i].px = this.parts[i].x; this.parts[i].py = this.parts[i].y; }
+    // annihilation order for a rupture — seeded, so a rupture is reproducible
+    this.order = [];
+    for (i = 0; i < POP; i++) this.order.push(i);
+    for (j = POP - 1; j > 0; j--) { k = Math.floor(p.random(j + 1)); a = this.order[j]; this.order[j] = this.order[k]; this.order[k] = a; }
+  }
+
+  System.prototype.box = function () {
+    var b = this.o.box;
+    return { x: b[0] * this.w, y: b[1] * this.h, w: b[2] * this.w, h: b[3] * this.h };
+  };
+
+  // the drive a particle actually experiences: global, or read off the x axis
+  System.prototype.driveAt = function (x) {
+    var o = this.o;
+    if (!o.sweep) return o.drive;
+    var b = this.box();
+    var f = Math.min(1, Math.max(0, (x - b.x) / b.w));
+    return o.sweep[0] + (o.sweep[1] - o.sweep[0]) * f;
+  };
+
+  System.prototype.assign = function () {
+    var o = this.o, i, pt;
+    for (i = 0; i < POP; i++) {
+      pt = this.parts[i];
+      if (!pt.on) continue;
+      var pf = pFraction(o.sweep ? this.driveAt(pt.x) : o.drive);
+      pt.leg = pt.u < pf ? 0 : 1;
+    }
+  };
+
+  // the trial balance, struck from the population itself — never from the formula
+  System.prototype.census = function () {
+    var cp = 0, cn = 0;
+    for (var i = 0; i < POP; i++) {
+      if (!this.parts[i].on) continue;
+      if (this.parts[i].leg === 0) cp++; else cn++;
+    }
+    return { p: cp / POP, n: cn / POP, sum: (cp + cn) / POP, alive: cp + cn };
+  };
+
+  System.prototype.annihilate = function (frac) {
+    var target = Math.round(POP * (1 - Math.min(1, Math.max(0, frac))));
+    while (this.alive > target) { this.parts[this.order[POP - this.alive]].on = false; this.alive--; }
+  };
+
+  // the law restored for a new sequence — never mid-sequence, never as relief
+  System.prototype.revive = function () {
+    for (var i = 0; i < POP; i++) { this.parts[i].on = true; this.parts[i].lum = 1; }
+    this.alive = POP;
+  };
+
+  /* ── one integration step ───────────────────────────────────────────── */
+  System.prototype.step = function (dt) {
+    var p = this.p, o = this.o, b = this.box(), i, pt;
+    this.t += dt;
+    this.z += 0.0016 * dt * (0.4 + o.energy);
+    this.assign();
+
+    var spd = 2.1 * o.energy * dt;
+    var ns = 0.0017 + 0.0011 * o.turb;
+
+    for (i = 0; i < POP; i++) {
+      pt = this.parts[i];
+      if (!pt.on) continue;
+      pt.px = pt.x; pt.py = pt.y;
+
+      var ang = p.noise(pt.x * ns, pt.y * ns, this.z) * 12.566;
+      var vx = Math.cos(ang) * (0.35 + 0.85 * o.turb);
+      var vy = Math.sin(ang) * (0.35 + 0.85 * o.turb);
+
+      if (o.geom === 'ledger') {
+        // rows are held; the population drifts along the price axis
+        var ty = b.y + b.h * (1 - pt.u) + pt.jy * 3.4;
+        vy = vy * 0.17 + Math.max(-2.2, Math.min(2.2, (ty - pt.y) * 0.10));
+        vx = vx * 0.16 + 0.92 + 0.10 * pt.jx;
+      } else {
+        var wx = b.x + b.w * (0.5 + o.split * (pt.leg ? 0.185 : -0.185));
+        var wy = b.y + b.h * (0.5 + (pt.leg ? 0.02 : -0.02) * o.split);
+        var dx = wx - pt.x, dy = wy - pt.y;
+        var d = Math.sqrt(dx * dx + dy * dy) + 0.0001;
+        // a basin is a lens, not a well: attract from outside, hold off the centre
+        var R = b.h * (0.30 + 0.10 * (pt.leg ? 1 : 0));
+        var pull = (d - R * 0.55) / R;
+        pull = Math.max(-0.55, Math.min(1.5, pull)) * (0.55 + 0.85 * o.split);
+        vx += (dx / d) * pull; vy += (dy / d) * pull;
+        vx += (-dy / d) * o.swirl; vy += (dx / d) * o.swirl;
+      }
+
+      pt.x += vx * spd; pt.y += vy * spd;
+
+      // conservation at the boundary: RETURN the particle, never respawn it
+      if (pt.x < b.x) { pt.x += b.w; pt.px = pt.x; }
+      if (pt.x > b.x + b.w) { pt.x -= b.w; pt.px = pt.x; }
+      if (pt.y < b.y) { pt.y = b.y + (b.y - pt.y); pt.py = pt.y; }
+      if (pt.y > b.y + b.h) { pt.y = b.y + b.h - (pt.y - b.y - b.h); pt.py = pt.y; }
+
+      if (o.dim > 0 && pt.leg === 0) pt.lum = Math.max(0.18, pt.lum - 0.0016 * o.dim * dt);
+    }
+  };
+
+  /* ── one rendered pass ──────────────────────────────────────────────── */
+  System.prototype.paint = function () {
+    var p = this.p, o = this.o, b = this.box(), i, pt, c;
+    p.strokeWeight(o.weight);
+    for (i = 0; i < POP; i++) {
+      pt = this.parts[i];
+      if (!pt.on) continue;
+      var a = o.alpha * (o.gain || 1) * pt.lum;
+      if (o.scope > 0) {
+        // stakeholder scoping: a position is visible inside its own lens only
+        var cx = b.x + b.w * (0.5 + o.split * (pt.leg ? 0.185 : -0.185));
+        var cy = b.y + b.h * 0.5;
+        var dd = Math.sqrt((pt.x - cx) * (pt.x - cx) + (pt.y - cy) * (pt.y - cy));
+        var lens = b.h * 0.40;
+        if (dd > lens) a *= Math.max(0, 1 - o.scope) * Math.max(0, 1 - (dd - lens) / (b.h * 0.25));
+      }
+      c = pt.leg === 0 ? BLUE : GREY;
+      if (pt.leg === 0) a *= 1.15; else a *= 0.92;
+      p.stroke(c[0], c[1], c[2], a);
+      if (Math.abs(pt.x - pt.px) < b.w * 0.5) p.line(pt.px, pt.py, pt.x, pt.y);
+    }
+  };
+
+  /* ── the threshold that exists (problem side) ───────────────────────── */
+  System.prototype.paintThreshold = function (k) {
+    if (k <= 0) return;
+    var p = this.p, b = this.box();
+    var x = b.x + b.w * 0.62;
+    p.strokeWeight(1);
+    for (var i = 0; i < 26; i++) {
+      var y = b.y + b.h * (i / 26);
+      p.stroke(GREY[0], GREY[1], GREY[2], 60 * k);
+      p.line(x, y + b.h * 0.012, x, y + b.h * 0.026);
+    }
+  };
+
+  /* ── the seek: a scan for a breach that is not there ────────────────── */
+  System.prototype.paintSeek = function (prog) {
+    if (prog <= 0) return;
+    var p = this.p, b = this.box();
+    // decelerating: it never reaches the end of the axis
+    var e = 1 - Math.pow(1 - Math.min(1, prog), 2.6);
+    var x = b.x + b.w * (0.06 + 0.74 * e);
+    var fade = Math.max(0, 1 - Math.max(0, prog - 0.72) / 0.28);
+    p.noStroke();
+    for (var i = 0; i < 30; i++) {
+      var t = i / 30;
+      p.fill(BLUE[0], BLUE[1], BLUE[2], 26 * (1 - t) * fade);
+      p.rect(x - t * 26, b.y, 1.4, b.h);
+    }
+    p.stroke(BLUE[0], BLUE[1], BLUE[2], 130 * fade);
+    p.strokeWeight(1);
+    p.line(x, b.y, x, b.y + b.h);
+  };
+
+  /* ── masks: the field must fall to nothing where words live ─────────── */
+  function layMask(p, w, h, o) {
+    var g = p.drawingContext, grad;
+    if (o.veil > 0) { p.noStroke(); p.fill(0, 0, 0, 255 * o.veil); p.rect(0, 0, w, h); }
+    if (o.mask === 'left-tight') {
+      grad = g.createLinearGradient(0, 0, w * 0.40, 0);
+      grad.addColorStop(0, 'rgba(0,0,0,0.99)'); grad.addColorStop(0.55, 'rgba(0,0,0,0.86)');
+      grad.addColorStop(0.86, 'rgba(0,0,0,0.26)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    } else if (o.mask === 'left') {
+      grad = g.createLinearGradient(0, 0, w * 0.72, 0);
+      grad.addColorStop(0, 'rgba(0,0,0,0.99)'); grad.addColorStop(0.42, 'rgba(0,0,0,0.90)');
+      grad.addColorStop(0.78, 'rgba(0,0,0,0.34)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    } else if (o.mask === 'right') {
+      grad = g.createLinearGradient(w, 0, w * 0.28, 0);
+      grad.addColorStop(0, 'rgba(0,0,0,0.99)'); grad.addColorStop(0.42, 'rgba(0,0,0,0.90)');
+      grad.addColorStop(0.78, 'rgba(0,0,0,0.34)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    } else if (o.mask === 'center') {
+      grad = g.createRadialGradient(w * 0.5, h * 0.5, 0, w * 0.5, h * 0.5, w * 0.62);
+      grad.addColorStop(0, 'rgba(0,0,0,0.86)'); grad.addColorStop(0.46, 'rgba(0,0,0,0.60)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+    } else if (o.mask === 'top') {
+      grad = g.createLinearGradient(0, 0, 0, h * 0.72);
+      grad.addColorStop(0, 'rgba(0,0,0,0.99)'); grad.addColorStop(0.44, 'rgba(0,0,0,0.90)');
+      grad.addColorStop(0.80, 'rgba(0,0,0,0.32)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    } else if (o.mask === 'bottom') {
+      grad = g.createLinearGradient(0, h, 0, h * 0.18);
+      grad.addColorStop(0, 'rgba(0,0,0,0.97)'); grad.addColorStop(0.55, 'rgba(0,0,0,0.55)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+    }
+    if (grad) { g.fillStyle = grad; g.fillRect(0, 0, w, h); }
+    // edge vignette — the field always falls to true black at the frame
+    grad = g.createLinearGradient(0, 0, 0, h * 0.16);
+    grad.addColorStop(0, 'rgba(0,0,0,1)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grad; g.fillRect(0, 0, w, h * 0.16);
+    grad = g.createLinearGradient(0, h, 0, h * 0.86);
+    grad.addColorStop(0, 'rgba(0,0,0,1)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grad; g.fillRect(0, h * 0.86, w, h * 0.14);
+  }
+
+  /* ═══ PLATE — a deck backplate. Deterministic, drawn once, then still. ═══ */
+  function plate(parent, w, h, opts) {
+    var o = cfg(opts);
+    var api = { done: false, census: null, render: null };
+    new p5(function (p) {
+      var sys, steps = o.steps || 130, i;
+      p.setup = function () {
+        p.pixelDensity(1);
+        var c = p.createCanvas(w, h);
+        c.parent(parent);
+        p.noLoop();
+        p.background(0);
+        api.render = run;
+      };
+      function run() {
+        if (api.done) return api.census;
+        sys = new System(p, w, h, o);
+        p.background(0);
+        p.blendMode(p.ADD);
+        var sweepSteps = o.rupture > 0 ? Math.floor(steps * 0.62) : steps;
+        for (i = 0; i < sweepSteps; i++) { sys.step(1); sys.paint(); }
+        if (o.rupture > 0) {
+          // the one broken law: the population is removed, its trails are not
+          var frames = steps - sweepSteps;
+          for (i = 0; i < frames; i++) {
+            sys.annihilate(o.rupture * ((i + 1) / frames));
+            sys.o.energy = o.energy * (1 + 2.4 * (i / frames));
+            sys.step(1); sys.paint();
+          }
+          sys.o.energy = o.energy;
+        }
+        p.blendMode(p.BLEND);
+        sys.paintThreshold(o.threshold);
+        sys.paintSeek(o.seek);
+        if (o.rupture > 0) {
+          // functional colour, once: the count that stopped balancing
+          p.noStroke(); p.fill(RED[0], RED[1], RED[2], 30);
+          var b = sys.box(); p.rect(b.x, b.y + b.h * 0.52, b.w, 1.4);
+        }
+        layMask(p, w, h, o);
+        api.census = sys.census();
+        api.done = true;
+        return api.census;
+      }
+    });
+    return api;
+  }
+
+  /* ═══ FILM — a live field. One instance, driven by the player clock. ═══ */
+  function film(parent, w, h, hooks) {
+    var cur = cfg({}), tgt = cfg({}), sys = null, inst = null;
+    // a live frame accumulates ~1/3 the passes a static plate does; the gain
+    // buys that back so film and deck read at the same density
+    cur.gain = tgt.gain = (hooks && hooks.gain) || 4.3;
+    var morph = 1, morphRate = 0.02, sceneClock = 0;
+    var NUM = ['drive', 'split', 'turb', 'energy', 'swirl', 'dim', 'scope', 'threshold', 'seek', 'rupture', 'veil', 'alpha', 'weight'];
+
+    var api = {
+      set: function (params, opts) {
+        opts = opts || {};
+        var k;
+        for (k in params) tgt[k] = params[k];
+        if (opts.hard || !sys) {
+          for (k in tgt) cur[k] = tgt[k];
+          if (inst && sys) { sys = new System(inst, w, h, cur); inst.background(0); }
+          morph = 1;
+        } else {
+          morph = 0; morphRate = 1 / Math.max(1, (opts.morphFrames || 45));
+          cur.geom = tgt.geom; cur.sweep = tgt.sweep; cur.mask = tgt.mask; cur.box = tgt.box;
+          if (sys) { sys.o = cur; }
+        }
+        if (params.reseed && sys) { sys = new System(inst, w, h, cur); }
+        if (sys && (tgt.rupture || 0) === 0 && sys.alive < 1000) sys.revive();
+      },
+      // per-frame parameter drive: lerp cur toward params (rate 0..1, 1 = snap)
+      push: function (params, rate) {
+        var r = rate === undefined ? 0.10 : rate, k;
+        for (k in params) {
+          if (typeof params[k] === 'number' && typeof cur[k] === 'number' && r < 1) {
+            cur[k] = cur[k] + (params[k] - cur[k]) * r;
+          } else {
+            cur[k] = params[k];
+          }
+        }
+        if (sys) sys.o = cur;
+        if (sys && (cur.rupture || 0) <= 0.001 && sys.alive < POP) sys.revive();
+      },
+      params: function () { return cur; },
+      // a geometry change is a cut: the population is re-homed, never grown
+      rebuild: function () { if (inst) sys = new System(inst, w, h, cur); },
+      // advance the solver without drawing — lets a field settle before it paints
+      settle: function (n) { if (sys) { for (var i = 0; i < (n || 60); i++) sys.step(1); } },
+      // pre-accumulate a scene's trails so no frame is ever an empty field
+      warm: function (n) {
+        if (!sys || !inst) return;
+        inst.blendMode(inst.ADD);
+        for (var i = 0; i < (n || 30); i++) { sys.step(1); sys.paint(); }
+        inst.blendMode(inst.BLEND);
+      },
+      system: function () { return sys; },
+      census: function () { return sys ? sys.census() : null; },
+      clear: function () { if (inst && sys) inst.background(0); },
+      reset: function () { if (inst) { sys = new System(inst, w, h, cur); inst.background(0); } }
+    };
+
+    new p5(function (p) {
+      inst = p;
+      p.setup = function () {
+        p.pixelDensity(1);
+        p.createCanvas(w, h).parent(parent);
+        p.background(0);
+        sys = new System(p, w, h, cur);
+        p.frameRate(60);
+        // p5 may defer setup to the load event; nothing may touch the canvas
+        // before this point, so the caller is told when the field is live.
+        if (hooks && hooks.ready) hooks.ready(api);
+      };
+      p.draw = function () {
+        if (hooks && hooks.beforeFrame) hooks.beforeFrame(api);
+        if (morph < 1) {
+          morph = Math.min(1, morph + morphRate);
+          var e = morph < 0.5 ? 2 * morph * morph : 1 - Math.pow(-2 * morph + 2, 2) / 2;
+          for (var i = 0; i < NUM.length; i++) {
+            var k = NUM[i];
+            cur[k] = morph >= 1 ? tgt[k] : cur[k] + (tgt[k] - cur[k]) * (0.10 + 0.20 * e);
+          }
+        }
+        sys.o = cur;
+        // persistence: the trail decays, the population does not
+        p.noStroke();
+        p.fill(0, 0, 0, 255 * (0.030 + 0.055 * (1 - Math.min(1, cur.energy))));
+        p.rect(0, 0, w, h);
+        p.blendMode(p.ADD);
+        sys.step(1);
+        sys.paint();
+        p.blendMode(p.BLEND);
+        sys.paintThreshold(cur.threshold);
+        sys.paintSeek(cur.seek);
+        if (cur.rupture > 0) sys.annihilate(cur.rupture);
+        layMask(p, w, h, cur);
+        if (hooks && hooks.afterFrame) hooks.afterFrame(api);
+      };
+    });
+    return api;
+  }
+
+  global.CE = { POP: POP, plate: plate, film: film, pFraction: pFraction };
+})(window);
+
+</script>
+<script>
+/* ── the scene timeline: durations are the contract's vo_seconds ──────── */
+var SCENES = [{id:'k1',dur:13,seed:58489,base:{geom:'basin',split:0.0,drive:1.0,turb:0.14,energy:0.13,alpha:46,veil:0.42,swirl:0.08,box:[0.05,0.05,0.9,0.62],mask:'center',threshold:0.0},anim:function(u){return {energy:0.12, threshold:Math.min(1,Math.max(0,(u-0.45)/0.5))};}},{id:'k2',dur:22,seed:35632,base:{geom:'basin',split:0.1,drive:1.0,turb:0.86,energy:0.78,alpha:46,veil:0.26,swirl:0.55,rupture:0.0,box:[0.05,0.05,0.9,0.62],mask:'bottom',threshold:1.0},anim:function(u){var k=Math.max(0,(u-0.26)/0.60);return {rupture:Math.min(1,k*k), energy:0.72+1.5*Math.min(1,k), turb:0.86, threshold:1-Math.min(1,k)};},hard:true},{id:'k3',dur:20,seed:73251,base:{geom:'basin',split:0.0,drive:1.56,turb:0.28,energy:0.48,alpha:50,veil:0.26,swirl:0.34,box:[0.05,0.05,0.9,0.62],mask:'bottom'},anim:function(u){var a=Math.max(0,(u-0.18)/0.72);var e=a<0.5?2*a*a:1-Math.pow(-2*a+2,2)/2;return {split:e, energy:0.42+0.10*e, drive:1.56};}},{id:'k4',dur:21,seed:81346,base:{geom:'ledger',drive:0.7,turb:0.18,energy:0.3,alpha:30,veil:0.11,box:[0.06,0.06,0.88,0.5],mask:'bottom'},anim:function(u){var a=Math.max(0,(u-0.16)/0.78);var e=a<0.5?2*a*a:1-Math.pow(-2*a+2,2)/2;return {drive:0.70+1.75*e, energy:0.50};}},{id:'k5',dur:21,seed:28965,base:{geom:'ledger',sweep:[0.55,2.45],turb:0.24,energy:0.3,alpha:30,veil:0.13,drive:1.0,box:[0.06,0.06,0.88,0.5],mask:'bottom',threshold:0.0,seek:0.0},anim:function(u){var t=Math.min(1,u/0.22);var hold=(u>0.30&&u<0.44)?1:0;var s=Math.max(0,(u-0.44)/0.52);return {threshold:t*(1-Math.min(1,Math.max(0,(u-0.44)/0.20))), seek:s, energy:hold?0.06:(0.50+0.12*s), turb:hold?0.10:0.28};}},{id:'k6',dur:17,seed:6108,base:{geom:'basin',split:1.0,drive:1.56,turb:0.18,energy:0.3,alpha:50,veil:0.34,swirl:0.34,box:[0.05,0.05,0.9,0.62],mask:'bottom'},anim:function(u){return {energy:0.30, split:1.0, scope:Math.min(0.6,u*0.9)};}},{id:'k7',dur:14,seed:43727,base:{geom:'basin',split:0.45,drive:1.9,turb:0.3,energy:0.22,alpha:18,veil:0.42,swirl:0.2,box:[0.05,0.05,0.9,0.62],mask:'bottom'},anim:function(u){return {alpha:18-8*u, energy:0.22-0.08*u, dim:1.4*u, veil:0.42+0.10*u};}},{id:'k8',dur:15,seed:79918,base:{geom:'basin',split:0.16,drive:1.0,turb:0.2,energy:0.34,alpha:48,veil:0.26,swirl:0.24,seek:0.0,box:[0.05,0.05,0.9,0.62],mask:'center'},anim:function(u){return {split:0.60-0.50*u, seek:Math.max(0,(u-0.25)/0.75), energy:0.32};}}];
+var TOTAL = SCENES.reduce(function(a,s){return a+s.dur;},0);
+var stage=document.getElementById('stage'), bar=document.getElementById('bar'),
+    readout=document.getElementById('readout');
+
+function fit(){ stage.style.setProperty('--s', Math.min(window.innerWidth/1920, window.innerHeight/1080)); }
+window.addEventListener('resize', fit); fit();
+
+(function(){                                   // scene tick marks on the bar
+  var m=document.getElementById('marks'), acc=0;
+  SCENES.forEach(function(s){ acc+=s.dur; var i=document.createElement('i');
+    i.style.left=(acc/TOTAL*100)+'%'; m.appendChild(i); });
+})();
+
+/* state first: p5 runs the first frame inside the constructor, so every symbol
+   drive() touches must already exist before the film is created. */
+var T = 0, idx = -1, paused = false, pauseT = 0, ready = false, film = null;
+var qs = new URLSearchParams(location.search);
+var startScene = qs.has('scene')
+  ? Math.max(1, Math.min(SCENES.length, parseInt(qs.get('scene'),10)||1)) : 1;
+var startT = qs.has('t') ? Math.max(0, parseFloat(qs.get('t'))||0) : null;
+
+function startOf(i){ var a=0; for(var k=0;k<i;k++) a+=SCENES[k].dur; return a; }
+function sceneAt(t){ var a=0; for(var i=0;i<SCENES.length;i++){ if(t < a+SCENES[i].dur) return [i,(t-a)/SCENES[i].dur]; a+=SCENES[i].dur; } return [SCENES.length-1,1]; }
+
+function drive(){
+  if(!ready) return;
+  if(!paused) T = performance.now()/1000 - t0;
+  if(T >= TOTAL){ T = TOTAL - 0.001; paused = true; pauseT = T; }
+  var s = sceneAt(T), i = s[0], u = s[1];
+  if(i !== idx){ idx = i; enter(i); }
+  var sc = SCENES[i];
+  var p = Object.assign({}, sc.base);
+  if(sc.anim) { var d = sc.anim(u); for(var k in d) p[k] = d[k]; }
+  film.push(p, sc.hard ? 1 : 0.12);
+  bar.style.width = (T/TOTAL*100) + '%';
+  window.__player.scene = i + 1; window.__player.t = T;
+}
+
+/* the census is read AFTER the frame, so it reports the population that was
+   actually just drawn — including the one scene that annihilates it */
+function report(){
+  var c = film && film.census();
+  if(!c) return;
+  readout.textContent = (c.sum < 0.999)
+    ? 'census · Σ ' + c.sum.toFixed(3) + ' · conservation off'
+    : 'census · P ' + c.p.toFixed(3) + ' · N ' + c.n.toFixed(3) + ' · Σ ' + c.sum.toFixed(3);
+}
+
+/* land any absolute time in one frame: exact parameters, then a warm-up pass,
+   so a screenshot (or a seek) is never an empty or half-built field */
+function seedFrame(){
+  var s = sceneAt(T), sc = SCENES[s[0]];
+  var p = Object.assign({}, sc.base);
+  if(sc.anim){ var d = sc.anim(s[1]); for(var k in d) p[k] = d[k]; }
+  film.push(p, 1);
+  film.rebuild(); film.settle(70); film.clear(); film.warm(46);
+}
+
+var lastGeom = null;
+function enter(i){
+  var all = document.querySelectorAll('.scene');
+  for(var k=0;k<all.length;k++) all[k].classList.toggle('on', k===i);
+  var an = document.querySelectorAll('.annot');
+  for(k=0;k<an.length;k++) an[k].classList.toggle('on', an[k].getAttribute('data-scene')==String(i+1));
+  film.push(Object.assign({}, SCENES[i].base), 1);
+  if(SCENES[i].base.geom !== lastGeom){        /* a geometry change is a cut */
+    lastGeom = SCENES[i].base.geom;
+    film.rebuild(); film.settle(70);
+  }
+  film.clear();
+  film.warm(38);
+}
+
+window.__player = {
+  scene: startScene, t: 0, total: TOTAL,
+  seek: function(n){
+    n = Math.max(1, Math.min(SCENES.length, n|0));
+    T = startOf(n-1); t0 = performance.now()/1000 - T; paused = false; idx = -1;
+    idx = n - 1; enter(idx); seedFrame();
+  },
+  pause: function(){ paused = true; pauseT = T; },
+  play: function(){ if(paused){ t0 = performance.now()/1000 - pauseT; paused = false; } }
+};
+
+T = startT !== null ? Math.min(startT, TOTAL - 0.01) : startOf(startScene - 1);
+var t0 = performance.now()/1000 - T;
+film = CE.film(document.getElementById('field'), 1920, 1080, {
+  beforeFrame: drive,
+  afterFrame: report,
+  ready: function(){                          /* the field is live: start here */
+    film.set(Object.assign({}, SCENES[startScene-1].base,
+             {seed: SCENES[startScene-1].seed}), {hard:true});
+    t0 = performance.now()/1000 - T;
+    ready = true;
+    idx = sceneAt(T)[0];
+    enter(idx);
+    seedFrame();                              /* correct from frame zero */
+  }
+});
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'ArrowRight'){ e.preventDefault(); window.__player.seek(window.__player.scene + 1); }
+  else if(e.key === 'ArrowLeft'){ e.preventDefault(); window.__player.seek(window.__player.scene - 1); }
+  else if(e.key === ' '){ e.preventDefault(); window.__player.seek(window.__player.scene); }
+  else if(e.key === 'Home'){ e.preventDefault(); window.__player.seek(1); }
+  else if(e.key === 'p'){ e.preventDefault(); (window.__player.t>0 && !window.__paused) ? (window.__paused=true, window.__player.pause()) : (window.__paused=false, window.__player.play()); }
+});
+</script>
+</body>
+</html>

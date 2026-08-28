@@ -1,0 +1,30 @@
+# Medici for RWA tokens — staging — explainer script
+
+Messaging contract: `messaging/staging/staging.yaml` (video lane, 9 scenes, 120 s). Design: `algorithmic-art`, brand mode. Scene order, claims, VO text and durations are the contract's, unchanged.
+
+Runtime **120 s**, 9 scenes. Durations are the messaging contract's
+`vo_seconds`, unchanged. No audio ships with the file: the VO column is what a
+narrator reads while the scene is on screen.
+
+Playback: `explainer.html` auto-plays on load. `?scene=N` jumps to a scene;
+`→` / `←` step; `Space` re-runs the current scene. `window.__player`
+(`{scene, t, total, seek(n), play(), pause()}`) is exposed for tooling.
+
+**What is moving.** Every frame is one run of the *Conserved Entry* field
+(`brand/PHILOSOPHY.md`): 1000 particles, fixed before the first frame, never
+created and never respawned. The `census` readout in the corner is struck from
+the live particle count, not from a formula — P, N and their sum are what the
+population actually is at that instant. That is why exactly one scene can afford
+to break it.
+
+| # | Scene | Start | Dur | On screen | VO (verbatim from the contract) | What moves |
+|---|-------|-------|-----|-----------|----------------------------------|------------|
+| 1 | `s1` | 0:00 | 10s | Tokenized assets are on-chain, and mostly sitting still. | Tokenized treasuries, fund shares, gold: on-chain now, and mostly sitting still. Making one productive means accepting a liquidation price. There is a way that doesn't. | Nothing turns. One undivided population idles at the lowest energy in the film; the census reads P 1.000 · Σ 1.000 and does not move. The cold open spends no contrast. |
+| 2 | `s2` | 0:10 | 10s | Every venue that takes that collateral prices a liquidation threshold. / ~zero → $620M+ in a year | Every venue that lends against these assets prices in a liquidation threshold. On Morpho, tokenized collateral grew from nothing to over $620 million in a year. | Density accumulates as the field speeds up — the climb, not the end-state number. A threshold rule fades in across the frame while the count stays at 1.000: the venue's line exists, the collateral does not yet care. |
+| 3 | `s3` | 0:20 | 10s | This collateral cannot be sold in a single transaction. | But this collateral doesn't behave: NAV pricing, monthly redemption windows, no sale in a single transaction. So the market signs liquidation agreements with issuers. | Turbulence rises and the wells go shallow: the population is visibly not settling. Load without failure — the strain has to be seen not coping before the next scene has a cause. |
+| 4 | `s4` | 0:30 | 12s | In March 2020, MakerDAO collateral was auctioned for zero dollars. / ≈$8M of collateral, sold for $0 | Under stress, that machinery does exactly what it was built to do. March 2020: MakerDAO's collateral was auctioned for zero dollars. Around eight million dollars of it, sold for nothing. | THE ONE BROKEN LAW. The conservation solver is switched off and the population is annihilated — not faded, removed — while its trails stay on screen. The census falls to Σ 0.000 and prints “conservation off”. It happens once in the film and is never repeated. |
+| 5 | `s5` | 0:42 | 10s | The problem is the mechanism, not the risk management. | Every fix since has been discipline: better curators, tighter frameworks, more paperwork. The mechanism is unchanged. It still has a threshold, and thresholds get breached. | The population is back and almost still — the quiet the rupture was bought with. Only the residue of the previous scene decays. The film turns direction without moving. |
+| 6 | `s6` | 0:52 | 24s | P and N always sum back to the collateral. | Medici splits the collateral in two: P, protected, and N, amplified. At maturity one price is read against the strike. At or below it, P is worth the whole collateral, N nothing. Above it, P takes S over x, N takes the rest. They always sum to the collateral, at every price. No under-collateralized state. No threshold. Nothing to force-sell. | Geometry changes: the cloud reorganises into the ledger, where the frame's height is one unit of collateral and every particle holds a fixed row. The driving price rises through the strike and particles change allegiance in rank order — the blue/grey boundary IS the S/x curve, drawn by no one. The top edge never moves. Everything that arrives stays. |
+| 7 | `s7` | 1:16 | 14s | It settles where the collateral already lives, privately and atomically. / $344B of real-world assets already on Canton | It runs on Canton, where three hundred and forty-four billion dollars of real-world assets already sit. Positions are visible to their counterparties and no one else. Split, roll and settlement are single atomic transactions. | A change of place, not of process: the two populations settle, and each is clipped to its own lens. Particles outside their stakeholder set stop being visible without ever leaving the count — the census still reads Σ 1.000. |
+| 8 | `s8` | 1:30 | 18s | P gives up everything above the strike, and nothing is on mainnet. / −1.25%/yr net drift · 9-year backtest · ETH | The cost is real. P is short a call above the strike: when the asset rallies, P's value declines, continuously and computably. Nine years of backtest put that drift at negative one and a quarter percent a year, on ETH. And nothing is on mainnet yet. | Subtractive only. The blue band's luminance leaks away while its particle count does not change — the film's one careful distinction between a thing losing value and a thing ceasing to exist. Nothing new enters the frame. |
+| 9 | `s9` | 1:48 | 12s | Bring one tokenized position and argue with the payoff table. | So this is not a pitch to allocate. Bring one tokenized position, and argue with the payoff table. If the math holds, the asset never has to be sold. | The two populations recombine into the single one the film opened on — the rhyme s1 was owed. A scan crosses the frame looking for a price that breaks the sum, decelerates, and dissolves without arriving. One gesture, then stop. |

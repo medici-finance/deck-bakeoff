@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medici for RWA tokens — presentation-writing</title>
+<meta name="deck-footer" content="Medici — Proprietary &amp; Confidential">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%23000'/%3E%3Crect x='16' y='20' width='16' height='80' fill='%233366FF'/%3E%3Crect x='82' y='20' width='10' height='34' fill='%233366FF'/%3E%3Crect x='82' y='66' width='10' height='34' fill='%2300CC66'/%3E%3Ccircle cx='57' cy='60' r='9' fill='%233366FF'/%3E%3C/svg%3E">
+<style>
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans.woff2') format('woff2');font-weight:100 700;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans-italic.woff2') format('woff2');font-weight:100 700;font-style:italic;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#000000; --surface:#0A0A0A; --code:#060606; --line:#1A1A1A; --line-2:#252525;
+  --white:#FFFFFF; --text:#AAAAAA; --muted:#666666;
+  --blue:#3366FF; --blue-light:#5C85FF; --blue-dark:#1A4DCC; --gold:#D4A843;
+  --green:#00CC66; --red:#FF4444; --amber:#FFCC00;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+html,body{height:100%;background:var(--black);overflow:hidden}
+body{font-family:var(--sans);color:var(--text);-webkit-font-smoothing:antialiased}
+
+/* ── the 16:9 board: fixed 1280x720, letterboxed to the viewport ───────── */
+.stage{position:fixed;left:50%;top:50%;width:1280px;height:720px;
+  transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:50% 50%;
+  background:var(--black);overflow:hidden}
+.slide{position:absolute;inset:0;padding:50px 74px 62px;display:flex;flex-direction:column;
+  justify-content:center;opacity:0;transition:opacity .22s ease-out;pointer-events:none}
+.slide.active{opacity:1;pointer-events:auto;z-index:1}
+.slide.top{justify-content:flex-start}
+.fill{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0;padding-bottom:8px}
+.slide::after{content:"Medici — Proprietary & Confidential";position:absolute;left:0;right:0;bottom:20px;
+  text-align:center;font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:.08em;color:var(--muted)}
+.slide-no{position:absolute;right:26px;bottom:17px;font-family:var(--mono);font-size:12px;color:#3A3A3A;
+  font-variant-numeric:tabular-nums}
+
+/* ── type (brand guide §3.3, deck sizes §10.3) ────────────────────────── */
+h1{font-size:47px;font-weight:600;line-height:1.1;letter-spacing:-.015em;color:var(--white);text-wrap:balance}
+h2{font-size:33px;font-weight:600;line-height:1.16;letter-spacing:-.01em;color:var(--white);text-wrap:balance;max-width:1060px}
+h3{font-size:19px;font-weight:600;line-height:1.3;color:var(--white)}
+h4{font-size:15px;font-weight:600;line-height:1.35;color:var(--white)}
+p,li{font-size:18px;line-height:1.5}
+.lede{font-size:21px;line-height:1.45;color:var(--text)}
+.sm{font-size:16px;line-height:1.5}
+.xs{font-size:13.5px;line-height:1.5;color:var(--muted)}
+strong,b{color:var(--white);font-weight:600}
+ul{list-style:none}
+ul.dash>li{position:relative;padding-left:19px;margin-bottom:11px}
+ul.dash>li::before{content:"—";position:absolute;left:0;color:var(--muted)}
+.kicker{font-size:12px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--blue)}
+.kicker.mute{color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.blue{color:var(--blue-light)}.green{color:var(--green)}.red{color:var(--red)}
+.white{color:var(--white)}.dim{color:var(--muted)}
+.rule{height:1px;background:var(--line);border:0}
+.src{position:absolute;right:26px;top:22px;max-width:620px;text-align:right;font-family:var(--mono);
+  font-size:10.5px;line-height:1.4;color:#3A3A3A;letter-spacing:.02em}
+
+/* ── layout helpers ───────────────────────────────────────────────────── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.split{display:grid;grid-template-columns:1.02fr .98fr;gap:34px;align-items:center}
+.split.wide-l{grid-template-columns:1.25fr .75fr}
+.split.wide-r{grid-template-columns:.8fr 1.2fr}
+.mt1{margin-top:10px}.mt2{margin-top:18px}.mt3{margin-top:26px}.mt4{margin-top:36px}
+.mb1{margin-bottom:10px}.mb2{margin-bottom:18px}.mb3{margin-bottom:26px}
+.min0>*{min-width:0}
+
+/* ── components (§4.4 card, §5.1 badge) ───────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:19px 21px}
+.card.lead{border-left:3px solid var(--blue)}
+.card.warn{border-left:3px solid var(--red)}
+.card.ok{border-left:3px solid var(--green)}
+.card h3{margin-bottom:7px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 15px}
+.stat .num{font-family:var(--mono);font-size:29px;font-weight:500;color:var(--white);line-height:1.05;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.stat .num.sm{font-size:22px}
+.stat .cap{font-size:13px;color:var(--muted);margin-top:7px;line-height:1.35}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;
+  font-size:12px;font-weight:500;letter-spacing:.02em}
+.badge.b-blue{background:rgba(51,102,255,.10);color:var(--blue-light);border:1px solid rgba(51,102,255,.30)}
+.badge.b-mute{background:rgba(102,102,102,.10);color:#8A8A8A;border:1px solid rgba(102,102,102,.30)}
+.badge.b-green{background:rgba(0,204,102,.10);color:var(--green);border:1px solid rgba(0,204,102,.30)}
+.badge.b-red{background:rgba(255,68,68,.10);color:var(--red);border:1px solid rgba(255,68,68,.30)}
+.badge.b-amber{background:rgba(255,204,0,.10);color:var(--amber);border:1px solid rgba(255,204,0,.30)}
+table{width:100%;border-collapse:collapse;font-size:15.5px}
+th{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+  text-align:left;padding:9px 13px;border-bottom:1px solid var(--line-2)}
+td{padding:11px 13px;border-bottom:1px solid var(--line);color:var(--text);vertical-align:top}
+td:first-child{color:var(--white);font-weight:500}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+td.green{color:var(--green)}td.red{color:var(--red)}td.blue{color:var(--blue-light)}td.dim{color:var(--muted)}
+.quote{border-left:3px solid var(--blue);padding-left:24px}
+.quote p{font-size:26px;line-height:1.4;color:var(--white);font-weight:400;max-width:900px}
+.big{font-family:var(--mono);font-weight:500;font-size:132px;line-height:.94;color:var(--white);
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.big.red{color:var(--red)}
+.eq{font-family:var(--mono);font-size:20px;color:var(--white);letter-spacing:.01em}
+.cases{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.case{display:grid;grid-template-columns:92px 1fr 1fr;gap:12px;align-items:baseline;padding:13px 0;font-size:16.5px}
+.case+.case{border-top:1px solid var(--line)}
+.case>span{white-space:nowrap}
+.case .cond{color:var(--white);white-space:nowrap;font-family:var(--mono)}
+
+/* compare panels — css-patterns.md "Before / After Panels", house tokens */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.cmp>div{padding:20px 22px;background:var(--surface)}
+.cmp>div+div{border-left:1px solid var(--line);background:#050505}
+.cmp h4{margin-bottom:12px;letter-spacing:.02em}
+.cmp li{font-size:16px}
+
+/* sequence steps — css-patterns.md "Pipeline (horizontal steps)" */
+.seq{display:flex;align-items:stretch;gap:0}
+.seq .step{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 19px;min-width:0}
+.seq .arrow{display:flex;align-items:center;padding:0 12px;color:var(--line-2)}
+.seq .arrow svg{width:22px;height:22px;fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.seq .n{font-family:var(--mono);font-size:12px;color:var(--blue);letter-spacing:.06em;display:block;margin-bottom:8px}
+
+/* ── figures: the payoff axis, the split, the climb, the zero ─────────── */
+.fig{width:100%;height:auto;display:block;overflow:visible}
+.fig .ax{stroke:var(--line-2);stroke-width:1}
+.fig .grid{stroke:var(--line);stroke-width:1;stroke-dasharray:3 5}
+.fig .area-p{fill:rgba(51,102,255,.20)}
+.fig .area-n{fill:rgba(0,204,102,.14)}
+.fig .line-p{fill:none;stroke:var(--blue);stroke-width:2.5;stroke-linejoin:round}
+.fig .line-n{fill:none;stroke:var(--green);stroke-width:2.5;stroke-linejoin:round}
+.fig .line-sum{stroke:var(--white);stroke-width:2;stroke-dasharray:none}
+.fig .strike{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4}
+.fig text{font-family:var(--sans);font-size:14px;fill:var(--muted)}
+.fig .tick{font-family:var(--mono);font-size:13px;fill:var(--muted)}
+.fig .lab-p{fill:var(--blue-light);font-weight:600;font-size:17px}
+.fig .lab-n{fill:var(--green);font-weight:600;font-size:17px}
+.fig .lab-sum{fill:var(--white);font-size:14px;font-weight:500}
+.fig .ghost line{stroke:var(--red);stroke-width:1.5;stroke-dasharray:5 5;opacity:.65}
+.fig .ghost text{fill:var(--red);font-size:12.5px;opacity:.8}
+.fig .node-collat rect{fill:var(--surface);stroke:var(--line-2);stroke-width:1.5}
+.fig .node-p rect{fill:rgba(51,102,255,.08);stroke:var(--blue);stroke-width:1.5}
+.fig .node-n rect{fill:rgba(0,204,102,.07);stroke:var(--green);stroke-width:1.5}
+.fig .n-t{fill:var(--white);font-size:16px;font-weight:600}
+.fig .n-s{fill:var(--muted);font-size:14px}
+.fig .conn{fill:none;stroke-width:1.6}
+.fig .conn-p{stroke:var(--blue)}
+.fig .conn-n{stroke:var(--green)}
+.fig .tether path{fill:none;stroke:var(--white);stroke-width:1.2;stroke-dasharray:3 4;opacity:.55}
+.fig .area-climb{fill:rgba(51,102,255,.14)}
+.fig .line-climb{fill:none;stroke:var(--blue);stroke-width:2.5}
+.fig .dot-end{fill:var(--blue-light)}
+.fig .bar-was rect{fill:rgba(102,102,102,.18);stroke:var(--line-2)}
+.fig .bar-zero rect{fill:var(--red)}
+.fig .bar-v{font-family:var(--mono);font-size:19px;fill:var(--white)}
+.fig .bar-v.zero{fill:var(--red);font-size:30px}
+.fig .drop{fill:none;stroke:var(--red);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.mark{display:block}
+.watermark{position:absolute;right:-40px;bottom:-30px;width:330px;height:330px;opacity:.05;pointer-events:none}
+
+/* ── chrome ───────────────────────────────────────────────────────────── */
+.progress{position:absolute;top:0;left:0;height:2px;background:var(--blue);width:0;
+  transition:width .22s ease-out;z-index:20}
+.counter{position:absolute;left:74px;top:22px;font-family:var(--mono);font-size:12px;color:#3A3A3A;
+  font-variant-numeric:tabular-nums;z-index:19}
+.hint{position:fixed;left:14px;bottom:10px;font-size:11px;color:#2A2A2A;letter-spacing:.04em;z-index:30}
+@media (prefers-reduced-motion: reduce){.slide{transition:none}.progress{transition:none}}
+
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{overflow:visible;background:#000}
+  .stage{position:static;transform:none;width:1280px;height:auto;left:auto;top:auto}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1;pointer-events:auto;
+    page-break-after:always;break-after:page}
+  .slide:last-child{page-break-after:auto}
+  .progress,.hint,.counter{display:none}
+}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+<div class="progress" id="progress"></div>
+<span class="counter mono" id="counter">01 / 14</span>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="medici-mark" viewBox="0 0 120 120">
+  <rect x="16" y="20" width="16" height="80" rx="2" fill="#3366FF"/>
+  <rect x="82" y="20" width="10" height="34" rx="2" fill="#3366FF"/>
+  <rect x="82" y="66" width="10" height="34" rx="2" fill="#00CC66"/>
+  <path d="M32 26 L57 56 L82 26" fill="none" stroke="#3366FF" stroke-width="7" stroke-linejoin="round" opacity=".55"/>
+  <circle cx="57" cy="60" r="9" fill="#3366FF"/>
+  <circle cx="57" cy="60" r="3.4" fill="#D4A843"/>
+</symbol>
+<symbol id="mark-line" viewBox="0 0 120 120">
+  <rect x="16" y="20" width="16" height="80" rx="2" fill="none" stroke="#3366FF" stroke-width="3"/>
+  <rect x="82" y="20" width="10" height="34" rx="2" fill="none" stroke="#3366FF" stroke-width="3"/>
+  <rect x="82" y="66" width="10" height="34" rx="2" fill="none" stroke="#3366FF" stroke-width="3"/>
+  <circle cx="57" cy="60" r="9" fill="none" stroke="#3366FF" stroke-width="3"/>
+</symbol>
+</defs></svg>
+
+<section class="slide" data-layout="L-COVER">
+
+  <svg class="watermark" aria-hidden="true"><use href="#mark-line"/></svg>
+  <svg class="mark mb3" width="62" height="62" role="img" aria-label="Medici mark"><use href="#medici-mark"/></svg>
+  <p class="kicker mb2">Medici &#183; built for Canton</p>
+  <h1 style="max-width:930px">Medici splits tokenized collateral into two claims that always sum back</h1>
+  <p class="lede mt3" style="max-width:840px">P is the capped, income-bearing leg; N is the amplified leg that
+    takes everything above the strike. There is no liquidation price &#8212; the math doesn't permit it.</p>
+  <div class="mt4"><span class="badge b-mute">Medici (AAA Flowers S.A.)</span>
+    <span class="badge b-mute" style="margin-left:8px">material as-of July 2026</span></div>
+<span class="src">Medici Canton briefing slides 1 &#183; 3; Medici brand guide &#167;8.3</span>
+<span class="slide-no mono">01</span>
+</section>
+
+<section class="slide top" data-layout="L-STAT-ROW" data-question="Is this a real market, and what backs it?">
+
+  <p class="kicker mute mb1">The market today</p>
+  <h2 class="mb3">RWA lending is real &#8212; against collateral nobody can sell in one transaction</h2>
+<div class="fill">
+  <div class="g4 mb3">
+    <div class="stat"><div class="num">$620M+</div><div class="cap">Morpho RWA deposits by March 2026</div></div>
+    <div class="stat"><div class="num">87%</div><div class="cap">utilization on those deposits</div></div>
+    <div class="stat"><div class="num">$423.5M</div><div class="cap">Aave Horizon market, $106M borrowed</div></div>
+    <div class="stat"><div class="num">269</div><div class="cap">addresses on Horizon</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><h3>What backs those numbers</h3>
+      <p class="sm">NAV-priced collateral, with redemption windows measured in months.</p></div>
+    <div class="card lead"><h3>The report's own words</h3>
+      <p class="sm">Such a vault &#8220;cannot liquidate its position in a single onchain transaction&#8221;.</p></div>
+  </div>
+</div>
+<span class="src">RedStone with Credora, Gauntlet and Dune &#183; RWA lending report, March 2026 &#183; Part 2, who lends against what + vault standards</span>
+<span class="slide-no mono">02</span>
+</section>
+
+<section class="slide top" data-layout="L-SEQUENCE" data-question="How does the market handle a default it cannot execute?">
+
+  <p class="kicker mute mb1">The workaround, in three moves</p>
+  <h2 class="mb3">The market's fix for unsellable collateral is paperwork, not math</h2>
+<div class="fill">
+  <div class="seq mb3">
+    <div class="step"><span class="n">01</span><h3>A curator, not a credit committee</h3>
+      <p class="sm">Vault curators set LTVs and &#8220;manage liquidation pathways&#8221; for collateral that is
+        not observable onchain.</p></div>
+    <div class="arrow" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M4 10 L16 10 M12 6 L16 10 L12 14"/></svg></div>
+    <div class="step"><span class="n">02</span><h3>A signed agreement with the issuer</h3>
+      <p class="sm">Liquidation depends on the asset issuer agreeing, in advance and in writing, to redeem.</p></div>
+    <div class="arrow" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M4 10 L16 10 M12 6 L16 10 L12 14"/></svg></div>
+    <div class="step"><span class="n">03</span><h3>A formal de-leverage framework</h3>
+      <p class="sm">And a direct line to the issuer for the day it is needed.</p></div>
+  </div>
+  <div class="quote"><p style="font-size:22px">&#8220;These are not edge cases but fundamental design constraints.&#8221;</p></div>
+</div>
+<span class="src">RedStone with Credora, Gauntlet and Dune &#183; RWA lending report, March 2026 &#183; Part 2, liquidation mechanics and risk frameworks</span>
+<span class="slide-no mono">03</span>
+</section>
+
+<section class="slide" data-layout="L-STATEMENT" data-question="What happens on the day the pathway actually runs?">
+
+  <p class="kicker mb2">When it runs</p>
+  <h2 class="mb3">When the liquidation pathway runs, it runs at the worst possible price</h2>
+  <div class="split wide-r min0" style="align-items:center">
+    <div>
+      <div class="big red">$0</div>
+      <p class="sm mt2">Black Thursday, March 2020: <span class="mono white">$8M</span> of MakerDAO collateral
+        auctioned for <span class="mono white">$0</span>.</p>
+      <p class="sm mt1">Mango Markets: <span class="mono white">$116M</span>, through an oracle the protocol
+        had to read in real time.</p>
+      <p class="sm mt2 dim">The shape of the risk, not its size: fine one block, wiped out the next
+        &#8212; a cliff, not a slope.</p>
+    </div>
+    <div><svg class="fig" viewBox="0 0 560 230" role="img" aria-label="Auction proceeds falling to zero dollars">
+  <line class="ax" x1="40" y1="176" x2="536" y2="176"/>
+  <g class="bar-was">
+    <rect x="70" y="40" width="86" height="136" rx="4"/>
+    <text class="tick" x="113" y="196" text-anchor="middle">collateral posted</text>
+    <text class="bar-v" x="113" y="30" text-anchor="middle">~$8M</text>
+  </g>
+  <path class="drop" d="M 190,108 L 300,108 M 286,98 L 300,108 L 286,118"/>
+  <g class="bar-zero">
+    <rect x="330" y="172" width="86" height="4" rx="2"/>
+    <text class="tick" x="373" y="196" text-anchor="middle">auction proceeds</text>
+    <text class="bar-v zero" x="373" y="160" text-anchor="middle">$0</text>
+  </g>
+</svg></div>
+  </div>
+<span class="src">Medici Canton briefing slide 2; Medici asset-manager briefing slide 2</span>
+<span class="slide-no mono">04</span>
+</section>
+
+<section class="slide" data-layout="L-STATEMENT" data-question="What would you do instead of managing it better?">
+
+  <p class="kicker mb2">The pivot</p>
+  <h1 class="mb3" style="max-width:1000px">Medici deletes the liquidation pathway instead of managing it</h1>
+  <ul class="dash lede mt2" style="max-width:900px">
+    <li>Split the collateral into two claims that always add back to it; then there is no threshold to cross.</li>
+    <li>No under-collateralization condition exists anywhere in the payoff function.</li>
+  </ul>
+<span class="src">Medici Canton briefing slide 5; Medici asset-manager briefing slide 4</span>
+<span class="slide-no mono">05</span>
+</section>
+
+<section class="slide top" data-layout="L-DIAGRAM" data-question="What exactly does the vault do with the deposit?">
+
+  <p class="kicker mb1">The mechanism, part one</p>
+  <h2 class="mb2">One position becomes two claims that always add back to it</h2>
+<div class="fill">
+  <div class="split wide-l min0" style="align-items:center">
+    <div><svg class="fig" viewBox="0 0 620 252" role="img" aria-label="One collateral position splits into P and N and stays tethered to the vault">
+  <g class="node-collat">
+    <rect x="28" y="96" width="150" height="68" rx="10"/>
+    <text class="n-t" x="103" y="126" text-anchor="middle">collateral</text>
+    <text class="n-s" x="103" y="148" text-anchor="middle">1 tokenized position</text>
+  </g>
+  <path class="conn conn-p" d="M 180,116 C 250,116 250,60 320,60"/>
+  <path class="conn conn-n" d="M 180,144 C 250,144 250,200 320,200"/>
+  <g class="node-p">
+    <rect x="322" y="28" width="266" height="66" rx="10"/>
+    <text class="n-t" x="344" y="58">P — Protected</text>
+    <text class="n-s" x="344" y="80">capped at the strike, no margin call</text>
+  </g>
+  <g class="node-n">
+    <rect x="322" y="168" width="266" height="66" rx="10"/>
+    <text class="n-t" x="344" y="198">N — Amplified</text>
+    <text class="n-s" x="344" y="220">everything above the strike</text>
+  </g>
+  <g class="tether">
+    <path d="M 596,61 C 616,61 616,201 596,201"/>
+    <text class="n-s" x="300" y="139" text-anchor="middle">P + N &#8801; collateral</text>
+  </g>
+</svg></div>
+    <div>
+      <ul class="dash sm">
+        <li>Deposit a tokenized asset, pick a strike; the vault issues <b class="blue">P</b> (capped,
+          income-bearing) and <b class="green">N</b> (everything above the strike).</li>
+        <li><span class="mono white">P + N</span> is identically the collateral at every price
+          &#8212; closed-form, verified as math rather than asserted at runtime.</li>
+        <li>The oracle is read once, at settlement; there is no live feed to manipulate during the
+          position's life.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<span class="src">Medici Canton briefing slides 3 &#183; 5; Medici asset-manager briefing slide 3</span>
+<span class="slide-no mono">06</span>
+</section>
+
+<section class="slide top" data-layout="L-DIAGRAM" data-question="Where would a lender draw its liquidation line here?">
+
+  <p class="kicker mb1">The mechanism, part two</p>
+  <h2 class="mb2">At maturity there are two cases, and neither is a margin call</h2>
+<div class="fill">
+  <div class="split wide-l min0" style="align-items:center">
+    <div><svg class="fig" viewBox="0 0 640 322" role="img" aria-label="Stacked payoff of P and N with a flat top at 1.00, and a liquidation threshold that has nowhere to sit">
+<line class="ax" x1="66" y1="268.0" x2="554" y2="268.0"/>
+<line class="ax" x1="66" y1="38" x2="66" y2="268.0"/>
+<line class="grid" x1="66" y1="153.0" x2="554" y2="153.0"/>
+<path class="area-n" d="M 66.0,38.0 L 70.1,38.0 L 74.2,38.0 L 78.3,38.0 L 82.4,38.0 L 86.5,38.0 L 90.6,38.0 L 94.7,38.0 L 98.8,38.0 L 102.9,38.0 L 107.0,38.0 L 111.1,38.0 L 115.2,38.0 L 119.3,38.0 L 123.4,38.0 L 127.5,38.0 L 131.6,38.0 L 135.7,38.0 L 139.8,38.0 L 143.9,38.0 L 148.0,38.0 L 152.1,38.0 L 156.2,38.0 L 160.3,38.0 L 164.4,38.0 L 168.5,38.0 L 172.6,38.0 L 176.7,38.0 L 180.8,38.0 L 184.9,38.0 L 189.0,38.0 L 193.1,38.0 L 197.2,38.0 L 201.3,40.4 L 205.4,44.4 L 209.5,48.2 L 213.6,51.9 L 217.7,55.5 L 221.8,58.9 L 225.9,62.3 L 230.0,65.5 L 234.1,68.7 L 238.2,71.7 L 242.3,74.7 L 246.4,77.5 L 250.5,80.3 L 254.6,83.0 L 258.7,85.6 L 262.8,88.2 L 266.9,90.7 L 271.0,93.1 L 275.1,95.4 L 279.2,97.7 L 283.3,100.0 L 287.4,102.1 L 291.5,104.2 L 295.6,106.3 L 299.7,108.3 L 303.8,110.3 L 307.9,112.2 L 312.1,114.0 L 316.2,115.9 L 320.3,117.6 L 324.4,119.4 L 328.5,121.1 L 332.6,122.7 L 336.7,124.4 L 340.8,126.0 L 344.9,127.5 L 349.0,129.0 L 353.1,130.5 L 357.2,132.0 L 361.3,133.4 L 365.4,134.8 L 369.5,136.2 L 373.6,137.5 L 377.7,138.8 L 381.8,140.1 L 385.9,141.4 L 390.0,142.6 L 394.1,143.8 L 398.2,145.0 L 402.3,146.2 L 406.4,147.3 L 410.5,148.4 L 414.6,149.5 L 418.7,150.6 L 422.8,151.7 L 426.9,152.7 L 431.0,153.7 L 435.1,154.8 L 439.2,155.7 L 443.3,156.7 L 447.4,157.7 L 451.5,158.6 L 455.6,159.5 L 459.7,160.4 L 463.8,161.3 L 467.9,162.2 L 472.0,163.1 L 476.1,163.9 L 480.2,164.8 L 484.3,165.6 L 488.4,166.4 L 492.5,167.2 L 496.6,168.0 L 500.7,168.7 L 504.8,169.5 L 508.9,170.3 L 513.0,171.0 L 517.1,171.7 L 521.2,172.4 L 525.3,173.1 L 529.4,173.8 L 533.5,174.5 L 537.6,175.2 L 541.7,175.9 L 545.8,176.5 L 549.9,177.2 L 554.0,177.8 L 554.0,38.0 L 66.0,38.0 Z"/>
+<path class="area-p" d="M 66.0,38.0 L 70.1,38.0 L 74.2,38.0 L 78.3,38.0 L 82.4,38.0 L 86.5,38.0 L 90.6,38.0 L 94.7,38.0 L 98.8,38.0 L 102.9,38.0 L 107.0,38.0 L 111.1,38.0 L 115.2,38.0 L 119.3,38.0 L 123.4,38.0 L 127.5,38.0 L 131.6,38.0 L 135.7,38.0 L 139.8,38.0 L 143.9,38.0 L 148.0,38.0 L 152.1,38.0 L 156.2,38.0 L 160.3,38.0 L 164.4,38.0 L 168.5,38.0 L 172.6,38.0 L 176.7,38.0 L 180.8,38.0 L 184.9,38.0 L 189.0,38.0 L 193.1,38.0 L 197.2,38.0 L 201.3,40.4 L 205.4,44.4 L 209.5,48.2 L 213.6,51.9 L 217.7,55.5 L 221.8,58.9 L 225.9,62.3 L 230.0,65.5 L 234.1,68.7 L 238.2,71.7 L 242.3,74.7 L 246.4,77.5 L 250.5,80.3 L 254.6,83.0 L 258.7,85.6 L 262.8,88.2 L 266.9,90.7 L 271.0,93.1 L 275.1,95.4 L 279.2,97.7 L 283.3,100.0 L 287.4,102.1 L 291.5,104.2 L 295.6,106.3 L 299.7,108.3 L 303.8,110.3 L 307.9,112.2 L 312.1,114.0 L 316.2,115.9 L 320.3,117.6 L 324.4,119.4 L 328.5,121.1 L 332.6,122.7 L 336.7,124.4 L 340.8,126.0 L 344.9,127.5 L 349.0,129.0 L 353.1,130.5 L 357.2,132.0 L 361.3,133.4 L 365.4,134.8 L 369.5,136.2 L 373.6,137.5 L 377.7,138.8 L 381.8,140.1 L 385.9,141.4 L 390.0,142.6 L 394.1,143.8 L 398.2,145.0 L 402.3,146.2 L 406.4,147.3 L 410.5,148.4 L 414.6,149.5 L 418.7,150.6 L 422.8,151.7 L 426.9,152.7 L 431.0,153.7 L 435.1,154.8 L 439.2,155.7 L 443.3,156.7 L 447.4,157.7 L 451.5,158.6 L 455.6,159.5 L 459.7,160.4 L 463.8,161.3 L 467.9,162.2 L 472.0,163.1 L 476.1,163.9 L 480.2,164.8 L 484.3,165.6 L 488.4,166.4 L 492.5,167.2 L 496.6,168.0 L 500.7,168.7 L 504.8,169.5 L 508.9,170.3 L 513.0,171.0 L 517.1,171.7 L 521.2,172.4 L 525.3,173.1 L 529.4,173.8 L 533.5,174.5 L 537.6,175.2 L 541.7,175.9 L 545.8,176.5 L 549.9,177.2 L 554.0,177.8 L 554.0,268.0 L 66.0,268.0 Z"/>
+<path class="line-p" d="M 66.0,38.0 L 70.1,38.0 L 74.2,38.0 L 78.3,38.0 L 82.4,38.0 L 86.5,38.0 L 90.6,38.0 L 94.7,38.0 L 98.8,38.0 L 102.9,38.0 L 107.0,38.0 L 111.1,38.0 L 115.2,38.0 L 119.3,38.0 L 123.4,38.0 L 127.5,38.0 L 131.6,38.0 L 135.7,38.0 L 139.8,38.0 L 143.9,38.0 L 148.0,38.0 L 152.1,38.0 L 156.2,38.0 L 160.3,38.0 L 164.4,38.0 L 168.5,38.0 L 172.6,38.0 L 176.7,38.0 L 180.8,38.0 L 184.9,38.0 L 189.0,38.0 L 193.1,38.0 L 197.2,38.0 L 201.3,40.4 L 205.4,44.4 L 209.5,48.2 L 213.6,51.9 L 217.7,55.5 L 221.8,58.9 L 225.9,62.3 L 230.0,65.5 L 234.1,68.7 L 238.2,71.7 L 242.3,74.7 L 246.4,77.5 L 250.5,80.3 L 254.6,83.0 L 258.7,85.6 L 262.8,88.2 L 266.9,90.7 L 271.0,93.1 L 275.1,95.4 L 279.2,97.7 L 283.3,100.0 L 287.4,102.1 L 291.5,104.2 L 295.6,106.3 L 299.7,108.3 L 303.8,110.3 L 307.9,112.2 L 312.1,114.0 L 316.2,115.9 L 320.3,117.6 L 324.4,119.4 L 328.5,121.1 L 332.6,122.7 L 336.7,124.4 L 340.8,126.0 L 344.9,127.5 L 349.0,129.0 L 353.1,130.5 L 357.2,132.0 L 361.3,133.4 L 365.4,134.8 L 369.5,136.2 L 373.6,137.5 L 377.7,138.8 L 381.8,140.1 L 385.9,141.4 L 390.0,142.6 L 394.1,143.8 L 398.2,145.0 L 402.3,146.2 L 406.4,147.3 L 410.5,148.4 L 414.6,149.5 L 418.7,150.6 L 422.8,151.7 L 426.9,152.7 L 431.0,153.7 L 435.1,154.8 L 439.2,155.7 L 443.3,156.7 L 447.4,157.7 L 451.5,158.6 L 455.6,159.5 L 459.7,160.4 L 463.8,161.3 L 467.9,162.2 L 472.0,163.1 L 476.1,163.9 L 480.2,164.8 L 484.3,165.6 L 488.4,166.4 L 492.5,167.2 L 496.6,168.0 L 500.7,168.7 L 504.8,169.5 L 508.9,170.3 L 513.0,171.0 L 517.1,171.7 L 521.2,172.4 L 525.3,173.1 L 529.4,173.8 L 533.5,174.5 L 537.6,175.2 L 541.7,175.9 L 545.8,176.5 L 549.9,177.2 L 554.0,177.8"/>
+<line class="line-sum" x1="66" y1="38.0" x2="554" y2="38.0"/>
+<line class="strike" x1="198.9" y1="38" x2="198.9" y2="268.0"/>
+<text class="tick" x="198.9" y="288.0" text-anchor="middle">strike S</text>
+<text class="tick" x="56" y="43.0" text-anchor="end">1.00</text>
+<text class="tick" x="56" y="273.0" text-anchor="end">0</text>
+<text class="tick" x="554" y="288.0" text-anchor="end">reference price x at maturity</text>
+<text class="lab-p" x="130.2" y="162.2">P</text>
+<text class="lab-n" x="462.4" y="102.4">N</text>
+<text class="lab-sum" x="340.9" y="26.0">P + N = collateral, at every price</text>
+<g class="ghost"><line x1="393.6" y1="38" x2="393.6" y2="268.0"/><text x="401.6" y="52.0">liquidation threshold — nowhere to sit</text></g>
+</svg></div>
+    <div>
+      <div class="cases mb2">
+        <div class="case"><span class="cond">S &#8805; x</span>
+          <span><b class="blue">P</b> receives <span class="mono white">1.00</span></span>
+          <span><b class="green">N</b> receives <span class="mono white">0.00</span></span></div>
+        <div class="case"><span class="cond">S &lt; x</span>
+          <span><b class="blue">P</b> receives <span class="mono white">S/x</span></span>
+          <span><b class="green">N</b> receives <span class="mono white">1 &#8722; S/x</span></span></div>
+      </div>
+      <p class="sm">Then the liquidation threshold every other venue needs is drawn &#8212; and there is
+        <strong>no reference price at which the vault is worth less than the collateral</strong>, so it has
+        to be taken away.</p>
+    </div>
+  </div>
+</div>
+<span class="src">Medici Canton briefing slide 5; Medici asset-manager briefing slide 4</span>
+<span class="slide-no mono">07</span>
+</section>
+
+<section class="slide top" data-layout="L-TWO-COL" data-question="What does P give up for that?">
+
+  <p class="kicker mb1">Nothing is free</p>
+  <h2 class="mb2">P is short a call &#8212; that decline is what P earns</h2>
+<div class="fill">
+  <div class="split min0" style="align-items:center">
+    <div><svg class="fig" viewBox="0 0 600 300" role="img" aria-label="P declines continuously above the strike as S over x">
+<line class="ax" x1="66" y1="246.0" x2="514" y2="246.0"/>
+<line class="ax" x1="66" y1="38" x2="66" y2="246.0"/>
+<line class="grid" x1="66" y1="142.0" x2="514" y2="142.0"/>
+<path class="line-p" d="M 66.0,38.0 L 69.8,38.0 L 73.5,38.0 L 77.3,38.0 L 81.1,38.0 L 84.8,38.0 L 88.6,38.0 L 92.4,38.0 L 96.1,38.0 L 99.9,38.0 L 103.6,38.0 L 107.4,38.0 L 111.2,38.0 L 114.9,38.0 L 118.7,38.0 L 122.5,38.0 L 126.2,38.0 L 130.0,38.0 L 133.8,38.0 L 137.5,38.0 L 141.3,38.0 L 145.1,38.0 L 148.8,38.0 L 152.6,38.0 L 156.4,38.0 L 160.1,38.0 L 163.9,38.0 L 167.6,38.0 L 171.4,38.0 L 175.2,38.0 L 178.9,38.0 L 182.7,38.0 L 186.5,38.0 L 190.2,40.2 L 194.0,43.8 L 197.8,47.2 L 201.5,50.6 L 205.3,53.8 L 209.1,56.9 L 212.8,60.0 L 216.6,62.9 L 220.4,65.7 L 224.1,68.5 L 227.9,71.2 L 231.6,73.8 L 235.4,76.3 L 239.2,78.7 L 242.9,81.1 L 246.7,83.4 L 250.5,85.6 L 254.2,87.8 L 258.0,89.9 L 261.8,92.0 L 265.5,94.0 L 269.3,96.0 L 273.1,97.9 L 276.8,99.8 L 280.6,101.6 L 284.4,103.4 L 288.1,105.1 L 291.9,106.8 L 295.6,108.4 L 299.4,110.0 L 303.2,111.6 L 306.9,113.1 L 310.7,114.6 L 314.5,116.1 L 318.2,117.5 L 322.0,118.9 L 325.8,120.3 L 329.5,121.7 L 333.3,123.0 L 337.1,124.3 L 340.8,125.5 L 344.6,126.8 L 348.4,128.0 L 352.1,129.2 L 355.9,130.3 L 359.6,131.5 L 363.4,132.6 L 367.2,133.7 L 370.9,134.8 L 374.7,135.8 L 378.5,136.8 L 382.2,137.9 L 386.0,138.9 L 389.8,139.8 L 393.5,140.8 L 397.3,141.7 L 401.1,142.7 L 404.8,143.6 L 408.6,144.5 L 412.4,145.4 L 416.1,146.2 L 419.9,147.1 L 423.6,147.9 L 427.4,148.7 L 431.2,149.5 L 434.9,150.3 L 438.7,151.1 L 442.5,151.9 L 446.2,152.6 L 450.0,153.4 L 453.8,154.1 L 457.5,154.8 L 461.3,155.5 L 465.1,156.2 L 468.8,156.9 L 472.6,157.6 L 476.4,158.3 L 480.1,158.9 L 483.9,159.6 L 487.6,160.2 L 491.4,160.8 L 495.2,161.5 L 498.9,162.1 L 502.7,162.7 L 506.5,163.3 L 510.2,163.9 L 514.0,164.4"/>
+<line class="strike" x1="188.0" y1="38" x2="188.0" y2="246.0"/>
+<text class="tick" x="188.0" y="266.0" text-anchor="middle">strike S</text>
+<text class="tick" x="56" y="43.0" text-anchor="end">1.00</text>
+<text class="tick" x="56" y="251.0" text-anchor="end">0</text>
+<text class="tick" x="514" y="266.0" text-anchor="end">reference price x</text>
+<text class="lab-p" x="108.1" y="26.0">P</text>
+</svg>
+      <p class="xs" style="margin-top:-6px">Above the strike P declines as S/x: no floor, no cliff,
+        computable at every price &#8212; and that decline is the income.</p>
+    </div>
+    <div>
+      <div class="g2 mb2">
+        <div class="stat"><div class="num sm red">&#8722;1.25%/yr</div><div class="cap">net drift</div></div>
+        <div class="stat"><div class="num sm">$0.895</div><div class="cap">where P ends on $1.00</div></div>
+      </div>
+      <div class="card mb2"><h3>The backtest, named</h3>
+        <p class="sm">9 years, Hypercall, Aug 2017&#8211;Jun 2026. ETH underlying, Deribit options,
+          Black-Scholes at mid.</p></div>
+      <p class="sm">Roll execution is the dominant cost: <span class="mono white">&#8722;1.2%/yr</span> at 10bps
+        across ~<span class="mono white">12.2</span> rolls a year; best sub-period gross theta was
+        <span class="mono white">+0.57%/yr</span> in 2021&#8211;22.</p>
+    </div>
+  </div>
+</div>
+<span class="src">Medici asset-manager briefing slides 3 &#183; 4 &#183; 12; Medici Canton briefing slide 3</span>
+<span class="slide-no mono">08</span>
+</section>
+
+<section class="slide top" data-layout="L-TABLE" data-question="Is this a better lending rate, or a different thing?">
+
+  <p class="kicker mute mb1">Category, not price</p>
+  <h2 class="mb3">This is a different instrument, not a better lending rate</h2>
+<div class="fill">
+  <table>
+    <thead><tr><th style="width:30%"></th><th style="width:35%">Lending against the asset</th>
+      <th style="width:35%">Splitting the asset</th></tr></thead>
+    <tbody>
+      <tr><td>Who takes the price risk</td><td>The borrower, until the threshold breaches</td>
+        <td class="blue">The P holder, continuously above the strike</td></tr>
+      <tr><td>Worst case</td><td class="red">Forced sale of collateral with no bid</td>
+        <td>The asset rallies and P declines computably</td></tr>
+      <tr><td>What the issuer must sign</td><td>A liquidation agreement</td>
+        <td class="green">Nothing</td></tr>
+    </tbody>
+  </table>
+</div>
+<span class="src">Medici asset-manager briefing slide 8; RedStone with Credora, Gauntlet and Dune &#183; RWA lending report, March 2026 &#183; Part 2</span>
+<span class="slide-no mono">09</span>
+</section>
+
+<section class="slide top" data-layout="L-COMPARE" data-question="Which tokenized assets does this actually suit?">
+
+  <p class="kicker mute mb1">Which collateral</p>
+  <h2 class="mb2">The collateral this fits is the collateral institutions already rotated into</h2>
+<div class="fill">
+  <div class="cmp mb2">
+    <div>
+      <h4 class="green">Where the demand went</h4>
+      <ul class="dash">
+        <li>On Morpho, tokenized T-bill deposits fell <span class="mono white">92%</span> from a
+          ~<span class="mono white">$194M</span> October 2025 peak</li>
+        <li>Tokenized gold grew <span class="mono white">7x</span> over the same window</li>
+        <li>Gold borrows at a conservative ~<span class="mono white">40%</span> collateral ratio
+          &#8212; straightforward, non-looped borrowing</li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="red">What it does not fit, said plainly</h4>
+      <ul class="dash">
+        <li>Private credit is illiquid and NAV-priced</li>
+        <li>Tokenized equities are live with under <span class="mono white">$1K</span> deposited</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<span class="src">RedStone with Credora, Gauntlet and Dune &#183; RWA lending report, March 2026 &#183; Part 2, gold vs T-bills and who lends against what; Part 1 &#167;(b)4</span>
+<span class="slide-no mono">10</span>
+</section>
+
+<section class="slide top" data-layout="L-STAT-ROW" data-question="Why is Canton the venue, and what is the counter?">
+
+  <p class="kicker mute mb1">The ledger</p>
+  <h2 class="mb3">Canton already holds the assets and enforces the privacy institutions require</h2>
+<div class="fill">
+  <div class="g2 mb2">
+    <div class="stat"><div class="num">$344B</div><div class="cap">represented &#8212; the collateral is already
+      there, with no bridge and no wrapper</div></div>
+    <div class="stat"><div class="num">$2T</div><div class="cap">per month in repo</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><h3>What the ledger gives you</h3>
+      <p class="sm">Positions are stakeholder-scoped; splits, rolls and settlements are atomic;
+        no gas, no MEV, no mempool.</p></div>
+    <div class="card warn"><h3>The honest counter</h3>
+      <p class="sm">Canton appears nowhere in the RedStone lending report. Distribution is the open problem,
+        not the mechanism.</p></div>
+  </div>
+</div>
+<span class="src">Medici Canton briefing slide 4; RedStone with Credora, Gauntlet and Dune &#183; RWA lending report, March 2026 &#183; Part 2, the Canton distribution gap</span>
+<span class="slide-no mono">11</span>
+</section>
+
+<section class="slide top" data-layout="L-TWO-COL" data-question="What is actually running today?">
+
+  <p class="kicker mute mb1">Maturity</p>
+  <h2 class="mb2">The mechanism runs today; the audit, mainnet and users do not</h2>
+<div class="fill">
+  <div class="g2 mb2">
+    <div class="card ok"><h3 class="green">Real</h3>
+      <ul class="dash sm">
+        <li>54 DAML templates across 9 modules</li>
+        <li>A 12-agent TypeScript fleet behind a Go ledger service, 6 core agents live</li>
+        <li>A React frontend end-to-end</li>
+        <li>Closed-form invariant proofs</li>
+      </ul></div>
+    <div class="card warn"><h3 class="red">Not real</h3>
+      <ul class="dash sm">
+        <li>Mainnet deployment</li>
+        <li>Real collateral</li>
+        <li>Live users</li>
+        <li>A third-party audit, and revenue</li>
+      </ul></div>
+  </div>
+  <p class="xs">As-of July 2026 the plan was audit and legal in Q3 2026, mainnet Q4 2026, compliance layer
+    H1 2027, first institutional pilot H2 2027.</p>
+</div>
+<span class="src">Medici Canton briefing slides 8 &#183; 9 &#183; 12</span>
+<span class="slide-no mono">12</span>
+</section>
+
+<section class="slide top" data-layout="L-SEQUENCE" data-question="What are we asking this room to do?">
+
+  <p class="kicker mb1">The ask</p>
+  <h2 class="mb3">Bring us the asset you can't sell in a hurry</h2>
+<div class="fill">
+  <div class="seq mb3">
+    <div class="step"><span class="n">01</span><h3>Name one position</h3>
+      <p class="sm">One tokenized position on Canton you would not want force-sold. Gold or a volatile fund
+        unit fits; a near-zero-volatility treasury fund does not.</p></div>
+    <div class="arrow" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M4 10 L16 10 M12 6 L16 10 L12 14"/></svg></div>
+    <div class="step"><span class="n">02</span><h3>We size the split against it</h3>
+      <p class="sm">Strike, maturity, and the drift you would be paying &#8212; starting from the published
+        <span class="mono white">&#8722;1.25%/yr</span>.</p></div>
+    <div class="arrow" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M4 10 L16 10 M12 6 L16 10 L12 14"/></svg></div>
+    <div class="step"><span class="n">03</span><h3>Then try to break the payoff</h3>
+      <p class="sm">If P + N holds at every price you can name, the conversation becomes a pilot.</p></div>
+  </div>
+</div>
+<span class="src">RedStone with Credora, Gauntlet and Dune &#183; RWA lending report, March 2026 &#183; Part 2; Medici asset-manager briefing slide 3</span>
+<span class="slide-no mono">13</span>
+</section>
+
+<section class="slide" data-layout="L-CLOSING">
+
+  <svg class="watermark" aria-hidden="true"><use href="#mark-line"/></svg>
+  <p class="kicker mb2">One sentence to leave with</p>
+  <h1 style="max-width:920px">No liquidation price. Not a policy &#8212; a property of the payoff</h1>
+  <p class="lede mt4" style="max-width:820px">There is no liquidation price &#8212; the math doesn't permit it.</p>
+  <p class="eq mt3">P + N &#8801; collateral</p>
+<span class="src">Medici brand guide &#167;8.3 &#183; the canonical sentence, reused verbatim</span>
+<span class="slide-no mono">14</span>
+</section>
+
+</div><!-- /stage -->
+<span class="hint">&#8592; &#8594; &#183; click &#183; scroll</span>
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide')),
+      total=slides.length,cur=0,
+      stage=document.getElementById('stage'),
+      bar=document.getElementById('progress'),
+      counter=document.getElementById('counter');
+  function fit(){
+    var s=Math.min(window.innerWidth/1280,window.innerHeight/720);
+    stage.style.setProperty('--s',s);
+  }
+  function pad(n){return (n<10?'0':'')+n;}
+  function show(n){
+    cur=Math.max(0,Math.min(total-1,n));
+    slides.forEach(function(s,i){s.classList.toggle('active',i===cur);});
+    bar.style.width=((cur+1)/total*100)+'%';
+    counter.textContent=pad(cur+1)+' / '+pad(total);
+    history.replaceState(null,'','#'+(cur+1));
+  }
+  function next(){show(cur+1);} function prev(){show(cur-1);}
+  window.addEventListener('resize',fit);
+  document.addEventListener('keydown',function(e){
+    if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].indexOf(e.key)>-1){e.preventDefault();next();}
+    else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].indexOf(e.key)>-1){e.preventDefault();prev();}
+    else if(e.key==='Home'){e.preventDefault();show(0);}
+    else if(e.key==='End'){e.preventDefault();show(total-1);}
+  });
+  document.addEventListener('click',function(e){
+    if(e.target.closest('a,button')) return;
+    (e.clientX>window.innerWidth*0.35)?next():prev();
+  });
+  var lock=0;
+  document.addEventListener('wheel',function(e){
+    var t=Date.now(); if(t-lock<420) return;
+    if(Math.abs(e.deltaY)<8&&Math.abs(e.deltaX)<8) return;
+    lock=t;(e.deltaY>0||e.deltaX>0)?next():prev();
+  },{passive:true});
+  fit();
+  var h=parseInt((location.hash||'').replace('#',''),10);
+  show(isFinite(h)&&h>0?h-1:0);
+})();
+</script>
+</body>
+</html>

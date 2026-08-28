@@ -1,0 +1,612 @@
+# staging.yaml — normalized transport contract for "Medici for RWA tokens"
+# Messaging method: skills/messaging/house-guide/messaging-guide.md (the Assay comprehension-
+# diagnosis method), applied to Medici. Native artifacts beside this file:
+#   messaging-guide-medici.md  — the seven sections (diagnosis, 30s, analogies, demo, glossary,
+#                                category, number gate)
+#   messaging.md               — the distilled layer
+# Contract shape: skills/messaging/staging/SKILL.md §HANDOFF (field names, closed `function`
+# vocabulary, closed `motion_role` vocabulary, `transitions` types). Only the CONTRACT is adopted;
+# the arc, the claims, the bold moment and the sequencing come from the house-guide method.
+#
+# Design consumes this verbatim. Never reorder slots. Never rewrite a headline claim. A slot you
+# cannot render is logged in your NOTES.md and returned here — it is not fixed in the layout.
+# Nothing in this file names a visual.
+
+brief: "Medici for RWA tokens — product pitch / explainer (rwa-bakeoff/BRIEF.md, 2026-08-27)"
+method: house-guide
+genre: product-explainer          # method's own framing: educate first, the ask is a conversation
+lane: mixed(hall)                 # hall leads — sparse slots, one idea each. Read-fallback DECLARED:
+                                  # it is presented once and forwarded ten times, so every claim is a
+                                  # complete sentence that stands without a narrator.
+
+# ── THE METHOD'S GOVERNING RULE ──────────────────────────────────────────────────────────────
+sequencing_rule: "scene → value → mechanism → honest boundary"
+sequencing_note: >
+  Every beat order below is derived from this rule, and so is the bold moment. The rule is the
+  method's answer to the diagnosis (messaging-guide-medici.md §1, failures B3 and B9): the source
+  decks put the cost and the caveats inside the "what it is" slide, before the reader has a model to
+  price them with. Here the honest boundary is the LAST content beat, where it reads as seriousness
+  rather than as a warning label — and it is where the piece's one loud moment sits.
+
+diagnosis_carried:
+  b1: "Both source decks headline a negation ('No forced liquidation. Ever.') before saying what the thing is. Fixed: d1 and s1 state what the holder gets, not what is absent."
+  b3: "Economics table sits on the 'What Medici is' slide in both decks, so the reader's first number is a loss. Fixed: no figure appears before d7 / s5 (the mechanism)."
+  b4: "Nine unglossed terms in one table (asset-manager Slide 3). Fixed: glossary rule — one gloss per novel term on first use, max one unglossed term per sentence."
+  b5: "No worked example anywhere in the corpus. Fixed: d6 carries one deposit, one strike, three prices, three payouts."
+  b6: "No before/after. Fixed: d2–d4 stage the buyer's current world using the market's own account of it."
+  b7: "Six novelties in the canton deck. Fixed: ONE new mechanism (the split); chain, agents, compliance and entity are demoted to d11 or cut."
+  b8: "'Zero risk', 'counterparty risk: none', 'de-risked' overreach from the payoff to the system. Fixed: the liquidation claim stays UNHEDGED (brand §8.1 principle 4) and is scoped to the payoff in the same sentence; the overreaches are banned."
+  b9: "Honest boundary before comprehension. Fixed: it is beat four, and it is the peak."
+
+audience:
+  assumed_knowledge: >
+    Collateral, NAV, redemption windows, strike, maturity, call option, oracle, settlement,
+    loan-to-value, on-chain issuance. Usable without gloss. Must be glossed if used: roll, theta,
+    drift, sub-transaction privacy, lazy oracle, DAML, looping, MEV, liquidation cascade,
+    ERC-3643. One new mechanism only — the split — and nothing else novel may share its slot.
+  distrusts: >
+    Numbers with no named source; a comparison the presenter wins on every row; a novel structure
+    described as safe; enthusiasm with no downside attached. Proof is therefore spent on the cost
+    and on what does not exist, not on the mechanism — they will accept the mechanism once it is
+    arithmetic they can redo.
+  decision_they_hold: >
+    A credibility judgment and the authority to grant an hour, or to make an introduction. Not a
+    resource decision. The capital asks in both source decks ($5–50M strategic; Foundation funding)
+    are deliberately CUT — carrying them would change the genre and the room.
+  attention_budget: >
+    ~10 minutes live for the deck; the first minute decides whether it is for them. ~2 minutes for
+    the film, watched alone, often muted on the first pass.
+
+belief: >
+  Forced liquidation is not a risk to be managed on tokenized collateral — it is a mechanism that
+  can be removed, and for collateral that prices at NAV and redeems monthly, removing it is the
+  only honest way to make the asset productive.
+
+repeatable_line: >
+  Medici splits a tokenized asset into two claims that always add back up to it — so the asset can
+  be posted, sold against and earned on, with no liquidation price anywhere in it.
+
+# ── DECK LANE ────────────────────────────────────────────────────────────────────────────────
+deck:
+  time_shape:
+    minutes: 10
+    medium: deck
+    slots_total: 13
+    content_slots: 11              # excludes cover (d1) and end (d13)
+    seconds_per_slot: 54.5
+    floor: 40
+    arithmetic: "10 × 60 = 600s ÷ 11 content slots = 54.5s/slot ≥ 40s floor. PASS."
+    presented_vs_read: presented-primary, read-fallback (declared)
+
+  arc:
+    - {beat: scene,     slots: [1, 2, 3, 4],  minutes: 2.2, share: 0.22}
+    - {beat: value,     slots: [5],           minutes: 0.9, share: 0.09}
+    - {beat: mechanism, slots: [6, 7, 8],     minutes: 3.3, share: 0.33}
+    - {beat: boundary,  slots: [9, 10, 11],   minutes: 2.7, share: 0.27}
+    - {beat: close,     slots: [12, 13],      minutes: 0.9, share: 0.09}
+
+  bold_moment:
+    slot: 10
+    beat: boundary
+    form: >
+      The presenter shows the product losing money, on purpose, on stage: the price is run above the
+      strike and the protected claim is walked down to strike-over-price while the two claims still
+      sum to the collateral. The number is said out loud, and then the line — "this is not a
+      malfunction, it is what the income on this side is paid for."
+    why: >
+      The method's demo narrative (§4) places the emotional peak at the CATCH, not at the
+      guarantee: volunteered adverse evidence is the most persuasive event available to a novel
+      structure, and this room's stated distrust is of anyone claiming a novel structure is safe.
+      It is also the only EVENT in the boundary beat — the cost figures, the maturity list and the
+      comparison are all conditions, and a condition cannot be a moment.
+    placement_derivation: >
+      DERIVED from the method's sequencing rule, not from a genre percentage. The rule fixes the
+      honest boundary as the beat AFTER the mechanism, so the earliest legal index for the peak is
+      the first boundary slot. Mechanism closes at d8; the comparison (d9) is the boundary beat's
+      on-ramp and is a condition, so the first EVENT-bearing boundary slot is d10 — 10 ÷ 13 = 76.9%.
+      Two checks on the choice: (a) it is strictly after the mechanism is complete, or the audience
+      would be pricing a structure they cannot yet picture (failure B3); (b) it is strictly before
+      the ask, so the ask is made by someone who has already shown the downside.
+    rejected_candidate: >
+      March 2020 / collateral auctioned for zero (d4). It is a genuine event and it is the obvious
+      peak — which is why it is staged as a plain `fact` slot instead. Making the industry's
+      disaster the loudest moment would make the piece an argument against someone else rather than
+      a disclosure about us, and this method spends its peak on adverse evidence about the product
+      being sold. Two bold moments is zero bold moments.
+
+  slots:
+    - id: d1
+      function: cover
+      beat: scene
+      claim: "A tokenized asset can be made productive without giving anyone the right to sell it."
+      supporting:
+        - "Medici — collateral splitting for tokenized real-world assets."
+        - "AAA Flowers S.A. (Panama), operating as Medici. Material as-of July 2026."
+      source: "BRIEF.md; canton-pitch-deck.md Slide 1; house-brand-guide.md §0.5"
+      glossary_check: "No unglossed novel term. 'Productive' is the category's own word (RedStone Part 2)."
+
+    - id: d2
+      function: claim
+      beat: scene
+      claim: "Making a tokenized asset productive means posting it somewhere that can force-sell it."
+      supporting:
+        - "The asset side arrived: tokenized treasuries at $12.9B, up ~300% year on year (rwa.xyz, July 2026)."
+        - "An asset only starts earning beyond its stated yield once it is posted as collateral."
+        - "Every venue that takes it — money markets, permissioned institutional venues, desks — prices a liquidation threshold."
+      source: "asset-manager-pitch-deck.md Slides 2, 14; canton-pitch-deck.md Slide 2"
+      note: "The buyer's world, in the buyer's terms. No mechanism, no chain, no product yet."
+
+    - id: d3
+      function: evidence
+      beat: scene
+      claim: "The market already knows that right cannot be exercised on this collateral, so it patches the gap by hand."
+      supporting:
+        - "RWA lending must account for monthly or quarterly redemption cycles and NAV-based rather than market-based pricing, and 'the need for formal liquidation agreements with asset issuers. These are not edge cases but fundamental design constraints.'"
+        - "Curators hold 'signed liquidation agreements, formal de-leverage frameworks, direct lines to asset issuers.'"
+        - "A vault holding tokenized private credit 'cannot liquidate its position in a single onchain transaction.'"
+      source: "rwa-redstone-2026.md, Part 2 addendum — liquidation mechanics (RedStone/Credora report, 2026-03-26)"
+      note: "This is the before-picture the method's B6 finding says is missing from both source decks. It is quoted, dated, and it is not our argument — it is theirs."
+
+    - id: d4
+      function: fact
+      beat: scene
+      claim: "In March 2020, collateral in a liquidation cascade was auctioned for zero."
+      supporting:
+        - "One large forced sale depresses the price and triggers the next."
+        - "The dollar figure carried in one source deck is withheld: it is single-sourced in the corpus with no external citation (see the number gate)."
+      source: "canton-pitch-deck.md Slide 2; asset-manager-pitch-deck.md Slide 2"
+      note: "One fact per fact slot, per the function's rule. It supports d2's claim and sits adjacent to d3's evidence for the same claim."
+
+    - id: d5
+      function: pivot
+      beat: value
+      claim: "The liquidation threshold is a design choice, and removing it removes the whole failure class."
+      supporting:
+        - "Cascades, oracle-manipulation windows and cliff risk are all consequences of one mechanism: a threshold in the payoff."
+        - "The alternative is not better risk management of the threshold. It is a payoff with no threshold in it."
+      source: "canton-pitch-deck.md Slide 2 ('The common thread: liquidation is the mechanism. Remove it, and you remove the entire category of failure.')"
+      note: "The single pivot. Everything before it is the buyer's world; everything after is one mechanism."
+
+    - id: d6
+      function: mechanism
+      beat: mechanism
+      claim: "One tokenized asset becomes two claims: a protected one and an amplified one, and you sell either."
+      supporting:
+        - "A vault holds one depositor's collateral (a vault is single-depositor). You set a price up front — the strike."
+        - "The protected claim (P) is capped, computable and income-bearing; the amplified claim (N) receives everything above the strike."
+        - "Sell the protected claim and the proceeds are your liquidity, with no repayment schedule; keep the amplified claim and you keep exposure above the strike."
+        - "WORKED EXAMPLE, required: one deposit, one strike, three settlement prices, three payouts, arithmetic only from the published payoff rule."
+      source: "canton-pitch-deck.md Slide 3; asset-manager-pitch-deck.md Slides 3, 5"
+      glossary_check: "Glosses on first use: vault, strike, P, N. No sentence carries two unglossed terms."
+
+    - id: d7
+      function: mechanism
+      beat: mechanism
+      claim: "At every price the two claims add back up to the collateral, which is why no threshold exists to breach."
+      supporting:
+        - "At or below the strike the protected claim receives the full collateral value and the amplified claim receives nothing."
+        - "Above the strike the protected claim receives the strike divided by the settlement price, and the amplified claim receives the rest."
+        - "There is no under-collateralisation condition in the payoff function, so there is no threshold to define one over."
+      source: "canton-pitch-deck.md Slide 5; asset-manager-pitch-deck.md Slide 4"
+      note: "The one thing the audience must be able to redraw (BRIEF educational goal 3). It is the whole mechanism in two rows."
+
+    - id: d8
+      function: mechanism
+      beat: mechanism
+      claim: "At maturity one price is read once and both claims settle in a single transaction, visible only to the counterparties."
+      supporting:
+        - "The price is read once, at settlement — a smaller surface to manipulate and a larger single read, mitigated with multiple independent feeds and a consensus threshold."
+        - "Split, roll and settlement each execute as one transaction: no partial fill, no gas auction, cost is the spread."
+        - "A position is visible to its counterparties and not to the market, because that is the ledger's data model rather than a setting."
+      source: "canton-pitch-deck.md Slides 3, 4; authorization-pitch-deck.md Slides 3, 4"
+      note: "The mechanism run d6–d8 is one unit. Nothing may be inserted between them."
+
+    - id: d9
+      function: comparison
+      beat: boundary
+      claim: "Against a lending venue the difference is not the rate — it is what happens to your asset when the price moves against you."
+      supporting:
+        - "Axes are the audience's, not ours: what triggers a sale · who holds the right to sell · what you lose when the price moves · who you have to call · how deep the secondary market is."
+        - "Lending venue: a threshold triggers a sale; the protocol and its curators hold the right; you lose the asset at the worst price; you call the issuer and the curator; the market is deep and proven ($423.5M market size and $106M borrowed at Aave Horizon, as-of March 2026)."
+        - "Medici: nothing triggers a sale because no threshold exists; nobody holds a right to sell because nothing is owed; you lose value on the protected claim above the strike; you call nobody."
+        - "THE ROW WE LOSE, and it is not cut: secondary depth. The venue has a live market; we have a market-maker agent, no live users, and liquidity for the amplified claim is a named present risk."
+      source: "asset-manager-pitch-deck.md Slides 7, 8; rwa-redstone-2026.md Part 2 (Horizon)"
+      note: "Single slot — a comparison split across two slots is not a comparison. The losing row is mandatory: a table the presenter wins on every axis reads instantly as a sales table."
+
+    - id: d10
+      function: evidence
+      beat: boundary
+      claim: "Here is the loss we do not remove: above the strike the protected claim declines continuously, and that decline is what its income is paid for."
+      supporting:
+        - "The protected claim is economically short a call above the strike. Its value falls with no floor — continuously, computably, never a cliff and never a margin call."
+        - "In a nine-year third-party backtest (Hypercall, Aug 2017–Jun 2026, ETH underlying, Deribit options, Black-Scholes at mid) net drift was −1.25%/yr: $0.895 on $1.00."
+        - "Of that, roll execution was −1.2%/yr — 10bps × ~12.2 rolls a year, which re-derives to 1.22%. A buyer can check that one with a calculator."
+        - "What the figure is not: a Medici track record, and not an RWA figure. The source deck says the RWA case has different volatility characteristics."
+      source: "asset-manager-pitch-deck.md Slides 3, 4, 7, 12; canton-pitch-deck.md Slide 3"
+      note: "BOLD MOMENT. The first number in the entire deck arrives here, on slot 10 of 13, after the model is in the room (fixes B3)."
+
+    - id: d11
+      function: objection
+      beat: boundary
+      claim: "Nothing here is on mainnet, audited, or holding real collateral — and the cost figure is a third-party ETH backtest."
+      supporting:
+        - "What exists: a working system on a development cluster, the contract set, twelve operating agents with six live and six in progress, a front end running end to end, closed-form invariant proofs, and a drafted US regulatory analysis."
+        - "What does not exist: mainnet deployment, real collateral, live users, a third-party audit, revenue. Counsel has not reviewed the regulatory analysis."
+        - "Named next steps: two independent contract audits and a fund-counsel opinion. Mainnet was targeted for Q4 2026 as of the July 2026 plan — a dated intention, not a commitment."
+        - "The objection this pre-empts, in their words: 'so what is actually real here?' Answering it before it is asked is the point of the slot."
+      source: "canton-pitch-deck.md Slides 8, 9, 12; asset-manager-pitch-deck.md Slides 7, 12"
+      note: "Contract and line counts are WITHHELD: the two source decks disagree (54/~5,700 vs 36/~5,100, both dated 2026-07-04) and the conflict is unreconciled. Say 'the contract set'."
+
+    - id: d12
+      function: ask
+      beat: close
+      claim: "The next step is an hour with your risk and product leads on one named underlying."
+      supporting:
+        - "One ask, with a first step: pick the underlying you actually hold and we walk the payoff on it, including what the split does not do for a low-volatility instrument."
+        - "Not an allocation, not a commitment, not capital."
+      source: "BRIEF.md ('the ask is a conversation, not funding')"
+      note: "The capital asks in both source decks are cut. An ask must be adjacent to the end."
+
+    - id: d13
+      function: end
+      beat: close
+      claim: "One tokenized asset, two claims that always add back up to it, and no liquidation price anywhere in it."
+      supporting:
+        - "The repeatable line, said identically every time — a claim repeated identically reads as a fact."
+        - "Medici · AAA Flowers S.A. (Panama) · material as-of July 2026."
+      source: "messaging.md §1; house-brand-guide.md §0.8"
+      note: "Not a summary and not 'Questions?'. It is the sentence they are meant to carry out and repeat to someone who was not in the room."
+
+  transitions:
+    - {after_slot: 2,  type: escalate, line: "That is the trade everyone is making. Now look at what the trade actually assumes about your asset."}
+    - {after_slot: 4,  type: narrow,   line: "Of everything hard about RWA collateral, one thing is load-bearing — and it is the part being held together by signatures and phone calls."}
+    - {after_slot: 5,  type: turn,     line: "So the question is not how to manage the threshold better. It is what the instrument looks like when there is no threshold to manage."}
+    - {after_slot: 8,  type: fold,     line: "The split, the identity and the settlement are one property, and it is the one you can retell: the two halves always add back up."}
+    - {after_slot: 11, type: gate,     line: "That is the case, including the loss and the things that do not exist yet. Here is the part that needs you."}
+
+  gates:
+    helicopter: >
+      PASS — the 13 claims read alone, in order: a tokenized asset can be productive without giving
+      anyone the right to sell it → making it productive means posting it where it can be force-sold
+      → the market knows that right cannot be exercised and patches it by hand → in March 2020 that
+      cost holders everything → the threshold is a design choice → one asset becomes two claims →
+      they always add back up → they settle once, together, privately → the difference from a venue
+      is what happens when the price moves → here is the loss we do not remove → none of this is on
+      mainnet or audited → the next step is an hour → one asset, two claims, no liquidation price.
+      The argument stands with no narrator.
+    bold_moment: "PASS — exactly one (d10), derived from the sequencing rule (first EVENT-bearing slot of the boundary beat, 76.9% by index), and it is a thing that happens on stage, not a strong sentence."
+    dead_slot: >
+      PASS — every slot turns a value. d2 turns issuance into a collateral decision; d3 moves the
+      claim from our mouth to the market's; d4 turns an abstract risk into a dated event; d5 turns
+      a risk parameter into a design choice; d6 turns a claim into an operation; d7 turns an
+      operation into arithmetic; d8 turns arithmetic into a settled position; d9 turns "interesting"
+      into "compared, including where we lose"; d10 turns an advocate into a discloser; d11 turns a
+      demo into a maturity level; d12 turns a listener into a participant.
+    sequencing: >
+      PASS (method-native gate) — scene (d1–d4) → value (d5) → mechanism (d6–d8) → honest boundary
+      (d9–d11) → close. No figure appears before d10 except the two context numbers in d2 and d9,
+      both of which describe the buyer's world rather than our product. No caveat appears before the
+      mechanism is complete.
+    glossary: >
+      PASS (method-native gate) — every novel term is glossed on first use (vault d6, strike d6,
+      P/N d6 by role first, roll d10 with its cost in the same sentence, settlement d8). No slot
+      leads with "P", "Canton" or "DAML"; "DAML", "sub-transaction privacy", "lazy oracle", "MEV",
+      "looping" and "primitive" appear nowhere in the deck.
+    number_trace: >
+      PASS (method-native gate, messaging-guide-medici.md §7) — every figure on a slot appears in
+      the trace table with a SHIP verdict and carries its as-of date in visible text. Withheld and
+      absent from every slot: contract/line counts (two same-dated sources disagree), full-period
+      gross theta (unpublished; implied ≈ −0.05%/yr), the $8M Black Thursday figure (single-sourced).
+    banned_framings: >
+      PASS — no "zero risk", "counterparty risk: none", "de-risked", "risk-free", "principal
+      protected", "liquidation-resistant". The liquidation claim is stated unhedged (brand §8.1
+      principle 4) and scoped to the payoff function in the same sentence.
+    time_shape: "600s ÷ 11 content slots = 54.5s/slot ≥ 40s floor. PASS."
+
+# ── VIDEO LANE ───────────────────────────────────────────────────────────────────────────────
+video:
+  time_shape:
+    seconds: 110
+    medium: video
+    wpm: 150
+    word_budget: 275
+    words_written: 271
+    arithmetic: >
+      110s × 150 wpm ÷ 60 = 275 words for the whole piece. Scenes sum to 110s and 271 words
+      (147.8 wpm delivered, every scene between 140 and 158 wpm). Inside the brief's 90–150s window.
+      PASS.
+    why_110: >
+      The method's demo narrative puts the aha in minute one, so the mechanism must START inside the
+      first 35 seconds. At 150 wpm the problem block can afford 50 words (two scenes) and the turn
+      20; anything longer pushes the split past the point where a muted viewer leaves. 110s is the
+      shortest runtime that still fits an honest-boundary beat that is not a disclaimer crawl.
+
+  runtime_shares: {scene: 0.218, value: 0.073, mechanism: 0.364, boundary: 0.236, close: 0.109}
+
+  bold_moment:
+    scene: s7
+    beat: boundary
+    form: "The loss, ruptured: the price runs above the strike, the protected claim gives way, and the two claims still sum to the whole."
+    placement_derivation: >
+      DERIVED from this lane's runtime_shares, not inherited from the deck's 76.9%. The sequencing
+      rule puts the honest boundary after the mechanism; mechanism closes at 0.218 + 0.073 + 0.364 =
+      0.655 → 72s. The close beat opens at 98s (0.891). The legal window is therefore 65.5%–89.1%,
+      and s7 runs 72–84s = 65.5%–76.4% — at the window's open, immediately after the mechanism
+      completes and strictly before the close. PASS.
+    why: >
+      Same reason as the deck: the peak is spent on volunteered adverse evidence about our own
+      product, not on the industry's disaster. It is also one of only three EVENT claims in the film
+      (see the peak walk) and the only one in the boundary beat.
+
+  scenes:
+    - n: 1
+      id: s1
+      function: claim
+      beat: scene
+      claim: "Tokenized assets sit idle until you post them somewhere that can force-sell them."
+      claim_type: CONDITION
+      start: 0
+      vo_seconds: 12
+      words: 30
+      vo: >
+        Your tokenized treasuries and fund shares are on-chain, and mostly sitting still. To make one
+        productive you post it as collateral — and every venue that takes it can force-sell it.
+      source: "asset-manager-pitch-deck.md Slides 2, 14; canton-pitch-deck.md Slide 4"
+      motion_role: hold
+      energy: 1.0
+      peak: false
+      motion_turn: >
+        Turns nothing, deliberately: it gives the frame rather than developing it, so the last clause
+        lands on a still image. A cold open that moves has spent its contrast before there is
+        anything to contrast with.
+      figures:
+        - {name: "the idle holding", renders: "on-chain, and mostly sitting still"}
+
+    - n: 2
+      id: s2
+      function: evidence
+      beat: scene
+      claim: "The market patches that by hand, because this collateral cannot actually be sold on demand."
+      claim_type: CONDITION
+      start: 12
+      vo_seconds: 12
+      words: 30
+      vo: >
+        That asset redeems monthly and prices at net asset value. It cannot be sold this afternoon.
+        So the market patches the gap by hand: signed liquidation agreements with the issuer.
+      source: "rwa-redstone-2026.md Part 2 — liquidation mechanics (2026-03-26)"
+      motion_role: strain
+      energy: 3.0
+      peak: false
+      motion_turn: >
+        Turns "collateral is collateral" into "this collateral does not fit the machine it is being
+        put into". The load has to be seen rising and not coping, or the turn in s3 has no cause.
+      figures:
+        - {name: "the closed redemption window", renders: "redeems monthly … cannot be sold this afternoon"}
+        - {name: "the hand-signed patch", renders: "signed liquidation agreements with the issuer"}
+
+    - n: 3
+      id: s3
+      function: pivot
+      beat: value
+      claim: "The liquidation threshold is a design choice, not a property of the asset."
+      claim_type: CONDITION
+      start: 24
+      vo_seconds: 8
+      words: 20
+      vo: >
+        That is a workout desk bolted onto a mechanism that does not fit the asset. The threshold is
+        a choice.
+      source: "canton-pitch-deck.md Slide 2; rwa-redstone-2026.md Part 2"
+      motion_role: hold
+      energy: 1.5
+      peak: false
+      motion_turn: >
+        Turns a risk parameter into a decision. It holds rather than moves because the whole point is
+        that nothing has to happen here — and the stillness pays for the strain in s2 and buys the
+        assembly in s4. Peak vocabulary is illegal here anyway: the claim is a condition.
+      figures:
+        - {name: "the threshold, named as a choice", renders: "The threshold is a choice"}
+
+    - n: 4
+      id: s4
+      function: mechanism
+      beat: mechanism
+      claim: "One tokenized asset becomes two claims."
+      claim_type: EVENT
+      start: 32
+      vo_seconds: 14
+      words: 35
+      vo: >
+        Medici splits the position instead. One tokenized asset becomes two claims: a protected one
+        and an amplified one. You set a price up front. Sell either claim for cash today, and you
+        keep the other.
+      source: "canton-pitch-deck.md Slide 3; asset-manager-pitch-deck.md Slides 3, 5"
+      motion_role: assemble
+      energy: 3.0
+      peak: false
+      motion_turn: >
+        Turns a claim into an operation — the viewer watches one thing become two and everything that
+        arrives stays. This is the aha and it must be inside the first 35 seconds, per the method's
+        demo narrative; it is an EVENT and could peak, but spending the peak here would make the
+        product the loudest thing in the film, which is how an explainer reads as an advert.
+      figures:
+        - {name: "the split", renders: "One tokenized asset becomes two claims"}
+        - {name: "the price you set", renders: "You set a price up front"}
+
+    - n: 5
+      id: s5
+      function: mechanism
+      beat: mechanism
+      claim: "At every price the two claims add back up to the collateral."
+      claim_type: CONDITION
+      start: 46
+      vo_seconds: 14
+      words: 33
+      vo: >
+        Now walk the price anywhere you like. Below your price, the protected claim is worth the whole
+        collateral. Above it, it gives up exactly what the amplified claim gains. The total never
+        moves.
+      source: "canton-pitch-deck.md Slide 5; asset-manager-pitch-deck.md Slide 4"
+      motion_role: accumulate
+      energy: 2.5
+      peak: false
+      motion_turn: >
+        Turns the operation into the invariant. The point IS the continuous walk, not any one state of
+        it: a viewer who only sees two prices reads two examples, and a viewer who sees the price
+        swept reads a law. This is the frame they redraw afterwards.
+      figures:
+        - {name: "the price walk", renders: "walk the price anywhere you like"}
+        - {name: "the total that never moves", renders: "The total never moves"}
+
+    - n: 6
+      id: s6
+      function: mechanism
+      beat: mechanism
+      claim: "At maturity one price is read once and both claims settle together."
+      claim_type: EVENT
+      start: 60
+      vo_seconds: 12
+      words: 31
+      vo: >
+        At maturity the price is read once. Both claims settle in the same transaction, and they
+        recombine into the collateral. Your position was visible to your counterparty, and to nobody
+        else.
+      source: "canton-pitch-deck.md Slides 3, 4; authorization-pitch-deck.md Slides 3, 4"
+      motion_role: assemble
+      energy: 3.5
+      peak: false
+      motion_turn: >
+        Turns a live position into a closed one, which is the value the whole mechanism was for. The
+        privacy and the single read are stated as consequences of the same settlement, so the film
+        never has to name a chain or a contract language.
+      figures:
+        - {name: "the single read", renders: "the price is read once"}
+        - {name: "the recombination", renders: "they recombine into the collateral"}
+
+    - n: 7
+      id: s7
+      function: evidence
+      beat: boundary
+      claim: "Above the strike the protected claim falls continuously — and that fall is what its income is paid for."
+      claim_type: EVENT
+      start: 72
+      vo_seconds: 12
+      words: 28
+      vo: >
+        Here is the loss. If the asset rallies hard, the protected claim falls — continuously, no
+        floor, no margin call. That fall is what its income is paid for.
+      source: "asset-manager-pitch-deck.md Slides 4, 7, 8"
+      motion_role: rupture
+      energy: 5.0
+      peak: true
+      motion_turn: >
+        Turns an advocate into a discloser. The break has to be seen, not stated: the viewer watches
+        the protected claim give way while the total stays whole, which is simultaneously the honest
+        cost and the proof that the invariant holds through it. A scene that told this instead of
+        showing it would be the film's weakest moment rather than its strongest.
+      figures:
+        - {name: "the falling protected claim", renders: "the protected claim falls"}
+        - {name: "the cliff that is not there", renders: "continuously, no floor, no margin call"}
+        - {name: "what the fall pays for", renders: "That fall is what its income is paid for"}
+
+    - n: 8
+      id: s8
+      function: objection
+      beat: boundary
+      claim: "None of this is on mainnet, audited, or holding real collateral."
+      claim_type: CONDITION
+      start: 84
+      vo_seconds: 14
+      words: 33
+      vo: >
+        What exists today: a working system on a development cluster. No mainnet, no audit, no real
+        collateral, no users. The nine-year backtest behind our cost number is third-party, and it is
+        on ETH.
+      source: "canton-pitch-deck.md Slide 9; asset-manager-pitch-deck.md Slides 3, 12"
+      motion_role: divest
+      energy: 0.5
+      peak: false
+      motion_turn: >
+        Turns a demonstration into a maturity level, and it does it by taking things away: the film
+        gives up its own persuasive apparatus on screen, subtractively, while the narration lists what
+        does not exist. It is also the quiet that pays for s7 under the adjacency rule.
+      figures:
+        - {name: "the list of what does not exist", renders: "No mainnet, no audit, no real collateral, no users"}
+
+    - n: 9
+      id: s9
+      function: end
+      beat: close
+      claim: "One tokenized asset, two claims that always add back up to it, and no liquidation price anywhere in it."
+      claim_type: CONDITION
+      start: 98
+      vo_seconds: 12
+      words: 31
+      vo: >
+        Medici splits a tokenized asset into two claims that always add back up to it. No liquidation
+        price, anywhere in it. That is the whole idea. Come and take it apart.
+      source: "messaging.md §1; BRIEF.md (the ask is a conversation)"
+      motion_role: cadence
+      energy: 2.0
+      peak: false
+      motion_turn: >
+        Turns a viewer into someone holding a sentence. One gesture resolves the image opened in s4 —
+        the two claims close back into one — and then it stops. The invitation is to attack the thing,
+        which is the only ask this room's distrust will accept.
+      figures:
+        - {name: "the two claims closing back into one", renders: "always add back up to it"}
+
+  transitions:
+    - {after_scene: 2, type: narrow,   line: "One part of that is load-bearing."}
+    - {after_scene: 3, type: turn,     line: "So what does the instrument look like with no threshold in it?"}
+    - {after_scene: 6, type: fold,     line: "That is the mechanism, whole. Now the part it does not fix."}
+    - {after_scene: 8, type: gate,     line: "That is everything, including what is missing."}
+
+  motion_budget:
+    peak_walk: >
+      Claims marked EVENT or CONDITION, mechanically: s1 CONDITION, s2 CONDITION, s3 CONDITION,
+      s4 EVENT (one asset becomes two), s5 CONDITION, s6 EVENT (settlement happens), s7 EVENT (the
+      claim falls), s8 CONDITION, s9 CONDITION. Event count = 3, so the peak budget is 3.
+    peaks_earned: 1
+    peak_justification: >
+      R1 — only s7 turns a value the viewer must still be carrying tomorrow: that the product's
+      designer showed its loss unprompted. s4 and s6 are EVENTs and are legally peakable, and both
+      are deliberately declined: peaking on the mechanism would make the sales pitch the loudest
+      thing in the film, and the budget is spent where the method says the peak belongs.
+    ceiling_order: "s7 (5.0) > s6 (3.5) > s2 (3.0) = s4 (3.0) > s5 (2.5) > s9 (2.0) > s3 (1.5) > s1 (1.0) > s8 (0.5)"
+    ceiling_note: "R3 — the bold moment holds the single highest amplitude and every other scene is strictly below it. The s2/s4 tie is between two non-peaks and is legal."
+    quiet_scenes: [s1, s3, s8]
+    mean_energy: 2.44
+    mean_energy_check: "22.0 ÷ 9 = 2.44 ≤ 3.0 (R5). Scenes at ≤1.5: s1, s3, s8 = 3 of 9 = 33.3% ≥ one third (R5)."
+    adjacency: "pass — the single peak (s7) neighbours s6 at 3.5 and s8 at 0.5; the required ≤1.5 neighbour is s8. No adjacent peaks, no exception declared."
+    rhymes:
+      - {scene: 3, answers: 1, how: "s1 holds on a thing that cannot move; s3 holds on a thing that could. The repeat exists to answer the first, per R4."}
+      - {scene: 9, answers: 4, how: "the cadence closes the two claims back into one, resolving the split opened in s4. Not decoration — it is the image the piece was built on."}
+    figures_total: 15
+    ornament_gate: >
+      pass — ≤2 figures per scene, 3 on the bold moment (s7), every figure named against the clause
+      it renders. Cut at STAGE: the operating-agent roster from s6 (renders no clause of the claim
+      and imports a second novelty); the backtest history from s8 (an animated nine-year third-party
+      ETH series would read as an RWA track record, and the claim's clause is the ABSENCE of things,
+      not a history); a venue-name group from s2 (decoration attached to no clause).
+
+  gates:
+    helicopter: "PASS — nine claims in order carry the whole argument; the film stands without a title card."
+    bold_moment: "PASS — one (s7), derived from this lane's runtime_shares at 65.5%–76.4%, inside the 65.5%–89.1% window, and it is an event on screen."
+    dead_scene: "PASS — every scene names the value it turns in motion_turn; none restates a neighbour."
+    sequencing: "PASS — scene (s1–s2) → value (s3) → mechanism (s4–s6) → boundary (s7–s8) → close (s9). The first number in the film arrives at s7."
+    glossary: "PASS — the only glossed terms used are strike (glossed as 'a price you set up front', s4), settlement (s6) and the claim names (s4). 'Canton', 'DAML', 'oracle', 'theta', 'roll', 'drift' and 'primitive' appear nowhere in the VO."
+    number_trace: "PASS — the film carries exactly two figures, both from the SHIP rows of the number gate and both labelled in the VO itself: 'nine-year', 'third-party', 'on ETH'. The −1.25%/yr figure is deliberately NOT spoken; a spoken percentage in a muted 110-second film is a number nobody can trace."
+    time_shape: "PASS — 110s × 150 wpm ÷ 60 = 275 word budget; 271 written; scene seconds sum to 110."
+    motion_budget: "PASS — see the block above; R1 through R6 each checked with its arithmetic."
+    render_and_look: "NOT RUN — this is a messaging contender; the render gate belongs to the design track that consumes this file and must be run there."
+
+assumptions:
+  - "Recorded, not asked: the audience is the one named in BRIEF.md; no human was interviewed and no question stalled this pass."
+  - "The capital asks in both source decks are out of scope for this artifact, per BRIEF.md ('the ask is a conversation, not funding'). Any design that reintroduces a funding ask has changed the genre."
+  - "The underlying is left unnamed on every slot on purpose. The corpus contradicts itself — the decks sell tokenized fund shares and MMFs, the research concludes near-zero-volatility collateral is the worst fit and names tokenized gold first. d12 asks the buyer to name their own underlying, which is honest under either reading."
+  - "Roadmap and scale figures are as-of July 2026 and the venue figures are as-of March 2026. Both are stale at presentation time; the as-of date belongs in visible text, not a footnote."
+  - "Contract counts, line counts, full-period gross theta and the $8M Black Thursday figure are withheld from every slot and scene. A design that reinstates any of them has broken the number gate."
+  - "Prospect names (Franklin Templeton, WisdomTree, Invesco, BlockBooster) appear on no slot. They are pilot conversations in the corpus, and on a slide they would read as customers."
+  - "The deck's read-fallback is declared: every claim is a complete sentence, so a forwarded PDF argues on its own."

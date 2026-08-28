@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medici — Collateral splitting for tokenized real-world assets</title>
+<meta name="deck-footer" content="Medici — Proprietary &amp; Confidential">
+<style>
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans.woff2') format('woff2');font-weight:100 700;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans-italic.woff2') format('woff2');font-weight:100 700;font-style:italic;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#000000;--surface:#0A0A0A;--line:#1A1A1A;--line2:#252525;
+  --white:#FFFFFF;--text:#AAAAAA;--meta:#8A8A8A;--dim:#7A7A7A;--muted:#666666;
+  --blue:#3366FF;--blue-l:#5C85FF;--gold:#D4A843;--green:#00CC66;--red:#FF4444;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+html,body{height:100%;background:var(--black);overflow:hidden}
+body{font-family:var(--sans);color:var(--text);-webkit-font-smoothing:antialiased}
+
+/* the 16:9 board: fixed 1280x720, letterboxed to fit */
+.stage{position:fixed;left:50%;top:50%;width:1280px;height:720px;
+  transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:50% 50%;
+  background:var(--black);overflow:hidden}
+.slide{position:absolute;inset:0;padding:42px 68px 54px;display:grid;
+  grid-template-rows:auto 1fr auto;opacity:0;transition:opacity .2s ease-in-out;
+  pointer-events:none}
+.slide.active{opacity:1;pointer-events:auto;z-index:1}
+.slide::after{content:"Medici — Proprietary & Confidential";position:absolute;left:0;right:0;
+  bottom:17px;text-align:center;font-family:var(--sans);font-size:11px;font-weight:400;
+  letter-spacing:.08em;color:var(--muted)}
+.slide-no{position:absolute;right:24px;bottom:16px;font-family:var(--mono);font-size:12px;
+  color:var(--dim);font-variant-numeric:tabular-nums}
+
+/* masthead: the notice register */
+.mast{display:flex;align-items:center;gap:13px;padding-bottom:10px;
+  border-bottom:1px solid var(--line2)}
+.seal{width:9px;height:9px;background:var(--blue);flex:none}
+.ref{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--white)}
+.subj{font-size:12px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--meta)}
+.asof{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--meta);
+  font-variant-numeric:tabular-nums;letter-spacing:.02em}
+
+/* operative sentence */
+.mid{align-self:center;padding:20px 0 8px;min-height:0}
+h1{font-size:52px;font-weight:600;line-height:1.08;letter-spacing:-.02em;color:var(--white);
+  max-width:1000px;text-wrap:balance}
+h2{font-size:33px;font-weight:600;line-height:1.17;letter-spacing:-.012em;color:var(--white);
+  max-width:1010px;text-wrap:balance}
+h2.big{font-size:44px;line-height:1.1;letter-spacing:-.018em;max-width:960px}
+h3{font-size:18px;font-weight:600;line-height:1.3;color:var(--white)}
+.lede{font-size:21px;line-height:1.48;color:var(--text);max-width:780px;margin-top:18px}
+
+/* clause rows — the circular's numbered provisions */
+.clauses{margin-top:20px;border-top:1px solid var(--line)}
+.cl{display:grid;grid-template-columns:46px 1fr;gap:14px;padding:10px 0;
+  border-bottom:1px solid var(--line)}
+.cl .n{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--dim);
+  padding-top:5px;font-variant-numeric:tabular-nums}
+.cl p{font-size:18px;line-height:1.48;color:var(--text)}
+.cl.tight p{font-size:17.5px;line-height:1.42}
+strong{color:var(--white);font-weight:600}
+em{font-style:italic}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.p-leg{color:var(--blue-l)}
+.n-leg{color:var(--green)}
+.warn-leg{color:var(--red)}
+
+/* figure schedule — values in a ruled column, never a metric card */
+.sched{margin-top:18px;border-top:1px solid var(--line2)}
+.sched .row{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:baseline;
+  padding:12px 0;border-bottom:1px solid var(--line)}
+.sched .lbl{font-size:18px;line-height:1.42;color:var(--text)}
+.sched .val{font-family:var(--mono);font-size:23px;font-weight:500;color:var(--white);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* two-column ruled comparison */
+.cmp{display:grid;grid-template-columns:1fr 1fr;margin-top:18px;
+  border-top:1px solid var(--line2)}
+.cmp .h{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--meta);padding:11px 26px 9px 0;border-bottom:1px solid var(--line2)}
+.cmp .c{font-size:18px;line-height:1.45;padding:11px 26px 11px 0;
+  border-bottom:1px solid var(--line);color:var(--text)}
+.cmp .r{padding-left:26px;padding-right:0;border-left:1px solid var(--line)}
+.cmp .last{border-bottom:0}
+
+/* the vacated provision — an absence set as type, not asserted in prose */
+.vacated{margin-top:22px;display:grid;grid-template-columns:226px 1fr;gap:26px;
+  align-items:start;padding:15px 0;border-top:1px solid var(--line2);
+  border-bottom:1px solid var(--line2)}
+.vacated .hd{font-size:18px;line-height:1.4;color:var(--dim);text-decoration:line-through;
+  text-decoration-thickness:1px;text-underline-offset:2px}
+.vacated .no{font-size:18px;line-height:1.45;font-style:italic;color:var(--text)}
+
+/* payoff sheet */
+.fig{margin-top:20px}
+.fig svg{display:block}
+.figkey{display:flex;gap:26px;margin-top:10px;font-size:14px;color:var(--meta)}
+.figkey b{font-weight:500}
+.swatch{display:inline-block;width:22px;height:3px;vertical-align:middle;margin-right:8px}
+
+/* register: what is / is not */
+.reg{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:18px}
+.reg .col{border-top:1px solid var(--line2)}
+.reg .col+.col{border-left:1px solid var(--line);padding-left:26px}
+.reg .col:first-child{padding-right:26px}
+.reg .h{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  padding:11px 0 9px;color:var(--meta);border-bottom:1px solid var(--line)}
+.reg li{font-size:17.5px;line-height:1.45;list-style:none;padding:9px 0;
+  border-bottom:1px solid var(--line);color:var(--text)}
+.reg li:last-child{border-bottom:0}
+
+table{width:100%;border-collapse:collapse;font-size:17px;margin-top:16px}
+th{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--meta);text-align:left;padding:9px 14px 9px 0;
+  border-bottom:1px solid var(--line2);white-space:nowrap}
+th.num,td.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;
+  padding-right:0}
+td{padding:11px 14px 11px 0;border-bottom:1px solid var(--line);color:var(--text);
+  vertical-align:top;font-size:18px}
+td:first-child{color:var(--white);font-weight:500}
+tr:last-child td{border-bottom:0}
+.sum td{color:var(--white)}
+
+/* authority line — provenance travels with the claim */
+.auth{align-self:end;padding-top:11px;border-top:1px solid var(--line);
+  display:flex;gap:11px;align-items:baseline}
+.auth .k{font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--dim);flex:none}
+.auth .v{font-family:var(--mono);font-size:12px;color:var(--meta);line-height:1.4}
+
+.mark{display:block}
+.watermark{position:absolute;right:-110px;bottom:-100px;width:430px;height:430px;
+  opacity:.05;pointer-events:none}
+.stamp{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12.5px;
+  color:var(--meta);border:1px solid var(--line2);padding:6px 12px;border-radius:2px}
+
+.progress{position:absolute;top:0;left:0;height:2px;width:100%;background:var(--blue);
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .2s ease-out;z-index:20}
+.hint{position:absolute;left:24px;bottom:16px;font-size:11px;color:#3A3A3A;letter-spacing:.04em}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,.progress{transition:none}
+}
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{overflow:visible;background:#000}
+  .stage{position:static;transform:none;width:1280px;height:auto;left:auto;top:auto}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1;pointer-events:auto;
+    page-break-after:always;break-after:page}
+  .slide:last-child{page-break-after:auto}
+  .progress,.hint{display:none}
+}
+</style>
+</head>
+<body>
+<!--
+IMPECCABLE DIRECTION CONTRACT — brand mode · seed key 549e8b77 · direction 6 of 7 (assigned)
+THESIS: A pitch deck published the way a clearing house publishes a rule change — every
+  operative sentence numbered, dated and signed by its authority. It refuses the dark VC
+  deck (centred headline, three stat cards, logo row) and refuses that form's opposite,
+  the giant-number manifesto.
+OWN-WORLD: The pinned Medici external surface — true-black #000 canvas, #0A0A0A/#1A1A1A
+  hairline structure, Electric Blue #3366FF at =<2 uses a slide, IBM Plex Sans/Mono
+  self-hosted — rendered as a NOTICE: masthead rule with seal, reference and as-of stamp;
+  numbered clause rows on hairlines; a mono authority line above the confidentiality
+  footer. No cards, no shadows, no gradients. Depth is border contrast only.
+STORY: A finance-literate, non-DeFi reader sees a rule, its clauses, its date and its
+  source; learns the P/N split as a payoff schedule whose rows all sum to 1.00; watches
+  the liquidation clause be VACATED rather than argued away; leaves able to redraw it.
+FIRST VIEWPORT: Notice 01 of N. Mark at 60px, issuing party, the operative sentence at
+  52px over three lines, the invariant as clause 1.1, as-of stamp right, authority line
+  and footer at the foot. No image, no gradient, no hero shell.
+FORM: The clearing-house circular; candidate 6 of 7 on the grounded list; seed 549e8b77.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review,
+  the verdict, and DESIGN.md
+-->
+<div class="stage" id="stage">
+<div class="progress" id="progress"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="oct-line" viewBox="0 0 512 512">
+    <path d="M256 56 L420 138 V286 C420 384 352 442 256 470 C160 442 92 384 92 286 V138 Z"
+      fill="none" stroke="#3366FF" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M176 258 L232 310 L340 194"
+      fill="none" stroke="#3366FF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="assay-mark" viewBox="0 0 512 512">
+    <path d="M256 56 L420 138 V286 C420 384 352 442 256 470 C160 442 92 384 92 286 V138 Z"
+      fill="#D4A843" fill-opacity="0.10" stroke="#D4A843" stroke-width="22" stroke-linejoin="round"/>
+    <path d="M176 258 L232 310 L340 194"
+      fill="none" stroke="#D4A843" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</defs></svg>
+<section class="slide active" data-layout="L-COVER">
+<svg class="watermark" aria-hidden="true"><use href="#oct-line"/></svg><div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 01 / 14</span><span class="subj">Collateral splitting</span><span class="asof">As of July 2026</span></div>
+<div class="mid"><div style="margin-bottom:26px"><svg class="mark" width="58" height="58" role="img" aria-label="Medici mark"><use href="#assay-mark"/></svg></div><h1 class="">Medici splits tokenized collateral into two claims that always sum back</h1><div class="clauses"><div class="cl"><span class="n">1.1</span><p>P is the capped, income-bearing leg; N is the amplified leg that takes everything above the strike.</p></div><div class="cl"><span class="n">1.2</span><p>There is no liquidation price, because the math doesn&rsquo;t permit it.</p></div><div class="cl"><span class="n">1.3</span><p>Medici (AAA Flowers S.A.), built for Canton. Material as-of July 2026.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">Canton pitch deck, slides 1 &amp; 3</span></div>
+<span class="slide-no mono">01</span>
+</section>
+<section class="slide" data-layout="L-STAT-ROW" data-question="Is this a real market, and what is actually behind the collateral?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 02 / 14</span><span class="subj">The market</span><span class="asof">RedStone, as of March 2026</span></div>
+<div class="mid"><h2 class="">RWA lending is real &mdash; against collateral nobody can sell in one transaction</h2><div class="sched"><div class="row"><span class="lbl">Morpho RWA deposits by March 2026, at 87% utilization</span><span class="val">$620M+</span></div><div class="row"><span class="lbl">Aave Horizon: market size, borrowed, distinct addresses</span><span class="val">$423.5M &middot; $106M &middot; 269</span></div></div><div class="clauses"><div class="cl"><span class="n">2.1</span><p>What backs those numbers is NAV-priced, with redemption windows measured in months.</p></div><div class="cl"><span class="n">2.2</span><p>The report&rsquo;s own words: such a vault &ldquo;cannot liquidate its position in a single onchain transaction&rdquo;.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">RedStone RWA lending report, Part 2 — who lends against what, and vault standards</span></div>
+<span class="slide-no mono">02</span>
+</section>
+<section class="slide" data-layout="L-TWO-COL" data-question="How does a market lend against something it cannot sell?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 03 / 14</span><span class="subj">The market&rsquo;s fix</span><span class="asof">RedStone, as of March 2026</span></div>
+<div class="mid"><h2 class="">The market&rsquo;s fix for unsellable collateral is paperwork, not math</h2><div class="clauses"><div class="cl"><span class="n">3.1</span><p>Vault curators, not credit committees, set LTVs and manage liquidation pathways for collateral not observable onchain.</p></div><div class="cl"><span class="n">3.2</span><p>The tooling is signed liquidation agreements with the asset issuers and formal de-leverage frameworks.</p></div><div class="cl"><span class="n">3.3</span><p>The report&rsquo;s verdict: &ldquo;These are not edge cases but fundamental design constraints&rdquo;.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">RedStone RWA lending report, Part 2 — liquidation mechanics and risk frameworks</span></div>
+<span class="slide-no mono">03</span>
+</section>
+<section class="slide" data-layout="L-STATEMENT" data-question="What does the pathway cost the day it actually runs?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 04 / 14</span><span class="subj">When it runs</span><span class="asof">March 2020 &middot; October 2022</span></div>
+<div class="mid"><h2 class="big">When the liquidation pathway runs, it runs at the worst possible price</h2><div class="sched"><div class="row"><span class="lbl">Black Thursday, March 2020: MakerDAO collateral auctioned for $0</span><span class="val">~$8M</span></div><div class="row"><span class="lbl">Mango Markets, through an oracle the protocol had to read in real time</span><span class="val">$116M</span></div></div><div class="clauses"><div class="cl"><span class="n">4.1</span><p>The shape of the risk, not its size: fine one block, wiped out the next &mdash; a cliff, not a slope.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">Canton pitch deck, slide 2 &middot; asset-manager pitch deck, slide 2</span></div>
+<span class="slide-no mono">04</span>
+</section>
+<section class="slide" data-layout="L-STATEMENT" data-question="What would it take to remove the risk rather than price it?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 05 / 14</span><span class="subj">The turn</span><span class="asof"></span></div>
+<div class="mid"><h2 class="big">Medici deletes the liquidation pathway instead of managing it</h2><div class="clauses"><div class="cl"><span class="n">5.1</span><p>Split the collateral into two claims that always add back to it; then there is no threshold to cross.</p></div><div class="cl"><span class="n">5.2</span><p>No under-collateralization condition exists anywhere in the payoff function.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">Canton pitch deck, slide 5 &middot; asset-manager pitch deck, slide 4</span></div>
+<span class="slide-no mono">05</span>
+</section>
+<section class="slide" data-layout="L-DIAGRAM" data-question="What exactly does the vault issue, and against what?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 06 / 14</span><span class="subj">The split</span><span class="asof"></span></div>
+<div class="mid"><h2 class="">One position becomes two claims that always add back to it</h2><div class="fig"><svg viewBox="0 0 1030 190" width="1030" height="190" role="img" aria-label="One collateral position splits into a P claim and an N claim whose stacked height is unchanged: P plus N is identically the collateral."><rect x="60" y="30" width="200" height="120" fill="#0A0A0A" stroke="#FFFFFF" stroke-width="1.5"/><text x="160.0" y="96.0" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="17" text-anchor="middle">collateral</text><line x1="290" y1="90" x2="530" y2="90" stroke="#252525" stroke-width="1"/><path d="M 530,90 l -11,-5 l 0,10 Z" fill="#8A8A8A"/><text x="410.0" y="76.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="13" text-anchor="middle">split, atomically</text><rect x="560" y="75.6" width="200" height="74.4" fill="#3366FF" fill-opacity="0.13" stroke="#3366FF" stroke-width="1.5"/><rect x="560" y="30" width="200" height="45.6" fill="#00CC66" fill-opacity="0.11" stroke="#00CC66" stroke-width="1.5"/><text x="660.0" y="118.8" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="17" text-anchor="middle">P</text><text x="660.0" y="58.8" fill="#FFFFFF" font-family="IBM Plex Sans,sans-serif" font-size="17" text-anchor="middle">N</text><line x1="794" y1="30" x2="794" y2="150" stroke="#8A8A8A" stroke-width="1"/><line x1="789" y1="30" x2="799" y2="30" stroke="#8A8A8A" stroke-width="1"/><line x1="789" y1="150" x2="799" y2="150" stroke="#8A8A8A" stroke-width="1"/><text x="808.0" y="96.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="15" >P + N ≡ collateral</text></svg></div><div class="clauses"><div class="cl tight"><span class="n">6.1</span><p>Deposit a tokenized asset, pick a strike; the vault issues P (capped, income-bearing) and N (everything above the strike).</p></div><div class="cl tight"><span class="n">6.2</span><p><strong>P + N is identically the collateral at every price</strong> &mdash; closed-form, verified as math rather than asserted at runtime.</p></div><div class="cl tight"><span class="n">6.3</span><p>The oracle is read once, at settlement; there is no live feed to manipulate during the position&rsquo;s life.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">Canton pitch deck, slides 3 &amp; 5 &middot; asset-manager pitch deck, slide 3</span></div>
+<span class="slide-no mono">06</span>
+</section>
+<section class="slide" data-layout="L-DIAGRAM" data-question="Where on this payoff would a lender put its liquidation line?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 07 / 14</span><span class="subj">At maturity</span><span class="asof"></span></div>
+<div class="mid"><h2 class="">At maturity there are two cases, and neither is a margin call</h2><div class="fig"><svg viewBox="0 0 1136 214" width="1136" height="214" role="img" aria-label="Payoff of P and N against the reference price x, stacked. Their top edge is one flat line at 1.00 collateral at every price."><line x1="62" y1="26.0" x2="1112" y2="26.0" stroke="#252525" stroke-width="1"/><line x1="62" y1="170.0" x2="1112" y2="170.0" stroke="#252525" stroke-width="1"/><line x1="62" y1="98.0" x2="1112" y2="98.0" stroke="#1A1A1A" stroke-width="1"/><path d="M 62.0,170.0 L 62.0,26.0 L 69.0,26.0 L 76.0,26.0 L 83.0,26.0 L 90.0,26.0 L 97.0,26.0 L 104.0,26.0 L 111.0,26.0 L 118.0,26.0 L 125.0,26.0 L 132.0,26.0 L 139.0,26.0 L 146.0,26.0 L 153.0,26.0 L 160.0,26.0 L 167.0,26.0 L 174.0,26.0 L 181.0,26.0 L 188.0,26.0 L 195.0,26.0 L 202.0,26.0 L 209.0,26.0 L 216.0,26.0 L 223.0,26.0 L 230.0,26.0 L 237.0,26.0 L 244.0,26.0 L 251.0,26.0 L 258.0,26.0 L 265.0,26.0 L 272.0,26.0 L 279.0,26.0 L 286.0,26.0 L 293.0,26.0 L 300.0,26.0 L 307.0,26.0 L 314.0,26.0 L 321.0,26.0 L 328.0,26.0 L 335.0,26.0 L 342.0,26.0 L 349.0,26.0 L 356.0,26.0 L 363.0,26.3 L 370.0,28.2 L 377.0,30.1 L 384.0,31.9 L 391.0,33.6 L 398.0,35.4 L 405.0,37.1 L 412.0,38.7 L 419.0,40.3 L 426.0,41.9 L 433.0,43.4 L 440.0,44.9 L 447.0,46.3 L 454.0,47.7 L 461.0,49.1 L 468.0,50.5 L 475.0,51.8 L 482.0,53.1 L 489.0,54.4 L 496.0,55.6 L 503.0,56.8 L 510.0,58.0 L 517.0,59.2 L 524.0,60.3 L 531.0,61.5 L 538.0,62.6 L 545.0,63.6 L 552.0,64.7 L 559.0,65.7 L 566.0,66.7 L 573.0,67.7 L 580.0,68.7 L 587.0,69.7 L 594.0,70.6 L 601.0,71.5 L 608.0,72.4 L 615.0,73.3 L 622.0,74.2 L 629.0,75.0 L 636.0,75.9 L 643.0,76.7 L 650.0,77.5 L 657.0,78.3 L 664.0,79.1 L 671.0,79.9 L 678.0,80.6 L 685.0,81.4 L 692.0,82.1 L 699.0,82.8 L 706.0,83.5 L 713.0,84.2 L 720.0,84.9 L 727.0,85.6 L 734.0,86.2 L 741.0,86.9 L 748.0,87.5 L 755.0,88.2 L 762.0,88.8 L 769.0,89.4 L 776.0,90.0 L 783.0,90.6 L 790.0,91.2 L 797.0,91.8 L 804.0,92.4 L 811.0,92.9 L 818.0,93.5 L 825.0,94.0 L 832.0,94.6 L 839.0,95.1 L 846.0,95.6 L 853.0,96.1 L 860.0,96.6 L 867.0,97.1 L 874.0,97.6 L 881.0,98.1 L 888.0,98.6 L 895.0,99.1 L 902.0,99.5 L 909.0,100.0 L 916.0,100.5 L 923.0,100.9 L 930.0,101.4 L 937.0,101.8 L 944.0,102.2 L 951.0,102.7 L 958.0,103.1 L 965.0,103.5 L 972.0,103.9 L 979.0,104.3 L 986.0,104.7 L 993.0,105.1 L 1000.0,105.5 L 1007.0,105.9 L 1014.0,106.3 L 1021.0,106.7 L 1028.0,107.1 L 1035.0,107.4 L 1042.0,107.8 L 1049.0,108.1 L 1056.0,108.5 L 1063.0,108.9 L 1070.0,109.2 L 1077.0,109.6 L 1084.0,109.9 L 1091.0,110.2 L 1098.0,110.6 L 1105.0,110.9 L 1112.0,111.2 L 1112.0,170.0 Z" fill="#3366FF" fill-opacity="0.13"/><path d="M 62.0,26.0 L 62.0,26.0 L 69.0,26.0 L 76.0,26.0 L 83.0,26.0 L 90.0,26.0 L 97.0,26.0 L 104.0,26.0 L 111.0,26.0 L 118.0,26.0 L 125.0,26.0 L 132.0,26.0 L 139.0,26.0 L 146.0,26.0 L 153.0,26.0 L 160.0,26.0 L 167.0,26.0 L 174.0,26.0 L 181.0,26.0 L 188.0,26.0 L 195.0,26.0 L 202.0,26.0 L 209.0,26.0 L 216.0,26.0 L 223.0,26.0 L 230.0,26.0 L 237.0,26.0 L 244.0,26.0 L 251.0,26.0 L 258.0,26.0 L 265.0,26.0 L 272.0,26.0 L 279.0,26.0 L 286.0,26.0 L 293.0,26.0 L 300.0,26.0 L 307.0,26.0 L 314.0,26.0 L 321.0,26.0 L 328.0,26.0 L 335.0,26.0 L 342.0,26.0 L 349.0,26.0 L 356.0,26.0 L 363.0,26.3 L 370.0,28.2 L 377.0,30.1 L 384.0,31.9 L 391.0,33.6 L 398.0,35.4 L 405.0,37.1 L 412.0,38.7 L 419.0,40.3 L 426.0,41.9 L 433.0,43.4 L 440.0,44.9 L 447.0,46.3 L 454.0,47.7 L 461.0,49.1 L 468.0,50.5 L 475.0,51.8 L 482.0,53.1 L 489.0,54.4 L 496.0,55.6 L 503.0,56.8 L 510.0,58.0 L 517.0,59.2 L 524.0,60.3 L 531.0,61.5 L 538.0,62.6 L 545.0,63.6 L 552.0,64.7 L 559.0,65.7 L 566.0,66.7 L 573.0,67.7 L 580.0,68.7 L 587.0,69.7 L 594.0,70.6 L 601.0,71.5 L 608.0,72.4 L 615.0,73.3 L 622.0,74.2 L 629.0,75.0 L 636.0,75.9 L 643.0,76.7 L 650.0,77.5 L 657.0,78.3 L 664.0,79.1 L 671.0,79.9 L 678.0,80.6 L 685.0,81.4 L 692.0,82.1 L 699.0,82.8 L 706.0,83.5 L 713.0,84.2 L 720.0,84.9 L 727.0,85.6 L 734.0,86.2 L 741.0,86.9 L 748.0,87.5 L 755.0,88.2 L 762.0,88.8 L 769.0,89.4 L 776.0,90.0 L 783.0,90.6 L 790.0,91.2 L 797.0,91.8 L 804.0,92.4 L 811.0,92.9 L 818.0,93.5 L 825.0,94.0 L 832.0,94.6 L 839.0,95.1 L 846.0,95.6 L 853.0,96.1 L 860.0,96.6 L 867.0,97.1 L 874.0,97.6 L 881.0,98.1 L 888.0,98.6 L 895.0,99.1 L 902.0,99.5 L 909.0,100.0 L 916.0,100.5 L 923.0,100.9 L 930.0,101.4 L 937.0,101.8 L 944.0,102.2 L 951.0,102.7 L 958.0,103.1 L 965.0,103.5 L 972.0,103.9 L 979.0,104.3 L 986.0,104.7 L 993.0,105.1 L 1000.0,105.5 L 1007.0,105.9 L 1014.0,106.3 L 1021.0,106.7 L 1028.0,107.1 L 1035.0,107.4 L 1042.0,107.8 L 1049.0,108.1 L 1056.0,108.5 L 1063.0,108.9 L 1070.0,109.2 L 1077.0,109.6 L 1084.0,109.9 L 1091.0,110.2 L 1098.0,110.6 L 1105.0,110.9 L 1112.0,111.2 L 1112.0,26.0 Z" fill="#00CC66" fill-opacity="0.11"/><line x1="362.0" y1="20.0" x2="362.0" y2="170.0" stroke="#8A8A8A" stroke-width="1" stroke-dasharray="3 4"/><polyline points="62.0,26.0 69.0,26.0 76.0,26.0 83.0,26.0 90.0,26.0 97.0,26.0 104.0,26.0 111.0,26.0 118.0,26.0 125.0,26.0 132.0,26.0 139.0,26.0 146.0,26.0 153.0,26.0 160.0,26.0 167.0,26.0 174.0,26.0 181.0,26.0 188.0,26.0 195.0,26.0 202.0,26.0 209.0,26.0 216.0,26.0 223.0,26.0 230.0,26.0 237.0,26.0 244.0,26.0 251.0,26.0 258.0,26.0 265.0,26.0 272.0,26.0 279.0,26.0 286.0,26.0 293.0,26.0 300.0,26.0 307.0,26.0 314.0,26.0 321.0,26.0 328.0,26.0 335.0,26.0 342.0,26.0 349.0,26.0 356.0,26.0 363.0,26.3 370.0,28.2 377.0,30.1 384.0,31.9 391.0,33.6 398.0,35.4 405.0,37.1 412.0,38.7 419.0,40.3 426.0,41.9 433.0,43.4 440.0,44.9 447.0,46.3 454.0,47.7 461.0,49.1 468.0,50.5 475.0,51.8 482.0,53.1 489.0,54.4 496.0,55.6 503.0,56.8 510.0,58.0 517.0,59.2 524.0,60.3 531.0,61.5 538.0,62.6 545.0,63.6 552.0,64.7 559.0,65.7 566.0,66.7 573.0,67.7 580.0,68.7 587.0,69.7 594.0,70.6 601.0,71.5 608.0,72.4 615.0,73.3 622.0,74.2 629.0,75.0 636.0,75.9 643.0,76.7 650.0,77.5 657.0,78.3 664.0,79.1 671.0,79.9 678.0,80.6 685.0,81.4 692.0,82.1 699.0,82.8 706.0,83.5 713.0,84.2 720.0,84.9 727.0,85.6 734.0,86.2 741.0,86.9 748.0,87.5 755.0,88.2 762.0,88.8 769.0,89.4 776.0,90.0 783.0,90.6 790.0,91.2 797.0,91.8 804.0,92.4 811.0,92.9 818.0,93.5 825.0,94.0 832.0,94.6 839.0,95.1 846.0,95.6 853.0,96.1 860.0,96.6 867.0,97.1 874.0,97.6 881.0,98.1 888.0,98.6 895.0,99.1 902.0,99.5 909.0,100.0 916.0,100.5 923.0,100.9 930.0,101.4 937.0,101.8 944.0,102.2 951.0,102.7 958.0,103.1 965.0,103.5 972.0,103.9 979.0,104.3 986.0,104.7 993.0,105.1 1000.0,105.5 1007.0,105.9 1014.0,106.3 1021.0,106.7 1028.0,107.1 1035.0,107.4 1042.0,107.8 1049.0,108.1 1056.0,108.5 1063.0,108.9 1070.0,109.2 1077.0,109.6 1084.0,109.9 1091.0,110.2 1098.0,110.6 1105.0,110.9 1112.0,111.2" fill="none" stroke="#3366FF" stroke-width="2.5"/><line x1="62" y1="26.0" x2="1112" y2="26.0" stroke="#00CC66" stroke-width="2.5"/><text x="52.0" y="31.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="13" text-anchor="end">1.00</text><text x="52.0" y="175.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="13" text-anchor="end">0</text><text x="362.0" y="14.0" fill="#FFFFFF" font-family="IBM Plex Mono,monospace" font-size="13" text-anchor="middle">S</text><text x="186.1" y="106.6" fill="#5C85FF" font-family="IBM Plex Mono,monospace" font-size="16" >P</text><text x="879.2" y="54.8" fill="#00CC66" font-family="IBM Plex Mono,monospace" font-size="16" >N</text><text x="1112.0" y="196.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="13" text-anchor="end">reference price x  →</text><text x="682.7" y="14.0" fill="#8A8A8A" font-family="IBM Plex Mono,monospace" font-size="13" text-anchor="middle">P + N = 1.00 at every price</text></svg></div><div class="figkey"><span><i class="swatch" style="background:#3366FF"></i><b>P</b> — protected leg, S/x above strike</span><span><i class="swatch" style="background:#00CC66"></i><b>N</b> — amplified leg, 1 &minus; S/x above strike</span></div><div class="cmp" style="margin-top:12px"><div class="c" style="border-bottom:0"><span class="mono" style="color:#FFFFFF">S &ge; x</span>&nbsp;&nbsp;P receives 1.00, the whole collateral; N receives 0.00</div><div class="c r" style="border-bottom:0"><span class="mono" style="color:#FFFFFF">S &lt; x</span>&nbsp;&nbsp;P receives S/x; N receives 1 &minus; S/x</div></div><div class="vacated" style="margin-top:12px"><span class="hd">Liquidation threshold</span><span class="no">Drawn across this payoff, it has nowhere to sit: there is no reference price at which the vault is worth less than the collateral, so the provision is taken away.</span></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">Canton pitch deck, slide 5 &middot; asset-manager pitch deck, slide 4</span></div>
+<span class="slide-no mono">07</span>
+</section>
+<section class="slide" data-layout="L-TABLE" data-question="What is the P holder actually being paid for?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 08 / 14</span><span class="subj">The cost</span><span class="asof">Backtest Aug 2017 &ndash; Jun 2026</span></div>
+<div class="mid"><h2 class="">P is short a call &mdash; that decline is what P earns</h2><div class="sched"><div class="row"><span class="lbl">Net drift; P ends at $0.895 on $1.00 over a 9-year backtest</span><span class="val">&minus;1.25%/yr</span></div><div class="row"><span class="lbl">Roll execution, the dominant cost: 10bps across ~12.2 rolls a year</span><span class="val">&minus;1.2%/yr</span></div><div class="row"><span class="lbl">Best sub-period gross theta, 2021&ndash;22</span><span class="val">+0.57%/yr</span></div></div><div class="clauses"><div class="cl tight"><span class="n">8.1</span><p>Above the strike P declines continuously as S/x: no floor, no cliff, computable at every price &mdash; and that decline is the income.</p></div><div class="cl tight"><span class="n">8.2</span><p>Hypercall, Aug 2017 &ndash; Jun 2026; ETH underlying, Deribit options, Black-Scholes at mid.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">Asset-manager pitch deck, slides 3, 4 &amp; 12 &middot; Canton pitch deck, slide 3</span></div>
+<span class="slide-no mono">08</span>
+</section>
+<section class="slide" data-layout="L-COMPARE" data-question="Is this competing with a lending market, or replacing the question?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 09 / 14</span><span class="subj">Category</span><span class="asof"></span></div>
+<div class="mid"><h2 class="">This is a different instrument, not a better lending rate</h2><table><thead><tr><th>&nbsp;</th><th>Lending against collateral</th><th>Medici</th></tr></thead><tbody><tr><td>Who takes the price risk</td><td>The borrower, until the threshold breaches</td><td>The P holder, continuously above the strike</td></tr><tr><td>Worst case</td><td>Forced sale of collateral with no bid</td><td>The asset rallies and P declines computably</td></tr><tr><td>What the issuer must sign</td><td>A liquidation agreement</td><td>Nothing</td></tr></tbody></table></div>
+<div class="auth"><span class="k">Authority</span><span class="v">Asset-manager pitch deck, slide 8 &middot; RedStone RWA lending report, Part 2</span></div>
+<span class="slide-no mono">09</span>
+</section>
+<section class="slide" data-layout="L-STAT-ROW" data-question="Which tokenized assets does this actually suit — and which not?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 10 / 14</span><span class="subj">Which collateral</span><span class="asof">RedStone, as of March 2026</span></div>
+<div class="mid"><h2 class="">The collateral this fits is the collateral institutions already rotated into</h2><div class="sched"><div class="row"><span class="lbl">Morpho tokenized T-bill deposits, from a ~$194M October 2025 peak</span><span class="val">&minus;92%</span></div><div class="row"><span class="lbl">Tokenized gold over the same period</span><span class="val">7x</span></div><div class="row"><span class="lbl">Gold borrowing, straightforward and non-looped</span><span class="val">~40% ratio</span></div></div><div class="clauses"><div class="cl"><span class="n">10.1</span><p>What it does not fit, said plainly: private credit is illiquid and NAV-priced; tokenized equities are live with under $1K deposited.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">RedStone RWA lending report, Part 2 — gold vs T-bills; Part 1 §(b)4</span></div>
+<span class="slide-no mono">10</span>
+</section>
+<section class="slide" data-layout="L-TWO-COL" data-question="Why here, and what is the argument against here?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 11 / 14</span><span class="subj">Which ledger</span><span class="asof">Canton, as of July 2026</span></div>
+<div class="mid"><h2 class="">Canton already holds the assets and enforces the privacy institutions require</h2><div class="clauses"><div class="cl"><span class="n">11.1</span><p>$344B represented and $2T per month in repo &mdash; the collateral is already there, with no bridge and no wrapper.</p></div><div class="cl"><span class="n">11.2</span><p>Positions are stakeholder-scoped; splits, rolls and settlements are atomic; no gas, no MEV, no mempool.</p></div><div class="cl"><span class="n">11.3</span><p>The honest counter: Canton appears nowhere in the RedStone lending report &mdash; distribution is the open problem, not the mechanism.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">Canton pitch deck, slide 4 &middot; RedStone RWA lending report, Part 2 — the Canton distribution gap</span></div>
+<span class="slide-no mono">11</span>
+</section>
+<section class="slide" data-layout="L-TABLE" data-question="How much of this exists, and how much is a plan?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 12 / 14</span><span class="subj">What is real</span><span class="asof">Plan as of July 2026</span></div>
+<div class="mid"><h2 class="">The mechanism runs today; the audit, mainnet and users do not</h2><div class="reg"><div class="col"><div class="h">Real</div><ul><li>54 DAML templates across 9 modules</li><li>A 12-agent TypeScript fleet behind a Go ledger service, 6 core agents live</li><li>A React frontend, end to end</li><li>Closed-form invariant proofs</li></ul></div><div class="col"><div class="h">Not real</div><ul><li>Mainnet deployment</li><li>Real collateral</li><li>Live users</li><li>A third-party audit</li><li>Revenue</li></ul></div></div><div class="clauses"><div class="cl tight"><span class="n">12.1</span><p>As-of July 2026 the plan was audit and legal in Q3 2026, mainnet Q4 2026, compliance layer H1 2027, first institutional pilot H2 2027.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">Canton pitch deck, slides 8, 9 &amp; 12</span></div>
+<span class="slide-no mono">12</span>
+</section>
+<section class="slide" data-layout="L-TWO-COL" data-question="What would you bring, and what would we do with it?">
+<div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 13 / 14</span><span class="subj">The ask</span><span class="asof"></span></div>
+<div class="mid"><h2 class="">Bring us the asset you can&rsquo;t sell in a hurry</h2><div class="clauses"><div class="cl"><span class="n">13.1</span><p>Name one tokenized position on Canton you would not want force-sold &mdash; gold or a volatile fund unit fits, a near-zero-vol treasury fund does not.</p></div><div class="cl"><span class="n">13.2</span><p>We size the split against it: strike, maturity, and the drift you would be paying, starting from the published &minus;1.25%/yr.</p></div><div class="cl"><span class="n">13.3</span><p>Then try to break the payoff. If P + N holds at every price you can name, the conversation becomes a pilot.</p></div></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">RedStone RWA lending report, Part 2 &middot; asset-manager pitch deck, slide 3</span></div>
+<span class="slide-no mono">13</span>
+</section>
+<section class="slide" data-layout="L-CLOSING">
+<svg class="watermark" aria-hidden="true"><use href="#oct-line"/></svg><div class="mast"><span class="seal accent" aria-hidden="true"></span><span class="ref">Notice 14 / 14</span><span class="subj">Ruling</span><span class="asof"></span></div>
+<div class="mid"><h1 class="">No liquidation price. Not a policy &mdash; a property of the payoff</h1><div class="clauses"><div class="cl"><span class="n">14.1</span><p>There is no liquidation price &mdash; the math doesn&rsquo;t permit it.</p></div></div><div style="margin-top:26px"><svg class="mark" width="58" height="58" role="img" aria-label="Medici mark"><use href="#assay-mark"/></svg></div></div>
+<div class="auth"><span class="k">Authority</span><span class="v">Canonical closing sentence, repeated identically from Notice 01</span></div>
+<span class="slide-no mono">14</span>
+</section>
+</div><!-- /stage -->
+<span class="hint">← → · click · <span id="count">1 / 14</span></span>
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide')),
+      total=slides.length,cur=0,
+      stage=document.getElementById('stage'),bar=document.getElementById('progress'),
+      cnt=document.getElementById('count');
+  function fit(){stage.style.setProperty('--s',Math.min(window.innerWidth/1280,window.innerHeight/720));}
+  function show(n){
+    cur=Math.max(0,Math.min(total-1,n));
+    slides.forEach(function(s,i){s.classList.toggle('active',i===cur);});
+    bar.style.transform='scaleX('+((cur+1)/total)+')';
+    if(cnt)cnt.textContent=(cur+1)+' / '+total;
+    location.hash=cur+1;
+  }
+  function next(){show(cur+1);} function prev(){show(cur-1);}
+  window.addEventListener('resize',fit);
+  document.addEventListener('keydown',function(e){
+    if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].indexOf(e.key)>-1){e.preventDefault();next();}
+    else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].indexOf(e.key)>-1){e.preventDefault();prev();}
+    else if(e.key==='Home'){e.preventDefault();show(0);}
+    else if(e.key==='End'){e.preventDefault();show(total-1);}
+  });
+  document.addEventListener('click',function(e){
+    if(e.target.closest('a,button')) return;
+    (e.clientX>window.innerWidth*.35)?next():prev();
+  });
+  var tx=0,ty=0;
+  document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',function(e){
+    var t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;
+    if(Math.abs(dx)>44&&Math.abs(dx)>Math.abs(dy)){dx<0?next():prev();}
+  },{passive:true});
+  fit();
+  var h=parseInt((location.hash||'').replace('#',''),10);
+  show(isFinite(h)&&h>0?h-1:0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medici for RWA tokens — explainer (pitch-deck-mastery)</title>
+<meta name="deck-footer" content="Medici — Proprietary &amp; Confidential">
+<meta name="explainer-runtime" content="143s">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%23000'/%3E%3Crect x='16' y='20' width='16' height='80' fill='%233366FF'/%3E%3Crect x='82' y='20' width='10' height='34' fill='%233366FF'/%3E%3Crect x='82' y='66' width='10' height='34' fill='%2300CC66'/%3E%3Ccircle cx='57' cy='60' r='9' fill='%233366FF'/%3E%3C/svg%3E">
+<style>
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans.woff2') format('woff2');font-weight:100 700;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans-italic.woff2') format('woff2');font-weight:100 700;font-style:italic;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#000000; --surface:#0A0A0A; --code:#060606; --line:#1A1A1A; --line-2:#252525;
+  --white:#FFFFFF; --text:#AAAAAA; --muted:#666666;
+  --blue:#3366FF; --blue-light:#5C85FF; --blue-dark:#1A4DCC; --gold:#D4A843;
+  --green:#00CC66; --red:#FF4444; --amber:#FFCC00;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+html,body{height:100%;background:var(--black);overflow:hidden}
+body{font-family:var(--sans);color:var(--text);-webkit-font-smoothing:antialiased}
+
+.stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;
+  transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:50% 50%;
+  background:var(--black);overflow:hidden}
+.scene{position:absolute;inset:0;padding:96px 130px 118px;display:flex;flex-direction:column;
+  justify-content:center;opacity:0;visibility:hidden}
+.scene.active{opacity:1;visibility:visible;z-index:1}
+.stage::after{content:"Medici — Proprietary & Confidential";position:absolute;left:0;right:0;bottom:34px;text-align:center;
+  font-size:16px;letter-spacing:.08em;color:var(--muted);z-index:5}
+
+h2{font-size:60px;font-weight:600;line-height:1.1;letter-spacing:-.015em;color:var(--white);
+  max-width:1500px;text-wrap:balance}
+h3{font-size:34px;font-weight:600;color:var(--white);line-height:1.2}
+p{font-size:31px;line-height:1.45}
+.lede{font-size:36px;line-height:1.35;color:var(--text);max-width:1420px}
+.kicker{font-size:22px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);
+  margin-bottom:26px}
+.kicker.mute{color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.white{color:var(--white)}.dim{color:var(--muted)}.blue{color:var(--blue-light)}
+.green{color:var(--green)}.red{color:var(--red)}
+ul{list-style:none}
+ul.dash>li{position:relative;padding-left:30px;margin-bottom:18px;font-size:31px;line-height:1.4}
+ul.dash>li::before{content:"—";position:absolute;left:0;color:var(--muted)}
+.big{font-family:var(--mono);font-weight:500;font-size:210px;line-height:.9;color:var(--red);
+  letter-spacing:-.03em}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.row.wide-l{grid-template-columns:1.3fr .7fr}
+.row.wide-r{grid-template-columns:.62fr 1.38fr}
+.tile{background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:30px 34px;
+  display:inline-block}
+.tile .t{font-size:30px;color:var(--white);font-weight:600}
+.tile .s{font-size:26px;color:var(--muted);margin-top:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px 28px}
+.stat .num{font-family:var(--mono);font-size:48px;font-weight:500;color:var(--white);line-height:1}
+.stat .cap{font-size:24px;color:var(--muted);margin-top:12px;line-height:1.3}
+.cases{border-top:1px solid var(--line);border-bottom:1px solid var(--line);max-width:820px}
+.case{display:grid;grid-template-columns:150px 1fr 1fr;gap:16px;align-items:baseline;padding:20px 0;font-size:29px}
+.case+.case{border-top:1px solid var(--line)}
+.case>span{white-space:nowrap}
+.case .cond{color:var(--white);font-family:var(--mono)}
+
+/* figures — same generators as the deck, scaled up */
+.fig{width:100%;height:auto;display:block;overflow:visible}
+.fig .ax{stroke:var(--line-2);stroke-width:1.5}
+.fig .grid{stroke:var(--line);stroke-width:1;stroke-dasharray:3 5}
+.fig .area-p{fill:rgba(51,102,255,.20)}
+.fig .area-n{fill:rgba(0,204,102,.14)}
+.fig .line-p{fill:none;stroke:var(--blue);stroke-width:3;stroke-linejoin:round}
+.fig .line-n{fill:none;stroke:var(--green);stroke-width:3;stroke-linejoin:round}
+.fig .line-sum{stroke:var(--white);stroke-width:2.5}
+.fig .strike{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 5}
+.fig text{font-family:var(--sans);font-size:22px;fill:var(--muted)}
+.fig .tick{font-family:var(--mono);font-size:21px;fill:var(--muted)}
+.fig .lab-p{fill:var(--blue-light);font-weight:600;font-size:26px}
+.fig .lab-n{fill:var(--green);font-weight:600;font-size:26px}
+.fig .lab-sum{fill:var(--white);font-size:23px;font-weight:500}
+.fig .ghost line{stroke:var(--red);stroke-width:2.5;stroke-dasharray:7 6}
+.fig .ghost text{fill:var(--red);font-size:22px}
+.fig .node-collat rect{fill:var(--surface);stroke:var(--line-2);stroke-width:2}
+.fig .node-p rect{fill:rgba(51,102,255,.08);stroke:var(--blue);stroke-width:2}
+.fig .node-n rect{fill:rgba(0,204,102,.07);stroke:var(--green);stroke-width:2}
+.fig .n-t{fill:var(--white);font-size:23px;font-weight:600}
+.fig .n-s{fill:var(--muted);font-size:22px}
+.fig .conn{fill:none;stroke-width:2.5}
+.fig .conn-p{stroke:var(--blue)}
+.fig .conn-n{stroke:var(--green)}
+.fig .tether path{fill:none;stroke:var(--white);stroke-width:1.6;stroke-dasharray:4 5;opacity:.55}
+.fig .area-climb{fill:rgba(51,102,255,.14)}
+.fig .line-climb{fill:none;stroke:var(--blue);stroke-width:3}
+.fig .dot-end{fill:var(--blue-light)}
+.fig .bar-was rect{fill:rgba(102,102,102,.18);stroke:var(--line-2)}
+.fig .bar-zero rect{fill:var(--red)}
+.fig .bar-v{font-family:var(--mono);font-size:26px;fill:var(--white)}
+.fig .bar-v.zero{fill:var(--red);font-size:40px}
+.fig .drop{fill:none;stroke:var(--red);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.fig .sweepline{stroke:var(--white);stroke-width:2;opacity:.85}
+.fig .sweepcap{fill:var(--white);font-family:var(--mono);font-size:22px}
+
+/* ── motion: every class below is a claim, not a decoration ───────────── */
+@keyframes ve-fade{from{opacity:0}to{opacity:1}}
+@keyframes ve-out{from{opacity:1}to{opacity:.12}}
+@keyframes ve-rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes ve-draw{from{stroke-dashoffset:var(--len,2200)}to{stroke-dashoffset:0}}
+@keyframes ve-fall{from{transform:scaleY(1)}to{transform:scaleY(.02)}}
+@keyframes ve-sweep{from{transform:translateX(0)}to{transform:translateX(var(--sweep-dx,600px))}}
+@keyframes ve-reach{from{transform:translateX(var(--reach-from,420px));opacity:.25}
+  60%{transform:translateX(var(--reach-stop,40px));opacity:1}
+  to{transform:translateX(var(--reach-stop,40px));opacity:1}}
+@keyframes ve-partl{from{opacity:0;transform:translate(-210px,118px)}to{opacity:1;transform:none}}
+@keyframes ve-partr{from{opacity:0;transform:translate(-210px,-118px)}to{opacity:1;transform:none}}
+@keyframes ve-strain{0%{transform:none}100%{transform:translateY(16px) rotate(-1.1deg)}}
+
+.anim{opacity:0}
+.scene.active .anim{animation:ve-fade .7s ease-out var(--d,0s) both}
+.scene.active .anim.rise{animation:ve-rise .8s cubic-bezier(.2,.7,.3,1) var(--d,0s) both}
+.scene.active .drop-out{animation:ve-out .9s ease-out var(--d,0s) both}
+.scene.active .fall{transform-origin:50% 100%;transform-box:fill-box;animation:ve-fall .8s cubic-bezier(.4,0,.9,.4) var(--d,0s) both}
+.scene.active .strain{animation:ve-strain 5s cubic-bezier(.3,0,.7,1) var(--d,0s) both}
+.scene.active .part-l{animation:ve-partl 1.9s cubic-bezier(.2,.75,.3,1) var(--d,0s) both}
+.scene.active .part-r{animation:ve-partr 1.9s cubic-bezier(.2,.75,.3,1) var(--d,0s) both}
+.fig .drawable{stroke-dasharray:var(--len,2200);stroke-dashoffset:var(--len,2200)}
+.scene.active .fig .drawable{animation:ve-draw var(--dur,1.6s) ease-out var(--d,0s) both}
+.scene.active .sweeper{animation:ve-sweep var(--dur,6s) linear var(--d,0s) both}
+.scene.active .reacher{animation:ve-reach var(--dur,2.2s) cubic-bezier(.15,.8,.2,1) var(--d,0s) both}
+
+/* chrome */
+.bar{position:absolute;left:0;top:0;height:3px;background:var(--blue);width:0;z-index:9}
+.ticker{position:absolute;right:44px;top:34px;font-family:var(--mono);font-size:17px;color:#333;z-index:9}
+@media (prefers-reduced-motion: reduce){
+  .scene.active .anim,.scene.active .anim.rise,.scene.active .drop-out,.scene.active .fall,
+  .scene.active .strain,.scene.active .part-l,.scene.active .part-r,
+  .scene.active .fig .drawable,.scene.active .sweeper,.scene.active .reacher{animation-duration:.01ms}
+}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+<div class="bar" id="bar"></div>
+<span class="ticker" id="ticker">scene 1 / 8</span>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="medici-mark" viewBox="0 0 120 120">
+  <rect x="16" y="20" width="16" height="80" rx="2" fill="#3366FF"/>
+  <rect x="82" y="20" width="10" height="34" rx="2" fill="#3366FF"/>
+  <rect x="82" y="66" width="10" height="34" rx="2" fill="#00CC66"/>
+  <path d="M32 26 L57 56 L82 26" fill="none" stroke="#3366FF" stroke-width="7" stroke-linejoin="round" opacity=".55"/>
+  <circle cx="57" cy="60" r="9" fill="#3366FF"/>
+  <circle cx="57" cy="60" r="3.4" fill="#D4A843"/>
+</symbol>
+<symbol id="mark-line" viewBox="0 0 120 120">
+  <rect x="16" y="20" width="16" height="80" rx="2" fill="none" stroke="#3366FF" stroke-width="3"/>
+  <rect x="82" y="20" width="10" height="34" rx="2" fill="none" stroke="#3366FF" stroke-width="3"/>
+  <rect x="82" y="66" width="10" height="34" rx="2" fill="none" stroke="#3366FF" stroke-width="3"/>
+  <circle cx="57" cy="60" r="9" fill="none" stroke="#3366FF" stroke-width="3"/>
+</symbol>
+</defs></svg>
+
+<section class="scene" id="scene-1" data-dur="13" data-scene="1">
+
+  <p class="kicker mute anim" style="--d:.2s">The position you hold</p>
+  <h2 class="anim rise" style="--d:.4s">Your tokenized collateral has a price at which someone else sells it.</h2>
+  <div class="row wide-r" style="margin-top:70px">
+    <div class="anim" style="--d:2.4s">
+      <div class="tile" style="display:block"><div class="t">One tokenized position</div>
+        <div class="s">a fund share &#183; a treasury &#183; a bond</div></div>
+    </div>
+    <div class="anim" style="--d:7s">
+      <svg viewBox="0 0 780 26" style="width:100%;height:26px" role="img" aria-label="A marked price line">
+        <line x1="0" y1="13" x2="780" y2="13" stroke="#FF4444" stroke-width="3" stroke-dasharray="10 8"/>
+      </svg>
+      <p class="red" style="margin-top:16px">a price at which somebody else sells it</p>
+      <p class="dim anim" style="--d:10s;margin-top:16px;font-size:29px">Somewhere in the paperwork.</p>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="scene-2" data-dur="22" data-scene="2">
+
+  <p class="kicker anim" style="--d:.2s">The threshold, crossed</p>
+  <h2 class="anim" style="--d:.4s">When the threshold breaks, the position is sold at the worst price.</h2>
+  <div class="row wide-l" style="margin-top:34px">
+    <div><svg class="fig" viewBox="0 0 980 400" role="img" aria-label="Auction proceeds falling from eight million dollars to zero">
+  <line class="ax" x1="120" y1="368" x2="890" y2="368"/>
+  <g class="bar-was">
+    <rect x="180" y="96" width="180" height="272" rx="6"/>
+    <text class="tick" x="270" y="404" text-anchor="middle">collateral posted</text>
+    <text class="bar-v" x="270" y="76" text-anchor="middle">~$8M</text>
+  </g>
+  <path class="drop anim" style="--d:6.0s" d="M 420,232 L 610,232 M 586,214 L 610,232 L 586,250"/>
+  <g class="bar-zero">
+    <rect class="fall" style="--d:6.6s" x="670" y="96" width="180" height="272" rx="6"/>
+    <text class="tick" x="760" y="404" text-anchor="middle">auction proceeds</text>
+    <text class="bar-v zero anim" style="--d:7.5s" x="760" y="76" text-anchor="middle">$0</text>
+  </g>
+</svg></div>
+    <div>
+      <div class="anim" style="--d:3.4s">
+        <svg viewBox="0 0 700 26" style="width:100%;height:26px" role="img" aria-label="The price crossing the threshold">
+          <line x1="0" y1="13" x2="700" y2="13" stroke="#FF4444" stroke-width="3" stroke-dasharray="10 8"/>
+        </svg>
+        <p class="red" style="margin-top:14px">price crosses it</p>
+      </div>
+      <p class="anim" style="--d:7.6s;margin-top:26px"><span class="mono white">$8M</span> of collateral,
+        cleared for <span class="mono red">$0</span> on Black Thursday.</p>
+      <ul class="dash" style="margin-top:30px">
+        <li class="anim" style="--d:13s">Most tokenized assets cannot be sold in one transaction</li>
+        <li class="anim" style="--d:17s">So the market signs liquidation agreements with issuers, to do it by hand</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="scene-3" data-dur="20" data-scene="3">
+
+  <p class="kicker anim" style="--d:.2s">The same collateral, split</p>
+  <h2 class="anim" style="--d:.4s">Medici splits one position into two claims: Protected and Amplified.</h2>
+  <div style="margin-top:28px;max-width:1240px;margin-left:auto;margin-right:auto"><svg class="fig" viewBox="0 0 1120 420" role="img" aria-label="One collateral position splits into P and N and stays tethered to the vault">
+  <g class="node-collat">
+    <rect x="40" y="176" width="280" height="120" rx="16"/>
+    <text class="n-t" x="180" y="228" text-anchor="middle">collateral</text>
+    <text class="n-s" x="180" y="262" text-anchor="middle">1 tokenized position</text>
+  </g>
+  <path class="conn conn-p drawable" style="--d:2.3s;--dur:1.6s;--len:420"
+        d="M 322,212 C 470,212 470,110 620,110"/>
+  <path class="conn conn-n drawable" style="--d:2.9s;--dur:1.6s;--len:420"
+        d="M 322,262 C 470,262 470,364 620,364"/>
+  <g class="node-p part-l" style="--d:2.3s">
+    <rect x="622" y="60" width="452" height="118" rx="16"/>
+    <text class="n-t" x="656" y="112">P &#8212; Protected</text>
+    <text class="n-s" x="656" y="148">capped at the strike, no margin call</text>
+  </g>
+  <g class="node-n part-r" style="--d:2.9s">
+    <rect x="622" y="308" width="452" height="118" rx="16"/>
+    <text class="n-t" x="656" y="360">N &#8212; Amplified</text>
+    <text class="n-s" x="656" y="396">everything above the strike</text>
+  </g>
+  <g class="tether anim" style="--d:12.0s">
+    <path d="M 1082,119 C 1116,119 1116,367 1082,367"/>
+    <text class="lab-sum" x="560" y="248" text-anchor="middle">P + N &#8801; collateral</text>
+  </g>
+</svg></div>
+  <p class="anim" style="--d:15.4s;margin-top:16px">Both are issued atomically &#8212; and both stay claims on
+    collateral that never leaves the vault.</p>
+</section>
+
+<section class="scene" id="scene-4" data-dur="21" data-scene="4">
+
+  <p class="kicker anim" style="--d:.2s">At maturity</p>
+  <h2 class="anim" style="--d:.3s">P takes S/x, N takes the rest, and the two still sum to the collateral.</h2>
+  <div class="row" style="margin-top:26px;grid-template-columns:1.18fr .82fr;gap:54px">
+    <div><svg class="fig" viewBox="0 0 1100 470" role="img" aria-label="P and N stacked against the reference price, summing to the collateral at every price">
+<line class="ax" x1="104" y1="384.0" x2="950" y2="384.0"/>
+<line class="ax" x1="104" y1="58" x2="104" y2="384.0"/>
+<line class="strike" x1="334.4" y1="58" x2="334.4" y2="384.0"/>
+<text class="tick" x="334.4" y="414.0" text-anchor="middle">strike S</text>
+<text class="tick" x="90" y="65.0" text-anchor="end">1.00</text>
+<text class="tick" x="90" y="391.0" text-anchor="end">0</text>
+<text class="tick" x="950" y="414.0" text-anchor="end">reference price x at maturity</text>
+<path class="anim" style="--d:5.2s" d="M 104.0,58.0 L 111.1,58.0 L 118.2,58.0 L 125.3,58.0 L 132.4,58.0 L 139.5,58.0 L 146.7,58.0 L 153.8,58.0 L 160.9,58.0 L 168.0,58.0 L 175.1,58.0 L 182.2,58.0 L 189.3,58.0 L 196.4,58.0 L 203.5,58.0 L 210.6,58.0 L 217.7,58.0 L 224.9,58.0 L 232.0,58.0 L 239.1,58.0 L 246.2,58.0 L 253.3,58.0 L 260.4,58.0 L 267.5,58.0 L 274.6,58.0 L 281.7,58.0 L 288.8,58.0 L 295.9,58.0 L 303.1,58.0 L 310.2,58.0 L 317.3,58.0 L 324.4,58.0 L 331.5,58.0 L 338.6,61.4 L 345.7,67.1 L 352.8,72.5 L 359.9,77.7 L 367.0,82.8 L 374.2,87.7 L 381.3,92.4 L 388.4,97.0 L 395.5,101.5 L 402.6,105.8 L 409.7,110.0 L 416.8,114.0 L 423.9,118.0 L 431.0,121.8 L 438.1,125.5 L 445.2,129.1 L 452.4,132.7 L 459.5,136.1 L 466.6,139.4 L 473.7,142.7 L 480.8,145.8 L 487.9,148.9 L 495.0,151.9 L 502.1,154.8 L 509.2,157.7 L 516.3,160.4 L 523.4,163.1 L 530.6,165.8 L 537.7,168.4 L 544.8,170.9 L 551.9,173.4 L 559.0,175.8 L 566.1,178.1 L 573.2,180.4 L 580.3,182.7 L 587.4,184.9 L 594.5,187.0 L 601.6,189.1 L 608.8,191.2 L 615.9,193.2 L 623.0,195.2 L 630.1,197.1 L 637.2,199.0 L 644.3,200.9 L 651.4,202.7 L 658.5,204.5 L 665.6,206.2 L 672.7,208.0 L 679.8,209.7 L 687.0,211.3 L 694.1,212.9 L 701.2,214.5 L 708.3,216.1 L 715.4,217.6 L 722.5,219.1 L 729.6,220.6 L 736.7,222.1 L 743.8,223.5 L 750.9,224.9 L 758.1,226.3 L 765.2,227.6 L 772.3,228.9 L 779.4,230.3 L 786.5,231.5 L 793.6,232.8 L 800.7,234.1 L 807.8,235.3 L 814.9,236.5 L 822.0,237.7 L 829.1,238.8 L 836.3,240.0 L 843.4,241.1 L 850.5,242.2 L 857.6,243.3 L 864.7,244.4 L 871.8,245.5 L 878.9,246.5 L 886.0,247.5 L 893.1,248.6 L 900.2,249.6 L 907.3,250.5 L 914.5,251.5 L 921.6,252.5 L 928.7,253.4 L 935.8,254.3 L 942.9,255.3 L 950.0,256.2 L 950.0,58.0 L 104.0,58.0 Z" fill="rgba(0,204,102,.14)"/>
+<path class="anim" style="--d:2.4s" d="M 104.0,58.0 L 111.1,58.0 L 118.2,58.0 L 125.3,58.0 L 132.4,58.0 L 139.5,58.0 L 146.7,58.0 L 153.8,58.0 L 160.9,58.0 L 168.0,58.0 L 175.1,58.0 L 182.2,58.0 L 189.3,58.0 L 196.4,58.0 L 203.5,58.0 L 210.6,58.0 L 217.7,58.0 L 224.9,58.0 L 232.0,58.0 L 239.1,58.0 L 246.2,58.0 L 253.3,58.0 L 260.4,58.0 L 267.5,58.0 L 274.6,58.0 L 281.7,58.0 L 288.8,58.0 L 295.9,58.0 L 303.1,58.0 L 310.2,58.0 L 317.3,58.0 L 324.4,58.0 L 331.5,58.0 L 338.6,61.4 L 345.7,67.1 L 352.8,72.5 L 359.9,77.7 L 367.0,82.8 L 374.2,87.7 L 381.3,92.4 L 388.4,97.0 L 395.5,101.5 L 402.6,105.8 L 409.7,110.0 L 416.8,114.0 L 423.9,118.0 L 431.0,121.8 L 438.1,125.5 L 445.2,129.1 L 452.4,132.7 L 459.5,136.1 L 466.6,139.4 L 473.7,142.7 L 480.8,145.8 L 487.9,148.9 L 495.0,151.9 L 502.1,154.8 L 509.2,157.7 L 516.3,160.4 L 523.4,163.1 L 530.6,165.8 L 537.7,168.4 L 544.8,170.9 L 551.9,173.4 L 559.0,175.8 L 566.1,178.1 L 573.2,180.4 L 580.3,182.7 L 587.4,184.9 L 594.5,187.0 L 601.6,189.1 L 608.8,191.2 L 615.9,193.2 L 623.0,195.2 L 630.1,197.1 L 637.2,199.0 L 644.3,200.9 L 651.4,202.7 L 658.5,204.5 L 665.6,206.2 L 672.7,208.0 L 679.8,209.7 L 687.0,211.3 L 694.1,212.9 L 701.2,214.5 L 708.3,216.1 L 715.4,217.6 L 722.5,219.1 L 729.6,220.6 L 736.7,222.1 L 743.8,223.5 L 750.9,224.9 L 758.1,226.3 L 765.2,227.6 L 772.3,228.9 L 779.4,230.3 L 786.5,231.5 L 793.6,232.8 L 800.7,234.1 L 807.8,235.3 L 814.9,236.5 L 822.0,237.7 L 829.1,238.8 L 836.3,240.0 L 843.4,241.1 L 850.5,242.2 L 857.6,243.3 L 864.7,244.4 L 871.8,245.5 L 878.9,246.5 L 886.0,247.5 L 893.1,248.6 L 900.2,249.6 L 907.3,250.5 L 914.5,251.5 L 921.6,252.5 L 928.7,253.4 L 935.8,254.3 L 942.9,255.3 L 950.0,256.2 L 950.0,384.0 L 104.0,384.0 Z" fill="rgba(51,102,255,.20)"/>
+<path class="line-p drawable" d="M 104.0,58.0 L 111.1,58.0 L 118.2,58.0 L 125.3,58.0 L 132.4,58.0 L 139.5,58.0 L 146.7,58.0 L 153.8,58.0 L 160.9,58.0 L 168.0,58.0 L 175.1,58.0 L 182.2,58.0 L 189.3,58.0 L 196.4,58.0 L 203.5,58.0 L 210.6,58.0 L 217.7,58.0 L 224.9,58.0 L 232.0,58.0 L 239.1,58.0 L 246.2,58.0 L 253.3,58.0 L 260.4,58.0 L 267.5,58.0 L 274.6,58.0 L 281.7,58.0 L 288.8,58.0 L 295.9,58.0 L 303.1,58.0 L 310.2,58.0 L 317.3,58.0 L 324.4,58.0 L 331.5,58.0 L 338.6,61.4 L 345.7,67.1 L 352.8,72.5 L 359.9,77.7 L 367.0,82.8 L 374.2,87.7 L 381.3,92.4 L 388.4,97.0 L 395.5,101.5 L 402.6,105.8 L 409.7,110.0 L 416.8,114.0 L 423.9,118.0 L 431.0,121.8 L 438.1,125.5 L 445.2,129.1 L 452.4,132.7 L 459.5,136.1 L 466.6,139.4 L 473.7,142.7 L 480.8,145.8 L 487.9,148.9 L 495.0,151.9 L 502.1,154.8 L 509.2,157.7 L 516.3,160.4 L 523.4,163.1 L 530.6,165.8 L 537.7,168.4 L 544.8,170.9 L 551.9,173.4 L 559.0,175.8 L 566.1,178.1 L 573.2,180.4 L 580.3,182.7 L 587.4,184.9 L 594.5,187.0 L 601.6,189.1 L 608.8,191.2 L 615.9,193.2 L 623.0,195.2 L 630.1,197.1 L 637.2,199.0 L 644.3,200.9 L 651.4,202.7 L 658.5,204.5 L 665.6,206.2 L 672.7,208.0 L 679.8,209.7 L 687.0,211.3 L 694.1,212.9 L 701.2,214.5 L 708.3,216.1 L 715.4,217.6 L 722.5,219.1 L 729.6,220.6 L 736.7,222.1 L 743.8,223.5 L 750.9,224.9 L 758.1,226.3 L 765.2,227.6 L 772.3,228.9 L 779.4,230.3 L 786.5,231.5 L 793.6,232.8 L 800.7,234.1 L 807.8,235.3 L 814.9,236.5 L 822.0,237.7 L 829.1,238.8 L 836.3,240.0 L 843.4,241.1 L 850.5,242.2 L 857.6,243.3 L 864.7,244.4 L 871.8,245.5 L 878.9,246.5 L 886.0,247.5 L 893.1,248.6 L 900.2,249.6 L 907.3,250.5 L 914.5,251.5 L 921.6,252.5 L 928.7,253.4 L 935.8,254.3 L 942.9,255.3 L 950.0,256.2" style="--d:1.4s;--dur:3.0s;--len:885"/>
+<line class="line-sum drawable" x1="104" y1="58.0" x2="950" y2="58.0" style="--d:8.0s;--dur:2.4s;--len:846"/>
+<text class="lab-p anim" x="199.3" y="240.6" style="--d:2.4s">P</text>
+<text class="lab-n anim" x="811.0" y="142.8" style="--d:5.2s">N</text>
+<text class="lab-sum anim" x="501.2" y="40.0" style="--d:8.0s">P + N = collateral, at every price</text>
+<g class="sweeper" style="--d:12.0s;--dur:8.0s;--sweep-dx:846px"><line class="sweepline" x1="104.0" y1="58" x2="104.0" y2="384.0"/><text class="sweepcap" x="116.0" y="62.0">P + N = 1.00</text></g>
+</svg></div>
+    <div>
+      <div class="cases">
+        <div class="case anim" style="--d:2.2s"><span class="cond">x &#8804; S</span>
+          <span><b class="blue">P</b> 1.00</span><span><b class="green">N</b> 0.00</span></div>
+        <div class="case anim" style="--d:5.2s"><span class="cond">x &gt; S</span>
+          <span><b class="blue">P</b> S/x</span><span><b class="green">N</b> 1 &#8722; S/x</span></div>
+      </div>
+      <p class="anim" style="--d:11.6s;margin-top:34px">Sweep the price across the whole range.</p>
+      <p class="anim" style="--d:16.4s;margin-top:24px;color:#FFFFFF">The two always add back to exactly
+        the collateral.</p>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="scene-5" data-dur="21" data-scene="5">
+
+  <p class="kicker anim" style="--d:.2s">Run that first scene again</p>
+  <h2 class="anim" style="--d:.3s">The price rises, and the liquidation that would fire does not exist.</h2>
+  <div class="row" style="margin-top:26px;grid-template-columns:1.18fr .82fr;gap:54px">
+    <div><svg class="fig" viewBox="0 0 1100 470" role="img" aria-label="P and N stacked against the reference price, summing to the collateral at every price">
+<line class="ax" x1="104" y1="384.0" x2="950" y2="384.0"/>
+<line class="ax" x1="104" y1="58" x2="104" y2="384.0"/>
+<line class="strike" x1="334.4" y1="58" x2="334.4" y2="384.0"/>
+<text class="tick" x="334.4" y="414.0" text-anchor="middle">strike S</text>
+<text class="tick" x="90" y="65.0" text-anchor="end">1.00</text>
+<text class="tick" x="90" y="391.0" text-anchor="end">0</text>
+<text class="tick" x="950" y="414.0" text-anchor="end">reference price x at maturity</text>
+<path class="anim" style="--d:1.2s" d="M 104.0,58.0 L 111.1,58.0 L 118.2,58.0 L 125.3,58.0 L 132.4,58.0 L 139.5,58.0 L 146.7,58.0 L 153.8,58.0 L 160.9,58.0 L 168.0,58.0 L 175.1,58.0 L 182.2,58.0 L 189.3,58.0 L 196.4,58.0 L 203.5,58.0 L 210.6,58.0 L 217.7,58.0 L 224.9,58.0 L 232.0,58.0 L 239.1,58.0 L 246.2,58.0 L 253.3,58.0 L 260.4,58.0 L 267.5,58.0 L 274.6,58.0 L 281.7,58.0 L 288.8,58.0 L 295.9,58.0 L 303.1,58.0 L 310.2,58.0 L 317.3,58.0 L 324.4,58.0 L 331.5,58.0 L 338.6,61.4 L 345.7,67.1 L 352.8,72.5 L 359.9,77.7 L 367.0,82.8 L 374.2,87.7 L 381.3,92.4 L 388.4,97.0 L 395.5,101.5 L 402.6,105.8 L 409.7,110.0 L 416.8,114.0 L 423.9,118.0 L 431.0,121.8 L 438.1,125.5 L 445.2,129.1 L 452.4,132.7 L 459.5,136.1 L 466.6,139.4 L 473.7,142.7 L 480.8,145.8 L 487.9,148.9 L 495.0,151.9 L 502.1,154.8 L 509.2,157.7 L 516.3,160.4 L 523.4,163.1 L 530.6,165.8 L 537.7,168.4 L 544.8,170.9 L 551.9,173.4 L 559.0,175.8 L 566.1,178.1 L 573.2,180.4 L 580.3,182.7 L 587.4,184.9 L 594.5,187.0 L 601.6,189.1 L 608.8,191.2 L 615.9,193.2 L 623.0,195.2 L 630.1,197.1 L 637.2,199.0 L 644.3,200.9 L 651.4,202.7 L 658.5,204.5 L 665.6,206.2 L 672.7,208.0 L 679.8,209.7 L 687.0,211.3 L 694.1,212.9 L 701.2,214.5 L 708.3,216.1 L 715.4,217.6 L 722.5,219.1 L 729.6,220.6 L 736.7,222.1 L 743.8,223.5 L 750.9,224.9 L 758.1,226.3 L 765.2,227.6 L 772.3,228.9 L 779.4,230.3 L 786.5,231.5 L 793.6,232.8 L 800.7,234.1 L 807.8,235.3 L 814.9,236.5 L 822.0,237.7 L 829.1,238.8 L 836.3,240.0 L 843.4,241.1 L 850.5,242.2 L 857.6,243.3 L 864.7,244.4 L 871.8,245.5 L 878.9,246.5 L 886.0,247.5 L 893.1,248.6 L 900.2,249.6 L 907.3,250.5 L 914.5,251.5 L 921.6,252.5 L 928.7,253.4 L 935.8,254.3 L 942.9,255.3 L 950.0,256.2 L 950.0,58.0 L 104.0,58.0 Z" fill="rgba(0,204,102,.14)"/>
+<path class="anim" style="--d:0.8s" d="M 104.0,58.0 L 111.1,58.0 L 118.2,58.0 L 125.3,58.0 L 132.4,58.0 L 139.5,58.0 L 146.7,58.0 L 153.8,58.0 L 160.9,58.0 L 168.0,58.0 L 175.1,58.0 L 182.2,58.0 L 189.3,58.0 L 196.4,58.0 L 203.5,58.0 L 210.6,58.0 L 217.7,58.0 L 224.9,58.0 L 232.0,58.0 L 239.1,58.0 L 246.2,58.0 L 253.3,58.0 L 260.4,58.0 L 267.5,58.0 L 274.6,58.0 L 281.7,58.0 L 288.8,58.0 L 295.9,58.0 L 303.1,58.0 L 310.2,58.0 L 317.3,58.0 L 324.4,58.0 L 331.5,58.0 L 338.6,61.4 L 345.7,67.1 L 352.8,72.5 L 359.9,77.7 L 367.0,82.8 L 374.2,87.7 L 381.3,92.4 L 388.4,97.0 L 395.5,101.5 L 402.6,105.8 L 409.7,110.0 L 416.8,114.0 L 423.9,118.0 L 431.0,121.8 L 438.1,125.5 L 445.2,129.1 L 452.4,132.7 L 459.5,136.1 L 466.6,139.4 L 473.7,142.7 L 480.8,145.8 L 487.9,148.9 L 495.0,151.9 L 502.1,154.8 L 509.2,157.7 L 516.3,160.4 L 523.4,163.1 L 530.6,165.8 L 537.7,168.4 L 544.8,170.9 L 551.9,173.4 L 559.0,175.8 L 566.1,178.1 L 573.2,180.4 L 580.3,182.7 L 587.4,184.9 L 594.5,187.0 L 601.6,189.1 L 608.8,191.2 L 615.9,193.2 L 623.0,195.2 L 630.1,197.1 L 637.2,199.0 L 644.3,200.9 L 651.4,202.7 L 658.5,204.5 L 665.6,206.2 L 672.7,208.0 L 679.8,209.7 L 687.0,211.3 L 694.1,212.9 L 701.2,214.5 L 708.3,216.1 L 715.4,217.6 L 722.5,219.1 L 729.6,220.6 L 736.7,222.1 L 743.8,223.5 L 750.9,224.9 L 758.1,226.3 L 765.2,227.6 L 772.3,228.9 L 779.4,230.3 L 786.5,231.5 L 793.6,232.8 L 800.7,234.1 L 807.8,235.3 L 814.9,236.5 L 822.0,237.7 L 829.1,238.8 L 836.3,240.0 L 843.4,241.1 L 850.5,242.2 L 857.6,243.3 L 864.7,244.4 L 871.8,245.5 L 878.9,246.5 L 886.0,247.5 L 893.1,248.6 L 900.2,249.6 L 907.3,250.5 L 914.5,251.5 L 921.6,252.5 L 928.7,253.4 L 935.8,254.3 L 942.9,255.3 L 950.0,256.2 L 950.0,384.0 L 104.0,384.0 Z" fill="rgba(51,102,255,.20)"/>
+<path class="line-p drawable" d="M 104.0,58.0 L 111.1,58.0 L 118.2,58.0 L 125.3,58.0 L 132.4,58.0 L 139.5,58.0 L 146.7,58.0 L 153.8,58.0 L 160.9,58.0 L 168.0,58.0 L 175.1,58.0 L 182.2,58.0 L 189.3,58.0 L 196.4,58.0 L 203.5,58.0 L 210.6,58.0 L 217.7,58.0 L 224.9,58.0 L 232.0,58.0 L 239.1,58.0 L 246.2,58.0 L 253.3,58.0 L 260.4,58.0 L 267.5,58.0 L 274.6,58.0 L 281.7,58.0 L 288.8,58.0 L 295.9,58.0 L 303.1,58.0 L 310.2,58.0 L 317.3,58.0 L 324.4,58.0 L 331.5,58.0 L 338.6,61.4 L 345.7,67.1 L 352.8,72.5 L 359.9,77.7 L 367.0,82.8 L 374.2,87.7 L 381.3,92.4 L 388.4,97.0 L 395.5,101.5 L 402.6,105.8 L 409.7,110.0 L 416.8,114.0 L 423.9,118.0 L 431.0,121.8 L 438.1,125.5 L 445.2,129.1 L 452.4,132.7 L 459.5,136.1 L 466.6,139.4 L 473.7,142.7 L 480.8,145.8 L 487.9,148.9 L 495.0,151.9 L 502.1,154.8 L 509.2,157.7 L 516.3,160.4 L 523.4,163.1 L 530.6,165.8 L 537.7,168.4 L 544.8,170.9 L 551.9,173.4 L 559.0,175.8 L 566.1,178.1 L 573.2,180.4 L 580.3,182.7 L 587.4,184.9 L 594.5,187.0 L 601.6,189.1 L 608.8,191.2 L 615.9,193.2 L 623.0,195.2 L 630.1,197.1 L 637.2,199.0 L 644.3,200.9 L 651.4,202.7 L 658.5,204.5 L 665.6,206.2 L 672.7,208.0 L 679.8,209.7 L 687.0,211.3 L 694.1,212.9 L 701.2,214.5 L 708.3,216.1 L 715.4,217.6 L 722.5,219.1 L 729.6,220.6 L 736.7,222.1 L 743.8,223.5 L 750.9,224.9 L 758.1,226.3 L 765.2,227.6 L 772.3,228.9 L 779.4,230.3 L 786.5,231.5 L 793.6,232.8 L 800.7,234.1 L 807.8,235.3 L 814.9,236.5 L 822.0,237.7 L 829.1,238.8 L 836.3,240.0 L 843.4,241.1 L 850.5,242.2 L 857.6,243.3 L 864.7,244.4 L 871.8,245.5 L 878.9,246.5 L 886.0,247.5 L 893.1,248.6 L 900.2,249.6 L 907.3,250.5 L 914.5,251.5 L 921.6,252.5 L 928.7,253.4 L 935.8,254.3 L 942.9,255.3 L 950.0,256.2" style="--d:0.6s;--dur:1.4s;--len:885"/>
+<line class="line-sum drawable" x1="104" y1="58.0" x2="950" y2="58.0" style="--d:1.6s;--dur:1.4s;--len:846"/>
+<text class="lab-p anim" x="199.3" y="240.6" style="--d:0.8s">P</text>
+<text class="lab-n anim" x="811.0" y="142.8" style="--d:1.2s">N</text>
+<text class="lab-sum anim" x="501.2" y="40.0" style="--d:1.6s">P + N = collateral, at every price</text>
+<g class="ghost reacher" style="--d:6.8s;--dur:2.2s;--reach-from:520px;--reach-stop:40px"><line x1="572.7" y1="58" x2="572.7" y2="384.0"/><text x="586.7" y="80.0">a lending market would seize it here</text></g>
+</svg></div>
+    <div>
+      <p class="anim" style="--d:4.6s">A lending market would seize the collateral here.</p>
+      <p class="anim" style="--d:9.2s;margin-top:26px;color:#FFFFFF;font-size:36px">Watch.</p>
+      <p class="anim" style="--d:11.4s;margin-top:34px;color:#FFFFFF;font-size:36px">Nothing fires.</p>
+      <p class="anim" style="--d:14.6s;margin-top:30px">There is no liquidation threshold, because the payoff
+        has no under-collateralized state to trigger one.</p>
+      <p class="anim" style="--d:18s;margin-top:22px;font-size:29px">A theorem, not a risk setting.</p>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="scene-6" data-dur="17" data-scene="6">
+
+  <p class="kicker mute anim" style="--d:.2s">Who holds each leg</p>
+  <h2 class="anim" style="--d:.4s">Two holders, two reasons: income kept, exposure amplified.</h2>
+  <div class="row" style="margin-top:66px">
+    <div class="stat anim" style="--d:2.4s;border-left:3px solid #3366FF">
+      <div class="num blue">P &#183; Protected</div>
+      <div class="cap">A fund treasury holds it and earns on an asset it never sells.</div></div>
+    <div class="stat anim" style="--d:7.4s;border-left:3px solid #00CC66">
+      <div class="num green">N &#183; Amplified</div>
+      <div class="cap">An allocator holds it for exposure with no liquidation price and no funding rate.</div></div>
+  </div>
+  <p class="lede anim" style="--d:12.8s;margin-top:56px">Selling a leg is the liquidity.</p>
+</section>
+
+<section class="scene" id="scene-7" data-dur="14" data-scene="7">
+
+  <p class="kicker mute anim" style="--d:.2s">Said plainly</p>
+  <h2 class="anim" style="--d:.3s">What is built is real; what is not built is named.</h2>
+  <div class="row" style="margin-top:52px">
+    <div>
+      <p class="anim" style="--d:1.2s;color:#FFFFFF">What exists today</p>
+      <ul class="dash" style="margin-top:20px">
+        <li class="anim" style="--d:1.6s">54 DAML contracts on Canton</li>
+        <li class="anim" style="--d:2.8s">A twelve-agent fleet</li>
+        <li class="anim" style="--d:4s">A nine-year backtest</li>
+        <li class="anim" style="--d:5.2s">Closed-form proofs</li>
+      </ul>
+    </div>
+    <div>
+      <p class="anim" style="--d:6.8s;color:#FFFFFF">What does not</p>
+      <ul class="dash" style="margin-top:20px">
+        <li class="drop-out" style="--d:7.4s">Mainnet</li>
+        <li class="drop-out" style="--d:8.4s">An audit</li>
+        <li class="drop-out" style="--d:9.4s">Live collateral</li>
+        <li class="drop-out" style="--d:10.4s">A customer</li>
+      </ul>
+      <p class="anim" style="--d:11.8s;margin-top:24px;font-size:29px">You should hear that from us.</p>
+    </div>
+  </div>
+</section>
+
+<section class="scene" id="scene-8" data-dur="15" data-scene="8">
+
+  <p class="kicker anim" style="--d:.2s">The conversation</p>
+  <h2 class="anim rise" style="--d:.4s">Bring one position, and the split is modelled against it.</h2>
+  <div class="row wide-r" style="margin-top:64px">
+    <div class="anim" style="--d:3s">
+      <div class="tile" style="display:block;max-width:580px">
+        <div class="t">One tokenized position</div>
+        <div class="s">split, and never force-sold</div>
+        <div style="display:flex;gap:14px;margin-top:22px">
+          <span class="mono blue" style="font-size:29px">P</span>
+          <span class="mono dim" style="font-size:29px">+</span>
+          <span class="mono green" style="font-size:29px">N</span>
+          <span class="mono dim" style="font-size:29px">&#8801;</span>
+          <span class="mono white" style="font-size:29px">collateral</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="lede anim" style="--d:7.4s;color:#FFFFFF">Bring one position and a strike; we will show you
+        the payoff at every price.</p>
+      <div class="anim" style="--d:11.4s;display:flex;align-items:center;gap:20px;margin-top:40px">
+        <svg width="48" height="48" role="img" aria-label="Medici mark"><use href="#medici-mark"/></svg>
+        <p class="dim" style="font-size:29px">Medici &#183; collateral splitting for tokenized real-world assets</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /stage -->
+<script>
+(function(){
+  var scenes=[].slice.call(document.querySelectorAll('.scene'));
+  var durs=scenes.map(function(s){return parseFloat(s.getAttribute('data-dur'))||6;});
+  var starts=[],acc=0;
+  durs.forEach(function(d){starts.push(acc);acc+=d;});
+  var total=acc;
+  var stage=document.getElementById('stage'),bar=document.getElementById('bar'),
+      ticker=document.getElementById('ticker');
+  var idx=-1,t0=0,playing=true;
+  function fit(){
+    var s=Math.min(window.innerWidth/1920,window.innerHeight/1080);
+    stage.style.setProperty('--s',s);
+  }
+  function activate(n){
+    n=Math.max(0,Math.min(scenes.length-1,n));
+    scenes.forEach(function(s,i){
+      if(i===n){ s.classList.remove('active'); void s.offsetWidth; s.classList.add('active'); }
+      else s.classList.remove('active');
+    });
+    idx=n; t0=performance.now(); playing=true;
+    ticker.textContent='scene '+(n+1)+' / '+scenes.length;
+  }
+  function elapsed(){ return playing?Math.min((performance.now()-t0)/1000,durs[idx]):durs[idx]; }
+  function frame(){
+    if(idx>=0){
+      var e=(performance.now()-t0)/1000;
+      bar.style.width=((starts[idx]+Math.min(e,durs[idx]))/total*100)+'%';
+      if(playing&&e>=durs[idx]){
+        if(idx<scenes.length-1) activate(idx+1);
+        else { playing=false; bar.style.width='100%'; }
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('resize',fit);
+  document.addEventListener('keydown',function(ev){
+    if([' ','ArrowRight','ArrowDown','PageDown','Enter'].indexOf(ev.key)>-1){ev.preventDefault();activate(idx+1);}
+    else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].indexOf(ev.key)>-1){ev.preventDefault();activate(idx-1);}
+    else if(ev.key==='Home'){ev.preventDefault();activate(0);}
+    else if(ev.key==='r'||ev.key==='R'){ev.preventDefault();activate(idx);}
+  });
+  document.addEventListener('click',function(ev){
+    if(ev.target.closest('a,button')) return;
+    activate(ev.clientX>window.innerWidth*0.35?idx+1:idx-1);
+  });
+  window.__player={
+    total: total,
+    seek: function(n){ activate((n|0)-1); return n; },
+    get scene(){ return idx+1; },
+    get t(){ return idx<0?0:starts[idx]+elapsed(); }
+  };
+  fit();
+  var m=/[?&]scene=(\d+)/.exec(location.search);
+  activate(m?parseInt(m[1],10)-1:0);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

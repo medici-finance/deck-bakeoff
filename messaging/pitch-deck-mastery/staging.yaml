@@ -1,0 +1,363 @@
+# staging.yaml — normalized transport contract
+# Messaging contender: pitch-deck-mastery
+# Argument, slot order and headline claims come from the pitch-deck-mastery
+# 12-slide framework adapted to a product pitch (see pitch.md §1).
+# Shape follows skills/messaging/staging/SKILL.md's HANDOFF contract; its
+# methodology (INTAKE/CLASSIFY/LOAD/STAGE/GATE) was NOT used.
+#
+# Design consumers: never reorder slots, never rewrite a headline claim.
+# A slot you cannot render is logged in your NOTES.md, not dropped.
+# Nothing in this file names a colour, font, layout, chart type or transition.
+
+brief: medici-rwa-product-pitch
+messaging_skill: pitch-deck-mastery
+framework: "pitch-deck-mastery 12-slide framework, seed-stage adjustment, adapted from fundraise to product pitch"
+genre: product-pitch-explainer          # educate first; the ask is a conversation, not funding
+lane: mixed(table)                       # presented in ~10 min, then forwarded and read alone
+belief: "Forced liquidation is not a risk to be managed on tokenized collateral — it is a condition that need not exist in the payoff at all."
+
+audience:
+  who: "RWA issuers, tokenization platforms, asset managers and their risk/product leads; chain-ecosystem BD who make the introduction"
+  assumed_knowledge: "finance-literate and technical-adjacent; understands strike, maturity, NAV, collateral; NOT DeFi-native"
+  distrusts: "unhedged claims, invented market sizing, protocol yield language, anything that sounds like a promised return"
+  decision_they_hold: "whether to spend an hour modelling one of their own tokenized positions through the split"
+  attention_budget: "~10 minutes spoken for the deck; 90-150 seconds for the explainer"
+  educational_goals:
+    - "what Medici is, in one sentence they can repeat"
+    - "why a tokenized-asset holder or issuer cares"
+    - "how the P/N split works, as one diagram they could redraw"
+
+arc:
+  - {beat: "the liquidation they cannot execute", slots: [1, 2], minutes: 1.5}
+  - {beat: "the split", slots: [3, 4, 5], minutes: 2.5}
+  - {beat: "who holds each leg", slots: [6], minutes: 1.0}
+  - {beat: "why now, and where it runs", slots: [7, 8], minutes: 1.5}
+  - {beat: "category and evidence", slots: [9, 10], minutes: 1.5}
+  - {beat: "risk and cost", slots: [11, 12], minutes: 1.5}
+  - {beat: "the conversation", slots: [13], minutes: 0.5}
+
+bold_moment:
+  deck_slot: 5
+  video_scene: 5
+  beat: "the split"
+  form: "the liquidation gesture is begun and refused — the threshold is reached for and it is not there"
+  placement_deck: "slot 5 of 13 = 38% through the sequence, immediately after the payoff is drawn"
+  placement_video: "opens at 76 s of 143 s = 53% of runtime, closes at 68%"
+  why: "It is the only claim in the piece that is about an ABSENCE, and an absence is unintelligible before the payoff is drawn and anticlimactic after the evidence. It is also the single sentence the audience must carry out of the room."
+
+time_shape:
+  deck: {minutes: 10, slots: 13, seconds_per_slot: 46, arithmetic: "600 s / 13 slots = 46 s per slot"}
+  video: {seconds: 143, scenes: 8, words: 332, wpm: 141, arithmetic: "332 words / 143 s = 2.32 words per second"}
+
+# ---------------------------------------------------------------------------
+# DECK LANE — 13 slots
+# ---------------------------------------------------------------------------
+deck:
+  slots:
+    - id: 1
+      function: cover
+      headline: "Medici splits tokenized collateral into two claims that never liquidate"
+      supporting:
+        - "Medici — collateral splitting for tokenized real-world assets"
+        - "One position becomes P and N. P + N is identically the collateral."
+        - "AAA Flowers S.A. (Panama), operating as Medici"
+      source: "canton-pitch-deck.md Slides 1, 3"
+
+    - id: 2
+      function: problem
+      headline: "RWA lending's hardest problem is the liquidation nobody can execute"
+      supporting:
+        - "Every venue prices your collateral against a liquidation threshold"
+        - "Tokenized funds cannot be sold in one transaction"
+        - "So the workout is hand-built: signed liquidation agreements with issuers, formal de-leverage frameworks, curators with a line to the issuer"
+        - "RedStone, March 2026: these are 'not edge cases but fundamental design constraints'"
+        - "When the threshold does break: Black Thursday, $8M of collateral liquidated for $0"
+      source: "rwa-redstone-2026.md Part 2 'Liquidation mechanics and risk frameworks'; canton-pitch-deck.md Slide 2; asset-manager-pitch-deck.md Slide 2"
+
+    - id: 3
+      function: solution
+      headline: "One position becomes two claims that always sum back to it"
+      supporting:
+        - "P, the Protected leg — full collateral value at or below strike, no margin call, no forced sale"
+        - "N, the Amplified leg — everything above strike"
+        - "P + N is identically the collateral, at every price, by construction"
+        - "Split, hold, then recombine or settle at maturity — atomically"
+      source: "canton-pitch-deck.md Slides 3, 5; asset-manager-pitch-deck.md Slide 3; house-brand-guide.md §8.2"
+
+    - id: 4
+      function: mechanism
+      headline: "At maturity, P takes S/x and N takes the rest"
+      supporting:
+        - "Price x at or below strike S: P receives 1.00, N receives 0.00"
+        - "Price x above strike S: P receives S/x, N receives 1 minus S/x"
+        - "Every row sums to exactly the collateral"
+        - "Above strike, P declines continuously — a slope, never a cliff"
+        - "The oracle is read once, at settlement, not continuously"
+      diagram: "Payoff across reference price x with strike S marked. P is flat at 1.00 up to S then falls away as S/x, approaching zero without ever stepping. N is zero up to S then rises as 1 minus S/x. Stacked, their top edge is one flat line at 1.00 across the whole width — that flat top is the invariant. Annotate the absence: mark where a lending market would draw its vertical liquidation threshold and show that no such line exists."
+      source: "canton-pitch-deck.md Slide 5; asset-manager-pitch-deck.md Slide 4"
+
+    - id: 5
+      function: proof
+      bold_moment: true
+      headline: "No liquidation threshold exists because no under-collateralization condition exists"
+      supporting:
+        - "'No forced liquidation' is a theorem, not a risk parameter"
+        - "Closed-form invariant, verified as pure math — not a runtime assert"
+        - "There is no price x at which the vault is short of collateral"
+        - "Nothing to breach, so nothing to seize, so no liquidation agreement to sign"
+      source: "canton-pitch-deck.md Slide 5; asset-manager-pitch-deck.md Slide 4"
+
+    - id: 6
+      function: application
+      headline: "Two legs, two holders, each with an intrinsic reason"
+      supporting:
+        - "Fund treasury or issuer takes P — income on an asset they keep, never sold, never called"
+        - "Allocator or speculator takes N — amplified exposure, no liquidation price, no funding rate"
+        - "Volatile collateral plus two intrinsic holders equals endogenous two-sided demand"
+        - "Selling P is the liquidity, with no repayment schedule"
+        - "The split needs volatility to price N: treasuries have least of it, gold and equity-linked most"
+      source: "canton-pitch-deck.md Slide 6; asset-manager-pitch-deck.md Slide 5; rwa-redstone-2026.md Part 2 'Who lends against what'"
+
+    - id: 7
+      function: timing
+      headline: "The asset side arrived; the lending side still liquidates"
+      supporting:
+        - "Tokenized treasuries $12.9B, up roughly 300% year on year (rwa.xyz, July 2026)"
+        - "$840M+ of tokenized RWA already deposited into DeFi lending protocols"
+        - "Every one of those venues prices against a liquidation threshold"
+        - "Nobody in RedStone's 2026 report offers a no-liquidation design"
+      source: "asset-manager-pitch-deck.md Slide 14; rwa-redstone-2026.md Part 1 (a), Part 2"
+
+    - id: 8
+      function: context
+      headline: "Canton already holds the collateral, the privacy, and the settlement"
+      supporting:
+        - "$344B represented on Canton, $2T per month in repo"
+        - "Sub-transaction privacy — a position is visible to its counterparties, not the network"
+        - "No gas, no MEV, no mempool: cost is the spread, not an infrastructure tax"
+        - "Atomic settlement — split, roll and settle are single transactions"
+        - "Franklin Templeton, WisdomTree, Invesco and BlockBooster already issue here (May-July 2026)"
+      source: "canton-pitch-deck.md Slides 4, 7"
+
+    - id: 9
+      function: comparison
+      headline: "Not a better lending rate — a different risk category"
+      supporting:
+        - "Lending: the borrower carries price risk until a threshold breaches"
+        - "Medici: the P holder carries it continuously and computably"
+        - "Lending is paid for supplying liquidity; P is paid for selling upside above the strike"
+        - "Two axes that matter here: is there a liquidation pathway, and is the venue permissioned"
+        - "Aave Horizon is the honest benchmark — $423.5M market, $106M borrowed, 269 addresses — and it still liquidates"
+      source: "asset-manager-pitch-deck.md Slide 8; rwa-redstone-2026.md Part 2 Aave Horizon and Morpho sections"
+
+    - id: 10
+      function: evidence
+      headline: "The mechanism is built and backtested; the mainnet is not"
+      supporting:
+        - "54 DAML templates across 9 modules, about 5,700 lines"
+        - "12 TypeScript agents behind a Go Ledger Service; 6 core agents live"
+        - "9-year backtest, Aug 2017 to Jun 2026 (Hypercall), ETH underlying, Deribit data"
+        - "Closed-form invariant proofs; deployed on Canton single-node and int clusters"
+        - "Not yet: mainnet, real collateral, live users, third-party audit, revenue"
+      source: "canton-pitch-deck.md Slides 8, 9; asset-manager-pitch-deck.md Slide 12"
+
+    - id: 11
+      function: risk
+      headline: "Every risk we removed, and every risk we did not"
+      supporting:
+        - "Removed — forced liquidation, structurally; counterparty risk to Medici, the vault holds your deposit"
+        - "Present by design — principal risk above strike: P is short a call, P equals S/x, no floor"
+        - "Net drift minus 1.25% per year over the backtest; P ends at $0.895 on $1.00"
+        - "Present — smart-contract risk, not yet audited; two independent DAML audits are Phase 1"
+        - "Present — N liquidity; open — regulatory classification, counsel review not yet done"
+        - "Unchanged — the collateral's own custody chain sits upstream of the vault"
+      source: "asset-manager-pitch-deck.md Slides 3, 7; canton-pitch-deck.md Slide 3"
+
+    - id: 12
+      function: commercial
+      headline: "Five to ten basis points on flow. No token."
+      supporting:
+        - "Commission on each split, roll and settlement, in the settlement currency"
+        - "Fee schedule set by multi-sig governance, within circuit-breaker bounds"
+        - "No Medici token, no inflationary incentives"
+        - "No bridge — each chain is a self-contained deployment"
+      source: "canton-pitch-deck.md Slide 7; asset-manager-pitch-deck.md Slide 10"
+
+    - id: 13
+      function: close
+      headline: "Bring one position; we will model the split with you"
+      supporting:
+        - "Pick one tokenized position and a strike; we return the payoff at every price"
+        - "What we need: the instrument, the maturity you want, your compliance constraints"
+        - "What we are not asking for: capital, custody, or a commitment"
+        - "Ian, technical lead; Co-founder, RWA tokenization; Co-founder, growth"
+        - "Institutional deployment moves to a purpose-built SPV"
+      source: "canton-pitch-deck.md Slides 10, 11; asset-manager-pitch-deck.md Slide 11"
+
+  appendix:
+    - id: A1
+      function: appendix
+      headline: "Roadmap, compliance path and identity control plane — as of July 2026"
+      supporting:
+        - "Audits and legal Q3 2026; mainnet Q4 2026; compliance layer H1 2027; first institutional pilot H2 2027"
+        - "ERC-3643 (T-REX) at the EVM edge on Medici's own Identity Registry — the standard BUIDL uses"
+        - "Declarative identity manifest, 60-second convergence, full recovery from a wiped environment in 4-6 minutes"
+      source: "canton-pitch-deck.md Slide 12; asset-manager-pitch-deck.md Slide 6; authorization-pitch-deck.md Slides 7, 8"
+
+# ---------------------------------------------------------------------------
+# VIDEO LANE — 8 scenes, 143 s
+# The kinetic argument: the same liquidation gesture is performed twice.
+# Scene 2 completes it and destroys a position. Scene 5 begins it and refuses.
+# ---------------------------------------------------------------------------
+video:
+  runtime_seconds: 143
+  scenes:
+    - id: 1
+      function: cover
+      claim: "Your tokenized collateral has a price at which someone else sells it."
+      vo: "You hold a tokenized position — a fund share, a treasury, a bond. The moment you finance it, somewhere in the paperwork there is a price at which somebody else sells it."
+      vo_seconds: 13
+      motion_role: hold
+      energy: 1.0
+      peak: false
+      motion_turn: "Turns an abstract instrument into the viewer's own position, and plants the marked price that scenes 2 and 5 both act on. It needs time only to be given, not developed."
+      figures:
+        - {name: the-position, renders: "you hold a tokenized position"}
+      claim_type: CONDITION
+      source: "asset-manager-pitch-deck.md Slide 2"
+
+    - id: 2
+      function: problem
+      claim: "When the threshold breaks, the position is sold at the worst price."
+      vo: "That is a liquidation threshold. Price crosses it, and the collateral is sold into the fall. On Black Thursday, eight million dollars of collateral cleared for zero. Tokenized assets are worse — most cannot be sold in one transaction, so the market signs liquidation agreements with issuers to do it by hand."
+      vo_seconds: 22
+      motion_role: rupture
+      energy: 3.5
+      peak: true
+      motion_turn: "Turns liquidation from a parameter into a seizure. The break must be seen to happen for scene 5's refusal to mean anything; a still frame of a crossed line does not carry it."
+      figures:
+        - {name: the-crossing, renders: "price crosses it"}
+        - {name: the-seizure, renders: "the collateral is sold into the fall"}
+      claim_type: EVENT
+      source: "canton-pitch-deck.md Slide 2; rwa-redstone-2026.md Part 2 'Liquidation mechanics and risk frameworks'"
+
+    - id: 3
+      function: solution
+      claim: "Medici splits one position into two claims: Protected and Amplified."
+      vo: "Medici does something else with the same collateral. It splits the position into two claims. Protected takes the value at or below a strike you choose. Amplified takes everything above it. Both are issued atomically, and both stay claims on collateral that never leaves the vault."
+      vo_seconds: 20
+      motion_role: assemble
+      energy: 3.0
+      peak: false
+      motion_turn: "Turns one object into two that remain one. The tether has to persist visibly as the parts separate, which is a thing only time can show."
+      figures:
+        - {name: the-split, renders: "it splits the position into two claims"}
+        - {name: the-tether, renders: "both stay claims on collateral that never leaves the vault"}
+      claim_type: EVENT
+      source: "canton-pitch-deck.md Slide 3"
+
+    - id: 4
+      function: mechanism
+      claim: "At maturity, P takes S/x, N takes the rest, and the two still sum to the collateral."
+      vo: "At maturity, one reference price is read. At or below the strike, Protected takes the full collateral value and Amplified takes nothing. Above it, Protected takes S over x and Amplified takes the rest. Sweep the price across the whole range: the two always add back to exactly the collateral."
+      vo_seconds: 21
+      motion_role: accumulate
+      energy: 3.0
+      peak: false
+      motion_turn: "Turns the invariant from an assertion into something watched. The point is the sweep across every price, not any single price — no static frame can make that claim."
+      figures:
+        - {name: the-sweep, renders: "sweep the price across the whole range"}
+        - {name: the-constant-sum, renders: "the two always add back to exactly the collateral"}
+      claim_type: EVENT
+      source: "canton-pitch-deck.md Slide 5; asset-manager-pitch-deck.md Slide 4"
+
+    - id: 5
+      function: proof
+      claim: "The price rises, and the liquidation that would fire does not exist."
+      vo: "Now run that first scene again. Price moves hard against the Protected side. A lending market would seize the collateral here. Watch. [2 s hold] Nothing fires. There is no liquidation threshold, because the payoff has no under-collateralized state to trigger one. A theorem, not a risk setting."
+      vo_seconds: 21
+      motion_role: arrest
+      energy: 4.0
+      peak: true
+      bold_moment: true
+      motion_turn: "Turns the central belief. The gesture from scene 2 must start identically and stop mid-motion, and the two seconds of stillness after 'Watch' are the whole argument — an absence can only be shown by a motion that does not complete."
+      figures:
+        - {name: the-reaching-gesture, renders: "a lending market would seize the collateral here"}
+        - {name: the-absent-line, renders: "there is no liquidation threshold"}
+        - {name: the-unbroken-payoff, renders: "the payoff has no under-collateralized state"}
+      claim_type: EVENT
+      source: "canton-pitch-deck.md Slide 5"
+
+    - id: 6
+      function: application
+      claim: "Two holders, two reasons: income kept, exposure amplified."
+      vo: "Each leg has an owner who wants it. A fund treasury holds Protected and earns on an asset it never sells. An allocator holds Amplified for exposure with no liquidation price and no funding rate. Selling a leg is the liquidity."
+      vo_seconds: 17
+      motion_role: hold
+      energy: 1.0
+      peak: false
+      motion_turn: "Turns the mechanism into two named people. Deliberately still: it is the quiet that pays for scene 5, and a viewer recovering from the bold moment should be reading, not tracking."
+      figures:
+        - {name: the-two-holders, renders: "each leg has an owner who wants it"}
+      claim_type: CONDITION
+      source: "canton-pitch-deck.md Slide 6; asset-manager-pitch-deck.md Slide 5"
+
+    - id: 7
+      function: evidence
+      claim: "What is built is real; what is not built is named."
+      vo: "What exists today: fifty-four DAML contracts on Canton, a twelve-agent fleet, a nine-year backtest, closed-form proofs. What does not: mainnet, an audit, live collateral, a customer. You should hear that from us."
+      vo_seconds: 14
+      motion_role: divest
+      energy: 2.0
+      peak: false
+      motion_turn: "Turns the register from persuasion to disclosure. Motion is subtractive only — claims are removed one at a time until what remains is what is actually built. Nothing new may enter this scene."
+      figures:
+        - {name: the-shrinking-claim-set, renders: "what does not: mainnet, an audit, live collateral, a customer"}
+      claim_type: CONDITION
+      source: "canton-pitch-deck.md Slide 9; asset-manager-pitch-deck.md Slide 12"
+
+    - id: 8
+      function: close
+      claim: "Bring one position, and the split is modelled against it."
+      vo: "Medici splits a tokenized asset into two claims that always sum back to it, so the position can never be force-sold. Bring one position and a strike; we will show you the payoff at every price."
+      vo_seconds: 15
+      motion_role: cadence
+      energy: 1.0
+      peak: false
+      motion_turn: "Resolves the image opened in scene 1: the same single position returns, now split and summing. One gesture, then stop — not a summary of the film."
+      figures:
+        - {name: the-returned-position, renders: "two claims that always sum back to it"}
+      claim_type: CONDITION
+      source: "canton-pitch-deck.md Slides 1, 11"
+
+  motion_budget:
+    peaks_earned: 2
+    peak_justification:
+      - {scene: 2, rule: R1, why: "turns the audience from 'liquidation is a parameter' to 'liquidation is a seizure I cannot execute on this asset'"}
+      - {scene: 5, rule: R1, why: "turns the central belief — the value the viewer must still be carrying tomorrow; the staged bold moment"}
+    ceiling_order: "s5 (4.0) > s2 (3.5) > s3 (3.0) = s4 (3.0) > s7 (2.0) > s1 (1.0) = s6 (1.0) = s8 (1.0)"
+    quiet_scenes: [1, 6, 8]
+    quiet_share: "3 of 8 = 0.375 (R5 floor 0.333)"
+    mean_energy: 2.31
+    adjacency: "pass — s2 and s5 are not adjacent; s2 neighbours s1 at 1.0, s5 neighbours s6 at 1.0"
+    rhymes:
+      - {scene: 5, answers: 2, why: "the refusal answers the seizure — same gesture, stopped"}
+    figures_total: 13
+    ornament_gate: "pass — max 2 figures per scene, 3 on the bold moment. Cut at STAGE: a third figure in s3 restating the atomicity the VO already says; a 'Canton network' figure in s6 that rendered no clause of its claim."
+    event_walk: "s1 CONDITION, s2 EVENT, s3 EVENT, s4 EVENT, s5 EVENT, s6 CONDITION, s7 CONDITION, s8 CONDITION -> event budget 4, peaks taken 2; rupture and arrest legal only on s2-s5 and both taken there"
+    note_on_arrest_at_ceiling: "R3 requires the bold moment to hold the highest energy; the arrest role is by nature low-amplitude. Resolved as an ordering, not an absolute: s5 sits at 4.0 rather than 5.0, and every other scene is capped strictly below it. Design must not read 4.0 as licence to make s5 the busiest scene — it is the most CHARGED and the second stillest."
+
+gates:
+  headline_only_read: "pass — the 13 headline claims read in order form the whole argument without any supporting text"
+  bold_moment: "pass — exactly one, deck slot 5 and video scene 5, and it is a thing that happens on screen rather than a strong sentence"
+  dead_slot: "pass — every slot turns a value; no agenda slot, no recap slot. Team was folded into slot 13 rather than given a slot that turned nothing at first contact"
+  time_shape_deck: "600 s / 13 slots = 46 s per slot"
+  time_shape_video: "332 words / 143 s = 2.32 words per second, plus a 2 s hold inside scene 5; within the 90-150 s brief window"
+  sourcing: "pass — every figure on every slot cites a source file and slide/section; no TAM or projection is asserted anywhere"
+
+assumptions:
+  - "The ask is a scoped modelling conversation, not funding. Both source decks carry funding asks (Canton Foundation funding; $5-15M strategic plus a $10-25M pilot); the brief overrides them and neither figure appears in any slot."
+  - "Contract count taken as 54 templates / ~5,700 LOC per canton-pitch-deck.md Slide 9, the brief's priority source. asset-manager-pitch-deck.md Slide 12 says 36 / ~5,100. Same for the regulatory analysis: ~2,900 lines vs 2,600. Neither figure is load-bearing."
+  - "All roadmap and market figures are as-of their source date (July 2026 for the decks, March-July 2026 for the landscape files) and slots carrying them say so."
+  - "The backtest is third-party (Hypercall, Deribit) and ETH-only; it is stated as evidence about the mechanism, never as a forecast for RWA collateral."
+  - "Slot 6 carries the volatility caveat: the Amplified leg prices thin on low-volatility collateral. This qualifies the brief's MMF/treasury framing with rwa-redstone-2026.md's evidence rather than contradicting it."

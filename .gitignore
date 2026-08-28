@@ -12,8 +12,6 @@ __pycache__/
 # vendored runtimes fetched during the run (p5, mermaid) — re-fetchable
 tracks/*/vendor/
 
-# vendored third-party skills/tools (368 MB, own repos — see bakeoff/CONTENDERS.md for URLs)
-skills/
 
 # screenshot bulk (98 MB) — contact sheets + INDEX kept for the report
 shots/**/slide-*.png
@@ -30,7 +28,31 @@ out/
 
 # interesting, but not relevant for the bakeoff
 source/
+social/
 
 # OS / editor
 .DS_Store
 Thumbs.db
+
+# --- house skills ARE tracked (everything else under skills/ stays ignored) ---
+!skills/
+skills/*
+!skills/messaging/
+skills/messaging/*
+!skills/messaging/staging/
+!skills/messaging/house-guide/
+!skills/deck-author/
+!skills/video-author/
+!skills/video/
+skills/video/*
+!skills/video/video-design/
+!skills/video/explainer-video/
+skills/video/explainer-video/node_modules/
+skills/video/explainer-video/out/
+skills/video/explainer-video/__pycache__/
+!skills/social/
+skills/social/*
+!skills/social/linkedin-post/
+!skills/social/humanizer/
+node_modules/
+skills/video/explainer-video/voices/

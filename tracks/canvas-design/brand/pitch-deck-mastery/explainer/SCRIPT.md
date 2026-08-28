@@ -1,0 +1,25 @@
+# SCRIPT — Medici for RWA tokens — pitch-deck-mastery
+
+Explainer film, 143s, 8 scenes. 1920×1080. No audio, no TTS: the
+voice-over column is the narration to be read over a screen recording of
+`explainer.html`. Durations are the contract's `vo_seconds`, unchanged.
+
+Design: **Conservation Plate** (see ../../PHILOSOPHY.md). Motion is measurement —
+each scene's movement is the one named in the contract's `motion_role`, and the
+quiet scenes stay quiet.
+
+Playback: auto-plays on load. `?scene=N` starts at a scene; Space pauses;
+←/→ step scenes. `window.__player = {scene, t, total, seek(n)}`.
+
+| # | id | start | dur | motion | on-screen text | voice-over (verbatim from the contract) | what moves |
+|---|----|-------|-----|--------|----------------|------------------------------------------|------------|
+| 1 | `1` | 0s | 13s | hold | Your tokenized collateral has a price at which someone else sells it. · A FUND SHARE · A TREASURY · A BOND | You hold a tokenized position — a fund share, a treasury, a bond. The moment you finance it, somewhere in the paperwork there is a price at which somebody else sells it. | One position in the held field is outlined and a price is marked against it. The mark is planted here and acted on twice more, in scenes 2 and 5. |
+| 2 | `2` | 13s | 22s | rupture (peak) | When the threshold breaks, the position is sold at the worst price. · BLACK THURSDAY · $8M OF COLLATERAL CLEARED FOR $0 | That is a liquidation threshold. Price crosses it, and the collateral is sold into the fall. On Black Thursday, eight million dollars of collateral cleared for zero. Tokenized assets are worse — most cannot be sold in one transaction, so the market signs liquidation agreements with issuers to do it by hand. | The price track descends, crosses the threshold, and the collateral marks are taken one after another. The seizure has to be seen to happen for scene 5's refusal to mean anything. |
+| 3 | `3` | 35s | 20s | assemble | Medici splits one position into two claims: Protected and Amplified. · BOTH ISSUED ATOMICALLY · THE COLLATERAL NEVER LEAVES THE VAULT | Medici does something else with the same collateral. It splits the position into two claims. Protected takes the value at or below a strike you choose. Amplified takes everything above it. Both are issued atomically, and both stay claims on collateral that never leaves the vault. | One object becomes two that remain one: the tether to the vault is drawn as the parts separate and stays visible for the rest of the scene. |
+| 4 | `4` | 55s | 21s | accumulate | At maturity, P takes S/x, N takes the rest, and the two still sum to the collateral. · SWEEP THE PRICE ACROSS THE WHOLE RANGE | At maturity, one reference price is read. At or below the strike, Protected takes the full collateral value and Amplified takes nothing. Above it, Protected takes S over x and Amplified takes the rest. Sweep the price across the whole range: the two always add back to exactly the collateral. | A marker travels the entire price axis while the running sum is read off the constant edge. The sweep is the claim; no single price could make it. |
+| 5 | `5` | 76s | 21s | arrest (peak) | The price rises, and the liquidation that would fire does not exist. · NOTHING FIRES. | Now run that first scene again. Price moves hard against the Protected side. A lending market would seize the collateral here. Watch. [2 s hold] Nothing fires. There is no liquidation threshold, because the payoff has no under-collateralized state to trigger one. A theorem, not a risk setting. | The seizure gesture from scene 2 begins identically, travels, and stops mid-motion. Two full seconds of stillness follow. The most charged scene in the film and the second stillest. |
+| 6 | `6` | 97s | 17s | hold | Two holders, two reasons: income kept, exposure amplified. · SELLING A LEG IS THE LIQUIDITY | Each leg has an owner who wants it. A fund treasury holds Protected and earns on an asset it never sells. An allocator holds Amplified for exposure with no liquidation price and no funding rate. Selling a leg is the liquidity. | Still, on purpose. A viewer recovering from the arrest should be reading, not tracking. |
+| 7 | `7` | 114s | 14s | divest | What is built is real; what is not built is named. · NO MAINNET · NO AUDIT · NO LIVE COLLATERAL · NO CUSTOMER | What exists today: fifty-four DAML contracts on Canton, a twelve-agent fleet, a nine-year backtest, closed-form proofs. What does not: mainnet, an audit, live collateral, a customer. You should hear that from us. | Claims are removed one at a time until what remains is only what is actually built. Nothing new enters this scene. |
+| 8 | `8` | 128s | 15s | cadence | Bring one position, and the split is modelled against it. · WE WILL SHOW YOU THE PAYOFF AT EVERY PRICE | Medici splits a tokenized asset into two claims that always sum back to it, so the position can never be force-sold. Bring one position and a strike; we will show you the payoff at every price. | The single position from scene 1 returns, split and summing. One gesture, then stop. |
+
+Total: 143s.

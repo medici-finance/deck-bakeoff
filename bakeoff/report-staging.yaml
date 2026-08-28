@@ -1,0 +1,247 @@
+# staging.yaml — the bake-off report (report.pdf)
+# Staged with the house `staging` skill v2 (2026-08-18), the messaging leg's winner.
+# Contract rule 1 holds: nothing below names a chart type, a layout, a palette or a font.
+# Design lives in bakeoff/report-philosophy.md and report.html.
+
+brief: rwa-bakeoff report.pdf — the read-out of the 2026-08-27 deck/messaging bake-off
+genre: internal-decision
+lane: table                     # read close, read alone, forwarded; appendix legal
+medium: document                # a printed read-out, not a projected deck
+
+intake:
+  skipped: false
+  answers:
+    room: >-
+      Ian, alone, reading. He holds the decision on which messaging skill and which
+      design tool become the house default, and on six factual/positioning rulings
+      the bake-off could not close.
+    length_and_mode: >-
+      A print document, ~20 minutes read, definitely read rather than presented.
+    belief_in_one_sentence: >-
+      The bake-off produced one consensus (canvas-design under the house brand) and
+      one non-result (no free-mode consensus at all), and the honest read-out is to
+      ship both findings rather than manufacture a single winner.
+  recorded_assumptions:
+    - "The section order is PINNED by the commissioning instruction (eight numbered
+       sections). Staging therefore owns claims and beats, not sequence."
+    - "No personal names but Ian; co-founders render as 'Co-founder'."
+    - "The report is unbranded: no house marks, no house palette, no house type."
+
+classify:
+  chose:
+    genre: internal-decision
+    because: >-
+      The artifact exists to get specific decisions made — adopt a pipeline, rule on
+      six open questions — by one decision-holder who will read it without a narrator.
+  contributes:
+    genre: executive-explainer
+    beats: ["what the bake-off was", "who contended", "how the two legs were run"]
+    because: >-
+      Sections 1-2 teach a reader who was not in the run; that is explainer work
+      inside a decision artifact, and it leads nothing.
+  rejected:
+    - genre: technical-deep-dive
+      because: >-
+        pick_when requires a competent skeptic to be convinced a mechanism is real.
+        Nobody disputes that the artifacts render; the dispute is which to adopt.
+    - genre: board-update
+      because: >-
+        pick_when is oversight without a decision. This document asks for six rulings
+        and a pipeline adoption; oversight framing would bury the ask.
+    - genre: conference-keynote
+      because: >-
+        pick_when is a room of strangers holding one idea. The reader commissioned
+        the run and already holds the idea; he needs the evidence and the fork.
+
+audience:
+  assumed_knowledge: >-
+    Wrote the brief and the follow-ups; knows the product corpus, the two brand modes,
+    and the house skills. Does not know what any individual reviewer found.
+  distrusts: >-
+    A manufactured winner; a rank sum presented as though the rubrics agreed; a number
+    whose derivation is not named.
+  decision_they_hold: >-
+    Adopt / do not adopt the recommended pipeline; close (or defer) six rulings.
+  attention_budget: >-
+    Will read the verdicts and the issues section closely; will skim the per-tool
+    summaries and read the screenshots instead of the prose beside them.
+
+belief: >-
+  The house should adopt staging + house-guide + canvas-design + a mandatory
+  impeccable polish pass — and should treat the free-mode ranking as evidence
+  that the rubrics disagree, not as a ranking.
+
+time_shape:
+  minutes: 20
+  medium: document
+  content_slots: 14
+  seconds_per_slot: 85
+  floor: 45
+  arithmetic: "20 x 60 = 1200 s / 14 content slots = 85 s per slot, floor 45 s — PASS"
+
+arc:
+  - {beat: "what was run",        slots: [1, 2, 3],        minutes: 4}
+  - {beat: "the messaging leg",   slots: [4, 5, 6, 7],     minutes: 5}
+  - {beat: "the design leg",      slots: [8, 9, 10, 11, 12], minutes: 6}
+  - {beat: "what it cost",        slots: [13],             minutes: 2}
+  - {beat: "what to do",          slots: [14],             minutes: 2}
+  - {beat: "the artifact itself", slots: [15, 16],         minutes: 1}
+
+bold_moment:
+  slot: 13
+  beat: "what it cost"
+  form: >-
+    A thing that happened, not a strong sentence: the winning deck dropped a fact —
+    d11's roll-cost line, the only fact missing from any of the thirty decks — and
+    then reported "nothing dropped" in its own NOTES. Four rubrics ranked it first
+    anyway; the fifth ranked it fourth, and the fifth is the only one that checked.
+  why: >-
+    It is the single event in the run that turns the reader's belief: it converts the
+    verdict from "canvas-design won" into "canvas-design won, and the reason we can
+    say so is that one rubric looked for a missing fact and the others could not."
+    It is also the strongest argument for the recommended review stack in slot 14.
+  placement_derived: "slot 13 of 16 = 81.3% by index"
+  gate_note: >-
+    FAILS the genre's placement rule, which wants the peak at the last problem beat
+    before relief — nominally 55-70%. It is not fixable at STAGE: the eight-section
+    order is a ruled input, and the candid-issues section is section 5 of 8. Recorded
+    rather than fudged. The mitigation taken is that the same event is *named* early,
+    in the section-4 verdict at slot 12, and paid off at 13; the rupture stays single.
+
+slots:
+  - n: 1
+    function: cover
+    beat: "what was run"
+    claim: "Six design tools and four messaging skills rendered one pitch; five rubrics graded them."
+    source: "README.md; bakeoff/PROTOCOL.md; bakeoff/CONTENDERS.md"
+
+  - n: 2
+    function: context
+    beat: "what was run"
+    claim: "One brief, two media, two brand modes, thirty-six artifacts, judged twice."
+    source: "README.md 'How it ran'; BRIEF.md; bakeoff/PROTOCOL.md"
+
+  - n: 3
+    function: evidence
+    beat: "what was run"
+    claim: "Every contender is a named, versioned, licensed artifact with a printed origin URL."
+    source: "bakeoff/CONTENDERS.md"
+
+  - n: 4
+    function: common-ground
+    beat: "the messaging leg"
+    claim: "All four methods told the same story; only their emphasis and order diverged."
+    source: "bakeoff/JUDGING-messaging-claude.md §2"
+
+  - n: 5
+    function: comparison
+    beat: "the messaging leg"
+    claim: "Each skill's shape is its methodology showing through, not a difference of taste."
+    source: "bakeoff/JUDGING-messaging-claude.md §1, §4; messaging/*/NOTES.md"
+
+  - n: 6
+    function: evidence
+    beat: "the messaging leg"
+    claim: "The rubrics split two-two on structure versus comprehension, and the split is not noise."
+    source: "bakeoff/JUDGING-messaging-claude.md §5; reviews/messaging/*.md"
+
+  - n: 7
+    function: turn
+    beat: "the messaging leg"
+    claim: "Take staging as the transport and house-guide as the content gate — one pass, not a pick."
+    source: "bakeoff/JUDGING-messaging-claude.md §6, §7"
+
+  - n: 8
+    function: common-ground
+    beat: "the design leg"
+    claim: "No tool scores above seven, because all six had to build the timed-explainer engine themselves."
+    source: "bakeoff/JUDGING-design-claude.md §1 scoring convention, §3.4; tracks/*/NOTES.md"
+
+  - n: 9
+    function: comparison
+    beat: "the design leg"
+    claim: "One frame per tool per mode settles arguments that six pages of prose cannot."
+    source: "shots/<tool>/<mode>/staging/slide-08.png and scene-04.png; JUDGING-design §1"
+
+  - n: 10
+    function: evidence
+    beat: "the design leg"
+    claim: "Brand mode produced the run's only consensus; free mode produced none at all."
+    source: "bakeoff/JUDGING-design-claude.md §2"
+
+  - n: 11
+    function: mechanism
+    beat: "the design leg"
+    claim: "Nine findings recur across the whole design layer, and most are tooling gaps, not taste."
+    source: "bakeoff/JUDGING-design-claude.md §3"
+
+  - n: 12
+    function: decision
+    beat: "the design leg"
+    claim: "canvas-design wins the brand mode outright and the run overall; free mode has no winner on rank."
+    source: "bakeoff/JUDGING-design-claude.md §4"
+
+  - n: 13
+    function: risk
+    beat: "what it cost"
+    claim: "The winning deck lost a fact and reported that it had lost nothing."
+    source: "bakeoff/JUDGING-design-claude.md §1 canvas-design/brand, §2, §4 fix 1; reviews/design/by-messaging-rubrics.md"
+
+  - n: 14
+    function: ask
+    beat: "what to do"
+    claim: "Stage with staging, gate with house-guide, draw with canvas-design, finish with impeccable."
+    source: "bakeoff/JUDGING-design-claude.md §4 'Recommended house pipeline'; JUDGING-messaging §7"
+
+  - n: 15
+    function: evidence
+    beat: "the artifact itself"
+    claim: "Here is the winning film, frame by frame, with the words that run over it."
+    source: "winner/explainer/SCRIPT.md; winner/shots/scene-NN.png"
+
+  - n: 16
+    function: end
+    beat: "the artifact itself"
+    claim: "Six questions are left, and none of them is a design question."
+    source: "bakeoff/JUDGING-messaging-claude.md rev.2 §7 'Human rulings needed'"
+
+transitions:
+  - {after_slot: 3,  type: narrow,   line: "That is the field. Take the messaging leg first, because six design tracks consume its output."}
+  - {after_slot: 5,  type: escalate, line: "Four methods, four shapes. The question is whether anyone outside the run can tell them apart."}
+  - {after_slot: 7,  type: turn,     line: "The contract settled. What the design layer did with it is the other half of the run."}
+  - {after_slot: 9,  type: narrow,   line: "The frames show the spread. The rubrics were asked to rank it."}
+  - {after_slot: 12, type: gate,     line: "Before adopting any of that, the thing the verdicts do not say out loud."}
+  - {after_slot: 13, type: fold,     line: "Which is the argument for a pipeline rather than a favourite."}
+  - {after_slot: 14, type: turn,     line: "The recommendation, rendered. This is what the pipeline produces."}
+
+gates:
+  helicopter: >-
+    PASS — read alone the 16 claims run: field defined -> contenders named -> messaging
+    converged -> methods diverged -> rubrics split -> take both -> nobody had a timeline
+    engine -> look at the frames -> brand agreed, free did not -> nine recurring findings
+    -> canvas-design wins brand and overall -> and it dropped a fact -> so run the pipeline
+    -> here it is -> six questions remain.
+  bold_moment: >-
+    CONDITIONAL PASS on the form (one, and it is an event), FAIL on placement (81.3% vs a
+    55-70% window). Cause and mitigation recorded above; the section order is a ruled input.
+  dead_slot: >-
+    PASS — every slot turns a value. Slot 4 turns "four tools, four stories" into "one story";
+    slot 8 turns "which tool is best" into "all six are missing the same thing"; slot 10 turns
+    a ranking into a dispersion result; slot 13 turns a winner into a conditional winner.
+  kill_conditions: >-
+    PASS — internal-decision's kill condition is "the decision is already made or is not
+    the reader's to make". Neither fires: the pipeline is unadopted, and all six open
+    rulings are explicitly the reader's.
+  time_shape: "PASS — 20 x 60 / 14 = 85 s per slot against a 45 s floor."
+  number_trace: >-
+    PASS by construction — house messaging-guide §7 applied: every figure in the report
+    prints the review or NOTES file it came from, inline, in the reader's line of sight.
+  glossary: >-
+    PASS by construction — house messaging-guide §5 applied: every insider term (rank sum,
+    bold moment, staging.yaml, craft floor, brand mode, contract) is glossed on first use.
+
+assumptions:
+  - "Section order is ruled input; staging owns claims and beats only."
+  - "The winner's nine frames are used if winner/READY exists at render time; otherwise the
+     canvas-design/brand/staging scene frames stand in, with a footnote saying so."
+  - "Scores quoted are Claude's judge scores, not Ian's; his verdicts are not in this file."

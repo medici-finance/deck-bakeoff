@@ -1,0 +1,27 @@
+# SCRIPT.md — Medici explainer (staging contract)
+
+Brand mode. Stage 1920×1080, `explainer.html`, self-contained, no audio and no TTS —
+narration below is read by a person over the screen recording. Scene durations are the
+messaging contract's `vo_seconds`, unchanged. Total runtime **120 s**.
+
+Playback: auto-plays on load. `?scene=N` jumps to a scene; Space or → advances, ←
+steps back, Home restarts. `window.__player = {scene, t, total, totalSeconds, seek(n)}`
+is exposed for tooling. `prefers-reduced-motion: reduce` disables all motion and every
+scene still reads as a still frame.
+
+Nine scenes, energies 1 · 2 · 3 · 5 · 1 · 4 · 2 · 1 · 2 — the contract's motion budget, rendered. Two peaks (s4 rupture, s6 assemble), never adjacent; three quiet scenes (s1, s5, s8).
+
+| # | Start | Dur | On-screen text | VO narration (verbatim from the contract) | What moves |
+|---|------:|----:|---|---|---|
+| s1 | 0:00 | 10 s | Tokenized assets are on-chain, and mostly sitting still. | Tokenized treasuries, fund shares, gold: on-chain now, and mostly sitting still. Making one productive means accepting a liquidation price. There is a way that doesn’t. | hold (energy 1) — one hairline position rises in over 0.5 s and then nothing moves for ten seconds. A cold open that moves spends the film's first contrast before there is anything to contrast with. |
+| s2 | 0:10 | 10 s | Every venue that takes that collateral prices a liquidation threshold. | Every venue that lends against these assets prices in a liquidation threshold. On Morpho, tokenized collateral grew from nothing to over $620 million in a year. | accumulate (2) — the deposit curve draws continuously left to right beneath a dashed threshold that is present from the first frame; the figure lands at 80%. The climb is the point: an end-state number would read as a statistic. |
+| s3 | 0:20 | 10 s | This collateral cannot be sold in a single transaction. | But this collateral doesn’t behave: NAV pricing, monthly redemption windows, no sale in a single transaction. So the market signs liquidation agreements with issuers. | strain (3) — three constraints clamp on at 16%, 42% and 68% while the position's own stroke goes from white 2px to grey 4px across the whole scene. The load has to be seen rising and not coping. |
+| s4 | 0:30 | 12 s | In March 2020, MakerDAO collateral was auctioned for zero dollars. | Under stress, that machinery does exactly what it was built to do. March 2020: MakerDAO’s collateral was auctioned for zero dollars. Around eight million dollars of it, sold for nothing. | RUPTURE (5, peak, bold moment) — the price line draws down and crosses the dashed threshold at 48%; on the crossing the collateral is cut away by a 0.18 s hard clip and $0 lands in its place. The frame then holds still for the remaining six seconds. |
+| s5 | 0:42 | 10 s | The problem is the mechanism, not the risk management. | Every fix since has been discipline: better curators, tighter frameworks, more paperwork. The mechanism is unchanged. It still has a threshold, and thresholds get breached. | hold (1) — one 0.35 s rule strikes the list of fixes out, then the replacement line rises. This is the quiet the rupture was bought with; motion here would let the viewer off the instance early. |
+| s6 | 0:52 | 24 s | P and N always sum back to the collateral. | Medici splits the collateral in two: P, protected, and N, amplified. At maturity one price is read against the strike. At or below it, P is worth the whole collateral, N nothing. Above it, P takes S over x, N takes the rest. They always sum to the collateral, at every price. No under-collateralized state. No threshold. Nothing to force-sell. | assemble (4, peak) — reveal order follows the narration exactly: the split glyph, the axis, the strike read at 16%, P flat to the strike at 26%, P’s S/x decay at 42%, the N band at 58%, the flat sum line at 72%, the label at 88%. Nothing that arrives ever leaves. |
+| s7 | 1:16 | 14 s | It settles where the collateral already lives, privately and atomically. | It runs on Canton, where three hundred and forty-four billion dollars of real-world assets already sit. Positions are visible to their counterparties and no one else. Split, roll and settlement are single atomic transactions. | hold (2) — the ledger band and its positions rise in once; only the settlement caption arrives later, at 38%. The turn is one of place, not of process, so the frame settles rather than develops. |
+| s8 | 1:30 | 18 s | P gives up everything above the strike, and nothing is on mainnet. | The cost is real. P is short a call above the strike: when the asset rallies, P’s value declines, continuously and computably. Nine years of backtest put that drift at negative one and a quarter percent a year, on ETH. And nothing is on mainnet yet. | divest (1) — subtractive only. The figure starts complete and the film removes its own apparatus at 18%, leaving the decline and the drift figure standing alone at 58%. Nothing new enters. |
+| s9 | 1:48 | 12 s | Bring one tokenized position and argue with the payoff table. | So this is not a pitch to allocate. Bring one tokenized position, and argue with the payoff table. If the math holds, the asset never has to be sold. | cadence (2) — the position from scene 1 returns, split and still held; the dimension line draws once at 26% and the film stops. One gesture, then nothing. |
+
+**Footer.** `Medici — Proprietary & Confidential` is on every frame (house brand
+guide §10.6 rule 1 — the footer is the authoritative artifact-class marker).

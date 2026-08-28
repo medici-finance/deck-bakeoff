@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="nord">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medici for RWA tokens — explainer (presentation-writing cut)</title>
+<meta name="deck-footer" content="Medici — Proprietary &amp; Confidential">
+<meta name="generator" content="html-ppt (lewislulu/html-ppt-skill) — free mode, timed explainer">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>/* === html-ppt assets/base.css === */
+/* html-ppt :: base.css — reset + shared tokens + layout primitives */
+/* Default tokens. Themes in assets/themes/*.css override the :root block. */
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f7f7f8;
+  --surface: #ffffff;
+  --surface-2: #f2f2f4;
+  --border: rgba(0,0,0,.08);
+  --border-strong: rgba(0,0,0,.16);
+  --text-1: #111216;
+  --text-2: #55596a;
+  --text-3: #8a8f9e;
+  --accent: #3b6cff;
+  --accent-2: #7a5cff;
+  --accent-3: #ff5c8a;
+  --good: #1aaf6c;
+  --warn: #f5a524;
+  --bad:  #e0445a;
+  --grad: linear-gradient(135deg,#3b6cff,#7a5cff 55%,#ff5c8a);
+  --grad-soft: linear-gradient(135deg,#eef2ff,#f5ecff 55%,#ffeef5);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-lg: 26px;
+  --shadow: 0 10px 30px rgba(18,24,40,.08), 0 2px 6px rgba(18,24,40,.04);
+  --shadow-lg: 0 24px 60px rgba(18,24,40,.14), 0 6px 16px rgba(18,24,40,.06);
+  --font-sans: 'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+  --font-serif: 'Playfair Display','Noto Serif SC',Georgia,serif;
+  --font-mono: 'JetBrains Mono','IBM Plex Mono',SFMono-Regular,Menlo,monospace;
+  --font-display: var(--font-sans);
+  --letter-tight: -.03em;
+  --letter-normal: -.01em;
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text-1);
+  font-family:var(--font-sans);font-weight:400;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  letter-spacing:var(--letter-normal)}
+img,svg,video{max-width:100%;display:block}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code,kbd,pre,samp{font-family:var(--font-mono)}
+
+/* ================= SLIDE SYSTEM ================= */
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--bg)}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:72px 96px;
+  box-sizing:border-box;
+  opacity:0;pointer-events:none;
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+  transform:translateX(30px);
+  overflow:hidden;
+}
+.slide.is-active{opacity:1;pointer-events:auto;transform:translateX(0);z-index:2}
+.slide.is-prev{transform:translateX(-30px)}
+
+/* single-page standalone (used when a layout file is opened directly) */
+body.single .slide{position:relative;width:100vw;height:100vh;opacity:1;transform:none;pointer-events:auto}
+
+/* ================= TYPOGRAPHY ================= */
+.eyebrow{font-size:13px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3)}
+.kicker{font-size:14px;font-weight:600;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+h1.title,.h1{font-family:var(--font-display);font-size:72px;line-height:1.05;font-weight:800;letter-spacing:var(--letter-tight);margin:0 0 18px;color:var(--text-1)}
+h2.title,.h2{font-family:var(--font-display);font-size:54px;line-height:1.1;font-weight:700;letter-spacing:var(--letter-tight);margin:0 0 14px}
+h3,.h3{font-size:32px;line-height:1.2;font-weight:600;letter-spacing:var(--letter-normal);margin:0 0 10px}
+h4,.h4{font-size:22px;line-height:1.3;font-weight:600;margin:0 0 8px}
+.lede{font-size:22px;line-height:1.55;color:var(--text-2);font-weight:300;max-width:62ch}
+.dim{color:var(--text-2)}
+.dim2{color:var(--text-3)}
+.mono{font-family:var(--font-mono)}
+.serif{font-family:var(--font-serif)}
+
+/* ================= LAYOUT PRIMITIVES ================= */
+.stack>*+*{margin-top:14px}
+.row{display:flex;gap:24px;align-items:center}
+.row.wrap{flex-wrap:wrap}
+.grid{display:grid;gap:24px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.center{display:flex;align-items:center;justify-content:center;text-align:center}
+.fill{flex:1}
+.sp-t{padding-top:24px}.sp-b{padding-bottom:24px}
+.mt-s{margin-top:8px}.mt-m{margin-top:18px}.mt-l{margin-top:32px}
+.mb-s{margin-bottom:8px}.mb-m{margin-bottom:18px}.mb-l{margin-bottom:32px}
+
+/* ================= CARDS ================= */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:26px 28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.card-soft{background:var(--surface-2);border:1px solid var(--border)}
+.card-outline{background:transparent;border:1.5px solid var(--border-strong);box-shadow:none}
+.card-accent{background:var(--surface);border-top:3px solid var(--accent)}
+.card-hover{transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.card-hover:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:500;
+  background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}
+.pill-accent{background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 28%,transparent)}
+
+/* ================= BARS / DIVIDERS ================= */
+.divider{height:1px;background:var(--border);width:100%}
+.divider-accent{height:3px;width:72px;background:var(--accent);border-radius:2px}
+
+/* ================= CHROME (header/footer/progress) ================= */
+.deck-header{position:absolute;top:24px;left:40px;right:40px;display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--text-3);letter-spacing:.12em;text-transform:uppercase;z-index:10;pointer-events:none}
+.deck-footer{position:absolute;bottom:24px;left:40px;right:40px;display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--text-3);z-index:10;pointer-events:none}
+
+/* ================= PRESENTER / OVERVIEW ================= */
+.notes{display:none!important}
+.notes-overlay{position:fixed;inset:auto 0 0 0;max-height:42vh;background:rgba(20,22,30,.95);color:#e8ebf4;
+  padding:20px 32px;font-size:16px;line-height:1.6;border-top:1px solid rgba(255,255,255,.1);transform:translateY(100%);
+  transition:transform .3s var(--ease);z-index:40;overflow:auto;font-family:var(--font-sans)}
+.notes-overlay.open{transform:translateY(0)}
+.overview{position:fixed;inset:0;background:rgba(10,12,18,.92);backdrop-filter:blur(12px);z-index:50;
+  display:none;padding:40px;overflow:auto}
+.overview.open{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-content:start}
+.overview .thumb{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  aspect-ratio:16/9;overflow:hidden;cursor:pointer;position:relative;color:var(--text-1);padding:16px;
+  font-size:11px;transition:transform .2s var(--ease)}
+.overview .thumb:hover{transform:scale(1.04)}
+.overview .thumb .n{position:absolute;top:8px;left:10px;font-weight:700;font-size:14px;color:var(--text-3)}
+.overview .thumb .t{position:absolute;bottom:10px;left:14px;right:14px;font-weight:600;color:var(--text-1)}
+
+/* ================= PRESENTER VIEW ================= */
+/* Presenter view opens in a separate popup window (S key).
+ * All presenter styles are self-contained in the popup HTML generated by runtime.js.
+ * The audience window (this file) is NOT affected — it stays as normal deck view.
+ * Only the .notes class below is needed to hide speaker notes from audience. */
+
+/* ================= UTILITY ================= */
+.hidden{display:none!important}
+.nowrap{white-space:nowrap}
+.tr{text-align:right}.tc{text-align:center}.tl{text-align:left}
+.uppercase{text-transform:uppercase;letter-spacing:.12em}
+
+/* ================= PRINT ================= */
+@media print{
+  .slide{position:relative;opacity:1!important;transform:none!important;page-break-after:always;height:100vh}
+  .deck-header,.deck-footer,.progress-bar,.notes-overlay,.overview{display:none!important}
+}
+
+</style>
+<style>/* === html-ppt assets/themes/nord.css === */
+/* theme: nord */
+:root{
+  --bg:#2e3440;--bg-soft:#272b35;--surface:#3b4252;--surface-2:#434c5e;
+  --border:rgba(236,239,244,.12);--border-strong:rgba(236,239,244,.24);
+  --text-1:#eceff4;--text-2:#d8dee9;--text-3:#7b8394;
+  --accent:#88c0d0;--accent-2:#81a1c1;--accent-3:#b48ead;
+  --good:#a3be8c;--warn:#ebcb8b;--bad:#bf616a;
+  --grad:linear-gradient(135deg,#88c0d0,#81a1c1 50%,#b48ead);
+  --grad-soft:linear-gradient(135deg,#3b4252,#434c5e);
+  --radius:12px;--radius-sm:8px;--radius-lg:20px;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --shadow-lg:0 22px 60px rgba(0,0,0,.5);
+  --font-sans:'Inter','Noto Sans SC',sans-serif;
+}
+
+</style>
+<style>/* === html-ppt assets/animations/animations.css === */
+/* html-ppt animations.css — pruned to the effects this artifact actually uses.
+ * Polish pass: 57 unused vendored rules removed (marquee, shimmer, neon glow, gradient-flow,
+ * confetti, 3D flip/cube/page-turn, ken burns, spotlight, ripple, typewriter, glitch, tilt).
+ * Easing is exponential ease-out — a confident arrival, not an elastic bounce.
+ */
+:root{--anim-dur:.7s;--anim-ease:cubic-bezier(.16,1,.3,1)}
+
+@keyframes kf-fade-up{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+@keyframes kf-fade-down{from{opacity:0;transform:translateY(-32px)}to{opacity:1;transform:none}}
+@keyframes kf-rise{from{opacity:0;transform:translateY(60px) scale(.97);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@keyframes kf-zoom{from{opacity:0;transform:scale(.72)}to{opacity:1;transform:scale(1)}}
+
+.anim-fade-up{animation:kf-fade-up var(--anim-dur) var(--anim-ease) both}
+.anim-fade-down{animation:kf-fade-down var(--anim-dur) var(--anim-ease) both}
+.anim-rise-in{animation:kf-rise .9s var(--anim-ease) both}
+.anim-zoom-pop{animation:kf-zoom .7s cubic-bezier(.16,1,.3,1) both}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce){
+  [class*="anim-"]{animation:none!important;transition:none!important}
+}
+</style>
+<style>/* === film stage === */
+
+/* ===== 1920x1080 film stage ===== */
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--letterbox,#0a0b0e)}
+.film-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+.film{position:relative;width:1920px;height:1080px;overflow:hidden;transform-origin:center center;background:var(--bg)}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:120px 140px 132px;opacity:0;visibility:hidden;transition:opacity .45s cubic-bezier(.16,1,.3,1)}
+.scene.is-live{opacity:1;visibility:visible;z-index:2}
+.film,.scene{font-size:32px;line-height:1.4}
+.scene p,.scene li{font-size:32px;line-height:1.4}
+.scene .big{font-size:76px;line-height:1.08;font-weight:800;letter-spacing:-.035em;margin:0}
+.scene .huge{font-size:112px;line-height:1;font-weight:900;letter-spacing:-.045em;margin:0;font-variant-numeric:tabular-nums}
+.scene .mid{font-size:46px;line-height:1.2;font-weight:700;letter-spacing:-.02em;margin:0}
+.scene .cap{font-size:30px;line-height:1.4;margin:0}
+.scene .eyebrow{font-size:28px;letter-spacing:.22em;text-transform:uppercase;font-weight:600}
+.film-foot{position:absolute;left:140px;right:140px;bottom:56px;display:flex;justify-content:space-between;
+  align-items:baseline;font-size:28px;letter-spacing:.02em;z-index:20;color:var(--text-3)}
+.film-foot .sc{font-variant-numeric:tabular-nums;letter-spacing:.1em}
+.film-mark{position:absolute;top:56px;left:140px;display:flex;align-items:center;gap:14px;z-index:20}
+.film-mark i{width:26px;height:26px;display:block;border-radius:6px;background:var(--accent)}
+.film-mark span{font-size:28px;font-weight:800;letter-spacing:-.02em;color:var(--text-1)}
+.film-mark.hidden-mark{opacity:0}
+.pbar{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(128,128,128,.22);z-index:30}
+.pbar i{display:block;height:100%;width:0;background:var(--accent)}
+.pbar b{position:absolute;top:0;bottom:0;width:2px;background:var(--bg);opacity:.5}
+/* payoff chart (shared with the decks) */
+.payoff{width:100%;height:auto}
+.pf-frame{fill:none;stroke:var(--border-strong);stroke-width:1.5}
+.pf-grid{stroke:var(--border);stroke-width:1;stroke-dasharray:3 4}
+.pf-tick{font-size:26px;fill:var(--text-3);font-family:var(--font-mono)}
+.pf-lab{font-size:28px;font-weight:600;fill:var(--text-1)}
+.pf-lab-sum{font-size:28px;font-weight:700;fill:var(--accent)}
+.pf-lab-absent{font-size:26px;font-weight:700}
+.pf-lab-s{font-size:24px;fill:var(--text-2);font-family:var(--font-mono);letter-spacing:.08em}
+.pf-pline{fill:none;stroke-width:4}
+.pf-sum{stroke-width:4}
+.pf-strike{stroke:var(--text-2);stroke-width:2;stroke-dasharray:8 6}
+.pf-absent-line{stroke-width:3;stroke-dasharray:7 8}
+/* ===== shared film primitives ===== */
+.colblock{position:relative;border-radius:10px}
+.legend{display:flex;gap:34px;align-items:center;margin-top:18px}
+.legend span{display:flex;align-items:center;gap:11px;font-size:28px;color:var(--text-2)}
+.legend i{width:20px;height:20px;border-radius:5px;display:block}
+.chiprow{display:flex;gap:16px;flex-wrap:wrap;margin-top:26px}
+.chip{border:2px solid var(--border-strong);border-radius:999px;padding:9px 24px;font-size:28px;color:var(--text-2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.grid2.tight{gap:40px}
+.rowtop{display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
+.q{font-size:38px;line-height:1.32;font-weight:600;max-width:22ch;margin:0}
+.readout{font-family:var(--font-mono);font-size:34px;letter-spacing:-.01em}
+.dimtext{color:var(--text-2)}
+.faint{color:var(--text-3)}
+/* reduced motion: the film still advances, entries just don't animate */
+@media (prefers-reduced-motion: reduce){[class*="anim-"]{animation:none!important}}
+
+/* presentation-writing film × nord (dark stage).
+   Roles: hold · strain · accumulate(peak) · hold · assemble · RUPTURE(peak,bold) · divest · cadence */
+.film-medici{--letterbox:#12151b;--text-3:#a3aec2;--frost:#88c0d0;--rose:#bf616a;--amber:#ebcb8b;--plum:#b48ead}
+.film{background:linear-gradient(180deg,#333a48 0%,#2e3440 48%,#282e38 100%);color:#eceff4}
+.scene{padding:112px 130px 140px}
+.scene .big{color:#eceff4;font-weight:800;letter-spacing:-.035em}
+.scene .mid{color:#eceff4}
+.scene .eyebrow{color:var(--frost)}
+.frost{color:var(--frost)}.rose{color:var(--rose)}.amber{color:var(--amber)}.plum{color:var(--plum)}
+.dimtext{color:#d8dee9}.faint{color:#a3aec2}
+.rule2{height:2px;background:rgba(236,239,244,.22);width:100%;margin:26px 0 30px}
+.rule-frost{height:3px;background:var(--frost);width:96px;margin:24px 0 30px;border-radius:2px}
+.film-mark i{background:var(--frost)}
+.film-mark span{color:#eceff4}
+.film-foot{color:#a3aec2}
+.pbar{background:rgba(236,239,244,.16)}
+.pbar i{background:var(--frost)}
+.pbar b{background:#2e3440}
+.chip{border-color:rgba(236,239,244,.34);color:#d8dee9}
+.chip.off{border-color:rgba(236,239,244,.2);color:#a3aec2}
+.chip.warn{border-color:var(--rose);color:var(--rose)}
+.panelbox{background:rgba(255,255,255,.05);border:1px solid rgba(236,239,244,.14);border-radius:16px;padding:26px 30px}
+.pf-p{fill:rgba(136,192,208,.26)}
+.pf-n{fill:rgba(180,142,173,.28)}
+.pf-pline{stroke:var(--frost)}
+.pf-sum{stroke:#eceff4}
+.pf-lab{fill:#eceff4}.pf-lab-sum{fill:#eceff4}.pf-tick{fill:#a3aec2}
+.pf-lab-s{fill:#a3aec2}.pf-frame{stroke:rgba(236,239,244,.3)}.pf-grid{stroke:rgba(236,239,244,.14)}
+.pf-strike{stroke:rgba(236,239,244,.5)}
+
+/* ---- the asset (s1, s5, s8) ---- */
+.asset{width:280px;height:280px;border-radius:18px;background:#434c5e;border:2px solid rgba(236,239,244,.25);
+  display:flex;align-items:center;justify-content:center;font-size:30px;color:#d8dee9;letter-spacing:.06em;position:relative}
+.tick-badge{position:absolute;top:-18px;right:-18px;background:var(--frost);color:#2e3440;font-weight:800;
+  font-size:24px;padding:7px 16px;border-radius:999px;letter-spacing:.06em}
+
+/* ---- s2 strain: the patches accumulate on an intact arrangement ---- */
+.beam{width:520px;height:18px;background:rgba(236,239,244,.3);border-radius:9px;transform-origin:center}
+.scene.is-live .beam.mo{animation:kf-bend 8s cubic-bezier(.4,0,.6,1) 1.2s forwards}
+@keyframes kf-bend{to{transform:scaleY(1.9) skewY(-2.4deg);background:var(--rose)}}
+.patch{opacity:0;transform:translateY(16px)}
+.scene.is-live .patch.p1.mo{animation:kf-pin .7s ease 3.0s forwards}
+.scene.is-live .patch.p2.mo{animation:kf-pin .7s ease 5.6s forwards}
+.scene.is-live .patch.p3.mo{animation:kf-pin .7s ease 8.2s forwards}
+.scene.is-live .patch.p4.mo{animation:kf-pin .7s ease 12.4s forwards}
+@keyframes kf-pin{to{opacity:1;transform:none}}
+.thrline{position:relative;height:4px;background:0;border-top:3px dashed var(--rose);opacity:0}
+.scene.is-live .thrline.mo{animation:kf-fadein .8s ease 1.0s forwards}
+@keyframes kf-fadein{to{opacity:1}}
+
+/* ---- s3 accumulate: one forced sale sets off the next ---- */
+.chain{display:flex;gap:22px;align-items:flex-end;height:300px}
+.chain .lnk{width:118px;background:var(--rose);border-radius:8px;transform-origin:bottom;transform:scaleY(0)}
+.scene.is-live .lnk.mo{animation:kf-linkgrow .9s cubic-bezier(.25,.9,.35,1) forwards}
+.scene.is-live .lnk.l1.mo{animation-delay:1.2s}
+.scene.is-live .lnk.l2.mo{animation-delay:2.6s}
+.scene.is-live .lnk.l3.mo{animation-delay:4.0s}
+.scene.is-live .lnk.l4.mo{animation-delay:5.4s}
+.scene.is-live .lnk.l5.mo{animation-delay:6.8s}
+.scene.is-live .lnk.l6.mo{animation-delay:8.2s}
+@keyframes kf-linkgrow{to{transform:scaleY(1)}}
+.zeroline{position:absolute;left:0;right:0;bottom:0;border-top:2px solid rgba(236,239,244,.35)}
+
+/* ---- s5 assemble: one becomes two and nothing left the system ---- */
+.splitrow{display:flex;gap:0;align-items:stretch;height:300px;width:300px}
+.splitrow .lg{flex:1;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;
+  border-radius:16px;opacity:0;transform:scale(.9)}
+.splitrow .lgp{background:var(--frost);color:#2e3440}
+.splitrow .lgn{background:var(--plum);color:#2e3440}
+.scene.is-live .lgp.mo{animation:kf-pop .9s cubic-bezier(.3,.9,.3,1) 3.0s forwards}
+.scene.is-live .lgn.mo{animation:kf-pop .9s cubic-bezier(.3,.9,.3,1) 3.6s forwards}
+@keyframes kf-pop{to{opacity:1;transform:none}}
+.scene.is-live .whole2.mo{animation:kf-vanish .8s ease 2.6s forwards}
+@keyframes kf-vanish{to{opacity:0;transform:scale(.94)}}
+.tether2{height:3px;background:rgba(236,239,244,.5);opacity:0;width:300px}
+.scene.is-live .tether2.mo{animation:kf-fadein .7s ease 4.6s forwards}
+.idrow{opacity:0}
+.scene.is-live .idrow.i1.mo{animation:kf-pin .8s ease 7.0s forwards}
+.scene.is-live .idrow.i2.mo{animation:kf-pin .8s ease 10.6s forwards}
+.scene.is-live .idrow.i3.mo{animation:kf-pin .8s ease 14.6s forwards}
+
+/* ---- s6 RUPTURE: the threshold is drawn, hunts for a home, and is refused ---- */
+.hunt{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--rose);opacity:0}
+.scene.is-live .hunt.mo{animation:kf-hunt 11s cubic-bezier(.4,0,.6,1) 9.5s forwards}
+@keyframes kf-hunt{
+  0%{opacity:0;left:6%}
+  6%{opacity:1;left:6%}
+  22%{left:26%}28%{left:26%;background:var(--rose)}
+  44%{left:52%}50%{left:52%}
+  68%{left:76%}74%{left:76%}
+  88%{left:93%;opacity:1}
+  100%{left:93%;opacity:0}}
+.rejected{opacity:0}
+.scene.is-live .rejected.mo{animation:kf-pin .9s ease 19.6s forwards}
+.casecard{opacity:0;transform:translateY(18px)}
+.scene.is-live .casecard.c1.mo{animation:kf-pin .8s ease 2.0s forwards}
+.scene.is-live .casecard.c2.mo{animation:kf-pin .8s ease 5.6s forwards}
+.scene.is-live .drawcue.mo{animation:kf-pin .8s ease 8.8s forwards}
+.drawcue{opacity:0}
+
+/* ---- s7 divest: subtractive only ---- */
+.scene.is-live .cut1.mo{animation:kf-cut .9s ease 3.6s forwards}
+.scene.is-live .cut2.mo{animation:kf-cut .9s ease 6.4s forwards}
+.scene.is-live .cut3.mo{animation:kf-cut .9s ease 9.0s forwards}
+@keyframes kf-cut{to{opacity:0;filter:blur(4px)}}
+.scene.is-live .remain.mo{animation:kf-remain .9s ease 10.6s forwards}
+@keyframes kf-remain{from{opacity:.5}to{opacity:1}}
+
+/* ---- s8 cadence ---- */
+.scene.is-live .homel.mo{animation:kf-homel 1.7s cubic-bezier(.3,.85,.3,1) 1.4s forwards}
+.scene.is-live .homer.mo{animation:kf-homer 1.7s cubic-bezier(.3,.85,.3,1) 1.4s forwards}
+@keyframes kf-homel{to{transform:translateX(26px)}}
+@keyframes kf-homer{to{transform:translateX(-26px)}}
+
+</style>
+</head>
+<body class="film-medici">
+<div class="film-wrap">
+<div class="film">
+<!-- s1 · hold · 12s -->
+<section class="scene" data-dur="12" data-id="s1">
+  <div class="grid2">
+    <div>
+      <p class="eyebrow" data-anim="fade-up">Medici · for tokenized real-world assets</p>
+      <p class="big mt-m" data-anim="fade-up" data-at="0.25">A tokenized fund share.<br>A gold bar with a ticker.<br><span class="frost">Real collateral, on a ledger.</span></p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="asset" data-anim="rise-in" data-at="0.8">your position<span class="tick-badge">XAUt</span></div>
+      <p class="cap faint" style="margin-top:38px;letter-spacing:.14em;text-transform:uppercase">none of it sells inside one transaction</p>
+    </div>
+  </div>
+  <div class="film-foot"><span>Medici — Proprietary &amp; Confidential</span><span class="sc">1 / 8</span></div>
+</section>
+
+<!-- s2 · strain · 18s -->
+<section class="scene" data-dur="18" data-id="s2">
+  <div class="film-mark" data-anim="fade-down" data-at="0.2"><i></i><span>Medici</span></div>
+  <p class="big" style="max-width:26ch" data-anim="fade-up">Every venue that lends against it prices a <span class="rose">liquidation threshold</span> anyway.</p>
+  <div class="rule2"></div>
+  <div class="grid2 tight" style="align-items:flex-start">
+    <div>
+      <div class="thrline mo" style="width:520px"></div>
+      <p class="cap rose" style="margin:10px 0 40px;letter-spacing:.12em;text-transform:uppercase">liquidation threshold</p>
+      <div class="beam mo"></div>
+      <p class="cap faint" style="margin-top:26px">the arrangement, under load</p>
+    </div>
+    <div>
+      <p class="cap patch p1 mo"><span class="chip warn">signed liquidation agreements with the issuer</span></p>
+      <p class="cap patch p2 mo" style="margin-top:16px"><span class="chip warn">curator-run de-leverage frameworks</span></p>
+      <p class="cap patch p3 mo" style="margin-top:16px"><span class="chip warn">NAV instead of a market price</span></p>
+      <p class="mid patch p4 mo" style="margin-top:36px">RedStone calls those <span class="amber">fundamental design constraints</span>, not edge cases.</p>
+    </div>
+  </div>
+  <div class="film-foot"><span>Medici — Proprietary &amp; Confidential</span><span class="sc">2 / 8</span></div>
+</section>
+
+<!-- s3 · accumulate · 16s · PEAK 3.5 -->
+<section class="scene" data-dur="16" data-id="s3">
+  <div class="film-mark"><i></i><span>Medici</span></div>
+  <p class="big" style="max-width:24ch" data-anim="fade-up">When the pathway actually runs, it runs at the <span class="rose">worst possible price</span>.</p>
+  <div class="rule2"></div>
+  <div class="grid2 tight" style="align-items:flex-end">
+    <div style="position:relative">
+      <div class="chain">
+        <div class="lnk l1 mo" style="height:70px"></div>
+        <div class="lnk l2 mo" style="height:112px"></div>
+        <div class="lnk l3 mo" style="height:158px"></div>
+        <div class="lnk l4 mo" style="height:206px"></div>
+        <div class="lnk l5 mo" style="height:252px"></div>
+        <div class="lnk l6 mo" style="height:300px"></div>
+      </div>
+      <div class="zeroline"></div>
+      <p class="cap faint" style="margin-top:20px">one forced sale sets off the next</p>
+    </div>
+    <div>
+      <p class="huge rose" data-anim="zoom-pop" data-at="9.6">$0</p>
+      <p class="mid mt-m" data-anim="fade-up" data-at="10.2" style="max-width:20ch">On Black Thursday, MakerDAO collateral was auctioned for zero dollars.</p>
+      <p class="cap faint mt-m" data-anim="fade-up" data-at="12.0">Eight million dollars of it.</p>
+    </div>
+  </div>
+  <div class="film-foot"><span>Medici — Proprietary &amp; Confidential</span><span class="sc">3 / 8</span></div>
+</section>
+
+<!-- s4 · hold · 12s -->
+<section class="scene" data-dur="12" data-id="s4">
+  <div class="film-mark"><i></i><span>Medici</span></div>
+  <p class="eyebrow" data-anim="fade-up">The turn</p>
+  <p class="big mt-m" style="max-width:20ch;font-size:84px" data-anim="fade-up" data-at="0.3">Medici asks a different question.</p>
+  <div class="rule-frost"></div>
+  <div class="grid2">
+    <p class="mid faint" style="text-decoration:line-through">How do we liquidate this safely?</p>
+    <p class="mid frost">What if there were nothing to liquidate?</p>
+  </div>
+  <p class="cap dimtext" style="margin-top:44px">Split the collateral instead.</p>
+  <div class="film-foot"><span>Medici — Proprietary &amp; Confidential</span><span class="sc">4 / 8</span></div>
+</section>
+
+<!-- s5 · assemble · 20s -->
+<section class="scene" data-dur="20" data-id="s5">
+  <div class="film-mark"><i></i><span>Medici</span></div>
+  <p class="big" style="max-width:28ch" data-anim="fade-up">One position becomes two claims that always add back to it.</p>
+  <div class="rule2"></div>
+  <div style="display:grid;grid-template-columns:340px 1fr;gap:0 70px;align-items:start">
+    <div style="position:relative">
+      <div class="asset whole2 mo" style="width:300px;height:300px;position:absolute;top:0;left:0">one position</div>
+      <div class="splitrow" style="gap:16px">
+        <div class="lg lgp mo">P</div>
+        <div class="lg lgn mo">N</div>
+      </div>
+      <div class="tether2 mo" style="margin-top:16px;width:300px"></div>
+      <p class="cap faint" style="margin-top:16px">collateral never leaves the vault</p>
+    </div>
+    <div>
+      <p class="mid idrow i1 mo"><span class="frost">P</span> is capped and income-bearing. <span class="plum">N</span> takes everything above the strike.</p>
+      <p class="mid idrow i2 mo" style="margin-top:34px"><span class="readout frost">P + N &equiv; collateral</span> &mdash; closed form, at every price, enforced by the contract that records the split.</p>
+      <p class="cap dimtext idrow i3 mo" style="margin-top:34px">The oracle isn't even read until settlement.</p>
+    </div>
+  </div>
+  <div class="film-foot"><span>Medici — Proprietary &amp; Confidential</span><span class="sc">5 / 8</span></div>
+</section>
+
+<!-- s6 · RUPTURE · 24s · PEAK 5 · BOLD MOMENT -->
+<section class="scene" data-dur="24" data-id="s6" style="justify-content:flex-start;padding-top:150px">
+  <div class="film-mark"><i></i><span>Medici</span></div>
+  <p class="big" style="max-width:44ch;font-size:50px" data-anim="fade-up">At maturity there are two cases &mdash; and then there is nowhere to put the line.</p>
+  <div class="rule2" style="margin:18px 0 20px"></div>
+  <div style="display:grid;grid-template-columns:1fr 1.45fr;gap:0 56px;align-items:start">
+    <div>
+      <div class="panelbox casecard c1 mo" style="padding:20px 24px">
+        <p class="cap"><b class="frost">At or below the strike</b></p>
+        <p class="mid mt-s" style="font-size:36px">P is worth the whole collateral. N is worth nothing.</p>
+      </div>
+      <div class="panelbox casecard c2 mo" style="margin-top:18px;padding:20px 24px">
+        <p class="cap"><b class="plum">Above it</b></p>
+        <p class="mid mt-s" style="font-size:36px">P is the strike over the price; N is the rest.</p>
+      </div>
+      <p class="mid drawcue mo amber" style="margin-top:24px;font-size:36px">Now draw the liquidation line every other venue needs.</p>
+      <p class="mid rejected mo" style="margin-top:16px;font-size:36px"><span class="rose">There is nowhere on this axis to put it.</span></p>
+    </div>
+    <div style="position:relative"><svg class="payoff" viewBox="0 0 980 430" role="img" aria-label="Payoff of P and N across reference price x, with strike S. P plus N is flat at one collateral unit at every price.">
+<defs><clipPath id="pff-clip"><rect x="78" y="44" width="862" height="330"/></clipPath></defs>
+<rect x="78" y="44" width="862" height="330" class="pf-frame"/>
+<line x1="78" y1="374.0" x2="940" y2="374.0" class="pf-grid"/>
+<text x="66" y="380.0" class="pf-tick" text-anchor="end">0</text>
+<line x1="78" y1="209.0" x2="940" y2="209.0" class="pf-grid"/>
+<text x="66" y="215.0" class="pf-tick" text-anchor="end">0.50</text>
+<line x1="78" y1="44.0" x2="940" y2="44.0" class="pf-grid"/>
+<text x="66" y="50.0" class="pf-tick" text-anchor="end">1.00</text>
+<g clip-path="url(#pff-clip)">
+<path d="M 78.0,44.0 L 940.0,44.0 L 940.0,247.1 L 936.1,246.6 L 932.2,246.1 L 928.2,245.6 L 924.3,245.1 L 920.4,244.6 L 916.5,244.1 L 912.6,243.6 L 908.7,243.1 L 904.7,242.6 L 900.8,242.1 L 896.9,241.6 L 893.0,241.1 L 889.1,240.6 L 885.1,240.0 L 881.2,239.5 L 877.3,239.0 L 873.4,238.4 L 869.5,237.9 L 865.6,237.3 L 861.6,236.8 L 857.7,236.2 L 853.8,235.6 L 849.9,235.1 L 846.0,234.5 L 842.0,233.9 L 838.1,233.3 L 834.2,232.7 L 830.3,232.1 L 826.4,231.5 L 822.5,230.9 L 818.5,230.3 L 814.6,229.7 L 810.7,229.1 L 806.8,228.5 L 802.9,227.9 L 798.9,227.2 L 795.0,226.6 L 791.1,225.9 L 787.2,225.3 L 783.3,224.6 L 779.4,224.0 L 775.4,223.3 L 771.5,222.6 L 767.6,221.9 L 763.7,221.2 L 759.8,220.5 L 755.8,219.8 L 751.9,219.1 L 748.0,218.4 L 744.1,217.7 L 740.2,217.0 L 736.3,216.2 L 732.3,215.5 L 728.4,214.8 L 724.5,214.0 L 720.6,213.2 L 716.7,212.5 L 712.7,211.7 L 708.8,210.9 L 704.9,210.1 L 701.0,209.3 L 697.1,208.5 L 693.2,207.7 L 689.2,206.9 L 685.3,206.0 L 681.4,205.2 L 677.5,204.4 L 673.6,203.5 L 669.6,202.6 L 665.7,201.8 L 661.8,200.9 L 657.9,200.0 L 654.0,199.1 L 650.1,198.2 L 646.1,197.3 L 642.2,196.3 L 638.3,195.4 L 634.4,194.4 L 630.5,193.5 L 626.5,192.5 L 622.6,191.5 L 618.7,190.5 L 614.8,189.5 L 610.9,188.5 L 607.0,187.5 L 603.0,186.5 L 599.1,185.4 L 595.2,184.3 L 591.3,183.3 L 587.4,182.2 L 583.4,181.1 L 579.5,180.0 L 575.6,178.9 L 571.7,177.7 L 567.8,176.6 L 563.9,175.4 L 559.9,174.2 L 556.0,173.1 L 552.1,171.9 L 548.2,170.6 L 544.3,169.4 L 540.3,168.2 L 536.4,166.9 L 532.5,165.6 L 528.6,164.3 L 524.7,163.0 L 520.8,161.7 L 516.8,160.3 L 512.9,159.0 L 509.0,157.6 L 505.1,156.2 L 501.2,154.8 L 497.2,153.4 L 493.3,151.9 L 489.4,150.4 L 485.5,149.0 L 481.6,147.4 L 477.7,145.9 L 473.7,144.4 L 469.8,142.8 L 465.9,141.2 L 462.0,139.6 L 458.1,137.9 L 454.1,136.3 L 450.2,134.6 L 446.3,132.9 L 442.4,131.2 L 438.5,129.4 L 434.6,127.6 L 430.6,125.8 L 426.7,124.0 L 422.8,122.1 L 418.9,120.2 L 415.0,118.3 L 411.0,116.3 L 407.1,114.3 L 403.2,112.3 L 399.3,110.3 L 395.4,108.2 L 391.5,106.1 L 387.5,104.0 L 383.6,101.8 L 379.7,99.6 L 375.8,97.3 L 371.9,95.0 L 367.9,92.7 L 364.0,90.4 L 360.1,87.9 L 356.2,85.5 L 352.3,83.0 L 348.4,80.5 L 344.4,77.9 L 340.5,75.3 L 336.6,72.6 L 332.7,69.9 L 328.8,67.2 L 324.8,64.3 L 320.9,61.5 L 317.0,58.6 L 313.1,55.6 L 309.2,52.5 L 305.3,49.5 L 301.3,46.3 L 297.4,44.0 L 293.5,44.0 L 289.6,44.0 L 285.7,44.0 L 281.7,44.0 L 277.8,44.0 L 273.9,44.0 L 270.0,44.0 L 266.1,44.0 L 262.2,44.0 L 258.2,44.0 L 254.3,44.0 L 250.4,44.0 L 246.5,44.0 L 242.6,44.0 L 238.6,44.0 L 234.7,44.0 L 230.8,44.0 L 226.9,44.0 L 223.0,44.0 L 219.1,44.0 L 215.1,44.0 L 211.2,44.0 L 207.3,44.0 L 203.4,44.0 L 199.5,44.0 L 195.5,44.0 L 191.6,44.0 L 187.7,44.0 L 183.8,44.0 L 179.9,44.0 L 176.0,44.0 L 172.0,44.0 L 168.1,44.0 L 164.2,44.0 L 160.3,44.0 L 156.4,44.0 L 152.4,44.0 L 148.5,44.0 L 144.6,44.0 L 140.7,44.0 L 136.8,44.0 L 132.9,44.0 L 128.9,44.0 L 125.0,44.0 L 121.1,44.0 L 117.2,44.0 L 113.3,44.0 L 109.3,44.0 L 105.4,44.0 L 101.5,44.0 L 97.6,44.0 L 93.7,44.0 L 89.8,44.0 L 85.8,44.0 L 81.9,44.0 L 78.0,44.0 Z" class="pf-n"/>
+<path d="M 78.0,374.0 L 78.0,44.0 L 81.9,44.0 L 85.8,44.0 L 89.8,44.0 L 93.7,44.0 L 97.6,44.0 L 101.5,44.0 L 105.4,44.0 L 109.3,44.0 L 113.3,44.0 L 117.2,44.0 L 121.1,44.0 L 125.0,44.0 L 128.9,44.0 L 132.9,44.0 L 136.8,44.0 L 140.7,44.0 L 144.6,44.0 L 148.5,44.0 L 152.4,44.0 L 156.4,44.0 L 160.3,44.0 L 164.2,44.0 L 168.1,44.0 L 172.0,44.0 L 176.0,44.0 L 179.9,44.0 L 183.8,44.0 L 187.7,44.0 L 191.6,44.0 L 195.5,44.0 L 199.5,44.0 L 203.4,44.0 L 207.3,44.0 L 211.2,44.0 L 215.1,44.0 L 219.1,44.0 L 223.0,44.0 L 226.9,44.0 L 230.8,44.0 L 234.7,44.0 L 238.6,44.0 L 242.6,44.0 L 246.5,44.0 L 250.4,44.0 L 254.3,44.0 L 258.2,44.0 L 262.2,44.0 L 266.1,44.0 L 270.0,44.0 L 273.9,44.0 L 277.8,44.0 L 281.7,44.0 L 285.7,44.0 L 289.6,44.0 L 293.5,44.0 L 297.4,44.0 L 301.3,46.3 L 305.3,49.5 L 309.2,52.5 L 313.1,55.6 L 317.0,58.6 L 320.9,61.5 L 324.8,64.3 L 328.8,67.2 L 332.7,69.9 L 336.6,72.6 L 340.5,75.3 L 344.4,77.9 L 348.4,80.5 L 352.3,83.0 L 356.2,85.5 L 360.1,87.9 L 364.0,90.4 L 367.9,92.7 L 371.9,95.0 L 375.8,97.3 L 379.7,99.6 L 383.6,101.8 L 387.5,104.0 L 391.5,106.1 L 395.4,108.2 L 399.3,110.3 L 403.2,112.3 L 407.1,114.3 L 411.0,116.3 L 415.0,118.3 L 418.9,120.2 L 422.8,122.1 L 426.7,124.0 L 430.6,125.8 L 434.6,127.6 L 438.5,129.4 L 442.4,131.2 L 446.3,132.9 L 450.2,134.6 L 454.1,136.3 L 458.1,137.9 L 462.0,139.6 L 465.9,141.2 L 469.8,142.8 L 473.7,144.4 L 477.7,145.9 L 481.6,147.4 L 485.5,149.0 L 489.4,150.4 L 493.3,151.9 L 497.2,153.4 L 501.2,154.8 L 505.1,156.2 L 509.0,157.6 L 512.9,159.0 L 516.8,160.3 L 520.8,161.7 L 524.7,163.0 L 528.6,164.3 L 532.5,165.6 L 536.4,166.9 L 540.3,168.2 L 544.3,169.4 L 548.2,170.6 L 552.1,171.9 L 556.0,173.1 L 559.9,174.2 L 563.9,175.4 L 567.8,176.6 L 571.7,177.7 L 575.6,178.9 L 579.5,180.0 L 583.4,181.1 L 587.4,182.2 L 591.3,183.3 L 595.2,184.3 L 599.1,185.4 L 603.0,186.5 L 607.0,187.5 L 610.9,188.5 L 614.8,189.5 L 618.7,190.5 L 622.6,191.5 L 626.5,192.5 L 630.5,193.5 L 634.4,194.4 L 638.3,195.4 L 642.2,196.3 L 646.1,197.3 L 650.1,198.2 L 654.0,199.1 L 657.9,200.0 L 661.8,200.9 L 665.7,201.8 L 669.6,202.6 L 673.6,203.5 L 677.5,204.4 L 681.4,205.2 L 685.3,206.0 L 689.2,206.9 L 693.2,207.7 L 697.1,208.5 L 701.0,209.3 L 704.9,210.1 L 708.8,210.9 L 712.7,211.7 L 716.7,212.5 L 720.6,213.2 L 724.5,214.0 L 728.4,214.8 L 732.3,215.5 L 736.3,216.2 L 740.2,217.0 L 744.1,217.7 L 748.0,218.4 L 751.9,219.1 L 755.8,219.8 L 759.8,220.5 L 763.7,221.2 L 767.6,221.9 L 771.5,222.6 L 775.4,223.3 L 779.4,224.0 L 783.3,224.6 L 787.2,225.3 L 791.1,225.9 L 795.0,226.6 L 798.9,227.2 L 802.9,227.9 L 806.8,228.5 L 810.7,229.1 L 814.6,229.7 L 818.5,230.3 L 822.5,230.9 L 826.4,231.5 L 830.3,232.1 L 834.2,232.7 L 838.1,233.3 L 842.0,233.9 L 846.0,234.5 L 849.9,235.1 L 853.8,235.6 L 857.7,236.2 L 861.6,236.8 L 865.6,237.3 L 869.5,237.9 L 873.4,238.4 L 877.3,239.0 L 881.2,239.5 L 885.1,240.0 L 889.1,240.6 L 893.0,241.1 L 896.9,241.6 L 900.8,242.1 L 904.7,242.6 L 908.7,243.1 L 912.6,243.6 L 916.5,244.1 L 920.4,244.6 L 924.3,245.1 L 928.2,245.6 L 932.2,246.1 L 936.1,246.6 L 940.0,247.1 L 940.0,374.0 Z" class="pf-p"/>
+<path d="M 78.0,44.0 L 81.9,44.0 L 85.8,44.0 L 89.8,44.0 L 93.7,44.0 L 97.6,44.0 L 101.5,44.0 L 105.4,44.0 L 109.3,44.0 L 113.3,44.0 L 117.2,44.0 L 121.1,44.0 L 125.0,44.0 L 128.9,44.0 L 132.9,44.0 L 136.8,44.0 L 140.7,44.0 L 144.6,44.0 L 148.5,44.0 L 152.4,44.0 L 156.4,44.0 L 160.3,44.0 L 164.2,44.0 L 168.1,44.0 L 172.0,44.0 L 176.0,44.0 L 179.9,44.0 L 183.8,44.0 L 187.7,44.0 L 191.6,44.0 L 195.5,44.0 L 199.5,44.0 L 203.4,44.0 L 207.3,44.0 L 211.2,44.0 L 215.1,44.0 L 219.1,44.0 L 223.0,44.0 L 226.9,44.0 L 230.8,44.0 L 234.7,44.0 L 238.6,44.0 L 242.6,44.0 L 246.5,44.0 L 250.4,44.0 L 254.3,44.0 L 258.2,44.0 L 262.2,44.0 L 266.1,44.0 L 270.0,44.0 L 273.9,44.0 L 277.8,44.0 L 281.7,44.0 L 285.7,44.0 L 289.6,44.0 L 293.5,44.0 L 297.4,44.0 L 301.3,46.3 L 305.3,49.5 L 309.2,52.5 L 313.1,55.6 L 317.0,58.6 L 320.9,61.5 L 324.8,64.3 L 328.8,67.2 L 332.7,69.9 L 336.6,72.6 L 340.5,75.3 L 344.4,77.9 L 348.4,80.5 L 352.3,83.0 L 356.2,85.5 L 360.1,87.9 L 364.0,90.4 L 367.9,92.7 L 371.9,95.0 L 375.8,97.3 L 379.7,99.6 L 383.6,101.8 L 387.5,104.0 L 391.5,106.1 L 395.4,108.2 L 399.3,110.3 L 403.2,112.3 L 407.1,114.3 L 411.0,116.3 L 415.0,118.3 L 418.9,120.2 L 422.8,122.1 L 426.7,124.0 L 430.6,125.8 L 434.6,127.6 L 438.5,129.4 L 442.4,131.2 L 446.3,132.9 L 450.2,134.6 L 454.1,136.3 L 458.1,137.9 L 462.0,139.6 L 465.9,141.2 L 469.8,142.8 L 473.7,144.4 L 477.7,145.9 L 481.6,147.4 L 485.5,149.0 L 489.4,150.4 L 493.3,151.9 L 497.2,153.4 L 501.2,154.8 L 505.1,156.2 L 509.0,157.6 L 512.9,159.0 L 516.8,160.3 L 520.8,161.7 L 524.7,163.0 L 528.6,164.3 L 532.5,165.6 L 536.4,166.9 L 540.3,168.2 L 544.3,169.4 L 548.2,170.6 L 552.1,171.9 L 556.0,173.1 L 559.9,174.2 L 563.9,175.4 L 567.8,176.6 L 571.7,177.7 L 575.6,178.9 L 579.5,180.0 L 583.4,181.1 L 587.4,182.2 L 591.3,183.3 L 595.2,184.3 L 599.1,185.4 L 603.0,186.5 L 607.0,187.5 L 610.9,188.5 L 614.8,189.5 L 618.7,190.5 L 622.6,191.5 L 626.5,192.5 L 630.5,193.5 L 634.4,194.4 L 638.3,195.4 L 642.2,196.3 L 646.1,197.3 L 650.1,198.2 L 654.0,199.1 L 657.9,200.0 L 661.8,200.9 L 665.7,201.8 L 669.6,202.6 L 673.6,203.5 L 677.5,204.4 L 681.4,205.2 L 685.3,206.0 L 689.2,206.9 L 693.2,207.7 L 697.1,208.5 L 701.0,209.3 L 704.9,210.1 L 708.8,210.9 L 712.7,211.7 L 716.7,212.5 L 720.6,213.2 L 724.5,214.0 L 728.4,214.8 L 732.3,215.5 L 736.3,216.2 L 740.2,217.0 L 744.1,217.7 L 748.0,218.4 L 751.9,219.1 L 755.8,219.8 L 759.8,220.5 L 763.7,221.2 L 767.6,221.9 L 771.5,222.6 L 775.4,223.3 L 779.4,224.0 L 783.3,224.6 L 787.2,225.3 L 791.1,225.9 L 795.0,226.6 L 798.9,227.2 L 802.9,227.9 L 806.8,228.5 L 810.7,229.1 L 814.6,229.7 L 818.5,230.3 L 822.5,230.9 L 826.4,231.5 L 830.3,232.1 L 834.2,232.7 L 838.1,233.3 L 842.0,233.9 L 846.0,234.5 L 849.9,235.1 L 853.8,235.6 L 857.7,236.2 L 861.6,236.8 L 865.6,237.3 L 869.5,237.9 L 873.4,238.4 L 877.3,239.0 L 881.2,239.5 L 885.1,240.0 L 889.1,240.6 L 893.0,241.1 L 896.9,241.6 L 900.8,242.1 L 904.7,242.6 L 908.7,243.1 L 912.6,243.6 L 916.5,244.1 L 920.4,244.6 L 924.3,245.1 L 928.2,245.6 L 932.2,246.1 L 936.1,246.6 L 940.0,247.1" class="pf-pline"/>
+<line x1="78" y1="44.0" x2="940" y2="44.0" class="pf-sum"/>
+<line x1="298.5" y1="44" x2="298.5" y2="374" class="pf-strike"/>
+</g>
+<text x="306.5" y="362.0" class="pf-lab pf-lab-s">strike S</text>
+<text x="164.2" y="228.8" class="pf-lab pf-lab-p">P — Protected</text>
+<text x="560.7" y="77.0" class="pf-lab pf-lab-n">N — Amplified</text>
+<text x="78.0" y="28.0" class="pf-lab pf-lab-sum">P + N = 1.00 collateral, at every price</text>
+<text x="940.0" y="408" class="pf-tick" text-anchor="end">reference price x at maturity →</text>
+<text x="78" y="408" class="pf-tick">x below S</text>
+</svg><div class="hunt mo"></div></div>
+  </div>
+  <div class="film-foot"><span>Medici — Proprietary &amp; Confidential</span><span class="sc">6 / 8</span></div>
+</section>
+
+<!-- s7 · divest · 17s -->
+<section class="scene" data-dur="17" data-id="s7">
+  <div class="film-mark"><i></i><span>Medici</span></div>
+  <p class="big" style="max-width:20ch" data-anim="fade-up">That is not free.</p>
+  <div class="rule2"></div>
+  <div class="grid2 tight" style="align-items:flex-start">
+    <div>
+      <p class="mid cut1 mo">P is short a call above the strike.</p>
+      <p class="cap dimtext mt-m cut2 mo">So P's value falls continuously as the asset rallies.</p>
+      <div class="chiprow cut3 mo"><span class="chip">computable</span><span class="chip">no cliff</span></div>
+      <p class="mid remain mo" style="margin-top:56px;opacity:.5">Nine years of backtest put the net drift at <span class="amber">minus one and a quarter percent a year</span>.</p>
+      <p class="cap faint remain mo" style="margin-top:20px;opacity:.5">Never a cliff. Hypercall, Aug 2017 – Jun 2026, ETH underlying.</p>
+    </div>
+    <div style="opacity:.9"><svg class="payoff" viewBox="0 0 980 430" role="img" aria-label="Payoff of P and N across reference price x, with strike S. P plus N is flat at one collateral unit at every price.">
+<defs><clipPath id="pff-clip"><rect x="78" y="44" width="862" height="330"/></clipPath></defs>
+<rect x="78" y="44" width="862" height="330" class="pf-frame"/>
+<line x1="78" y1="374.0" x2="940" y2="374.0" class="pf-grid"/>
+<text x="66" y="380.0" class="pf-tick" text-anchor="end">0</text>
+<line x1="78" y1="209.0" x2="940" y2="209.0" class="pf-grid"/>
+<text x="66" y="215.0" class="pf-tick" text-anchor="end">0.50</text>
+<line x1="78" y1="44.0" x2="940" y2="44.0" class="pf-grid"/>
+<text x="66" y="50.0" class="pf-tick" text-anchor="end">1.00</text>
+<g clip-path="url(#pff-clip)">
+<path d="M 78.0,44.0 L 940.0,44.0 L 940.0,247.1 L 936.1,246.6 L 932.2,246.1 L 928.2,245.6 L 924.3,245.1 L 920.4,244.6 L 916.5,244.1 L 912.6,243.6 L 908.7,243.1 L 904.7,242.6 L 900.8,242.1 L 896.9,241.6 L 893.0,241.1 L 889.1,240.6 L 885.1,240.0 L 881.2,239.5 L 877.3,239.0 L 873.4,238.4 L 869.5,237.9 L 865.6,237.3 L 861.6,236.8 L 857.7,236.2 L 853.8,235.6 L 849.9,235.1 L 846.0,234.5 L 842.0,233.9 L 838.1,233.3 L 834.2,232.7 L 830.3,232.1 L 826.4,231.5 L 822.5,230.9 L 818.5,230.3 L 814.6,229.7 L 810.7,229.1 L 806.8,228.5 L 802.9,227.9 L 798.9,227.2 L 795.0,226.6 L 791.1,225.9 L 787.2,225.3 L 783.3,224.6 L 779.4,224.0 L 775.4,223.3 L 771.5,222.6 L 767.6,221.9 L 763.7,221.2 L 759.8,220.5 L 755.8,219.8 L 751.9,219.1 L 748.0,218.4 L 744.1,217.7 L 740.2,217.0 L 736.3,216.2 L 732.3,215.5 L 728.4,214.8 L 724.5,214.0 L 720.6,213.2 L 716.7,212.5 L 712.7,211.7 L 708.8,210.9 L 704.9,210.1 L 701.0,209.3 L 697.1,208.5 L 693.2,207.7 L 689.2,206.9 L 685.3,206.0 L 681.4,205.2 L 677.5,204.4 L 673.6,203.5 L 669.6,202.6 L 665.7,201.8 L 661.8,200.9 L 657.9,200.0 L 654.0,199.1 L 650.1,198.2 L 646.1,197.3 L 642.2,196.3 L 638.3,195.4 L 634.4,194.4 L 630.5,193.5 L 626.5,192.5 L 622.6,191.5 L 618.7,190.5 L 614.8,189.5 L 610.9,188.5 L 607.0,187.5 L 603.0,186.5 L 599.1,185.4 L 595.2,184.3 L 591.3,183.3 L 587.4,182.2 L 583.4,181.1 L 579.5,180.0 L 575.6,178.9 L 571.7,177.7 L 567.8,176.6 L 563.9,175.4 L 559.9,174.2 L 556.0,173.1 L 552.1,171.9 L 548.2,170.6 L 544.3,169.4 L 540.3,168.2 L 536.4,166.9 L 532.5,165.6 L 528.6,164.3 L 524.7,163.0 L 520.8,161.7 L 516.8,160.3 L 512.9,159.0 L 509.0,157.6 L 505.1,156.2 L 501.2,154.8 L 497.2,153.4 L 493.3,151.9 L 489.4,150.4 L 485.5,149.0 L 481.6,147.4 L 477.7,145.9 L 473.7,144.4 L 469.8,142.8 L 465.9,141.2 L 462.0,139.6 L 458.1,137.9 L 454.1,136.3 L 450.2,134.6 L 446.3,132.9 L 442.4,131.2 L 438.5,129.4 L 434.6,127.6 L 430.6,125.8 L 426.7,124.0 L 422.8,122.1 L 418.9,120.2 L 415.0,118.3 L 411.0,116.3 L 407.1,114.3 L 403.2,112.3 L 399.3,110.3 L 395.4,108.2 L 391.5,106.1 L 387.5,104.0 L 383.6,101.8 L 379.7,99.6 L 375.8,97.3 L 371.9,95.0 L 367.9,92.7 L 364.0,90.4 L 360.1,87.9 L 356.2,85.5 L 352.3,83.0 L 348.4,80.5 L 344.4,77.9 L 340.5,75.3 L 336.6,72.6 L 332.7,69.9 L 328.8,67.2 L 324.8,64.3 L 320.9,61.5 L 317.0,58.6 L 313.1,55.6 L 309.2,52.5 L 305.3,49.5 L 301.3,46.3 L 297.4,44.0 L 293.5,44.0 L 289.6,44.0 L 285.7,44.0 L 281.7,44.0 L 277.8,44.0 L 273.9,44.0 L 270.0,44.0 L 266.1,44.0 L 262.2,44.0 L 258.2,44.0 L 254.3,44.0 L 250.4,44.0 L 246.5,44.0 L 242.6,44.0 L 238.6,44.0 L 234.7,44.0 L 230.8,44.0 L 226.9,44.0 L 223.0,44.0 L 219.1,44.0 L 215.1,44.0 L 211.2,44.0 L 207.3,44.0 L 203.4,44.0 L 199.5,44.0 L 195.5,44.0 L 191.6,44.0 L 187.7,44.0 L 183.8,44.0 L 179.9,44.0 L 176.0,44.0 L 172.0,44.0 L 168.1,44.0 L 164.2,44.0 L 160.3,44.0 L 156.4,44.0 L 152.4,44.0 L 148.5,44.0 L 144.6,44.0 L 140.7,44.0 L 136.8,44.0 L 132.9,44.0 L 128.9,44.0 L 125.0,44.0 L 121.1,44.0 L 117.2,44.0 L 113.3,44.0 L 109.3,44.0 L 105.4,44.0 L 101.5,44.0 L 97.6,44.0 L 93.7,44.0 L 89.8,44.0 L 85.8,44.0 L 81.9,44.0 L 78.0,44.0 Z" class="pf-n"/>
+<path d="M 78.0,374.0 L 78.0,44.0 L 81.9,44.0 L 85.8,44.0 L 89.8,44.0 L 93.7,44.0 L 97.6,44.0 L 101.5,44.0 L 105.4,44.0 L 109.3,44.0 L 113.3,44.0 L 117.2,44.0 L 121.1,44.0 L 125.0,44.0 L 128.9,44.0 L 132.9,44.0 L 136.8,44.0 L 140.7,44.0 L 144.6,44.0 L 148.5,44.0 L 152.4,44.0 L 156.4,44.0 L 160.3,44.0 L 164.2,44.0 L 168.1,44.0 L 172.0,44.0 L 176.0,44.0 L 179.9,44.0 L 183.8,44.0 L 187.7,44.0 L 191.6,44.0 L 195.5,44.0 L 199.5,44.0 L 203.4,44.0 L 207.3,44.0 L 211.2,44.0 L 215.1,44.0 L 219.1,44.0 L 223.0,44.0 L 226.9,44.0 L 230.8,44.0 L 234.7,44.0 L 238.6,44.0 L 242.6,44.0 L 246.5,44.0 L 250.4,44.0 L 254.3,44.0 L 258.2,44.0 L 262.2,44.0 L 266.1,44.0 L 270.0,44.0 L 273.9,44.0 L 277.8,44.0 L 281.7,44.0 L 285.7,44.0 L 289.6,44.0 L 293.5,44.0 L 297.4,44.0 L 301.3,46.3 L 305.3,49.5 L 309.2,52.5 L 313.1,55.6 L 317.0,58.6 L 320.9,61.5 L 324.8,64.3 L 328.8,67.2 L 332.7,69.9 L 336.6,72.6 L 340.5,75.3 L 344.4,77.9 L 348.4,80.5 L 352.3,83.0 L 356.2,85.5 L 360.1,87.9 L 364.0,90.4 L 367.9,92.7 L 371.9,95.0 L 375.8,97.3 L 379.7,99.6 L 383.6,101.8 L 387.5,104.0 L 391.5,106.1 L 395.4,108.2 L 399.3,110.3 L 403.2,112.3 L 407.1,114.3 L 411.0,116.3 L 415.0,118.3 L 418.9,120.2 L 422.8,122.1 L 426.7,124.0 L 430.6,125.8 L 434.6,127.6 L 438.5,129.4 L 442.4,131.2 L 446.3,132.9 L 450.2,134.6 L 454.1,136.3 L 458.1,137.9 L 462.0,139.6 L 465.9,141.2 L 469.8,142.8 L 473.7,144.4 L 477.7,145.9 L 481.6,147.4 L 485.5,149.0 L 489.4,150.4 L 493.3,151.9 L 497.2,153.4 L 501.2,154.8 L 505.1,156.2 L 509.0,157.6 L 512.9,159.0 L 516.8,160.3 L 520.8,161.7 L 524.7,163.0 L 528.6,164.3 L 532.5,165.6 L 536.4,166.9 L 540.3,168.2 L 544.3,169.4 L 548.2,170.6 L 552.1,171.9 L 556.0,173.1 L 559.9,174.2 L 563.9,175.4 L 567.8,176.6 L 571.7,177.7 L 575.6,178.9 L 579.5,180.0 L 583.4,181.1 L 587.4,182.2 L 591.3,183.3 L 595.2,184.3 L 599.1,185.4 L 603.0,186.5 L 607.0,187.5 L 610.9,188.5 L 614.8,189.5 L 618.7,190.5 L 622.6,191.5 L 626.5,192.5 L 630.5,193.5 L 634.4,194.4 L 638.3,195.4 L 642.2,196.3 L 646.1,197.3 L 650.1,198.2 L 654.0,199.1 L 657.9,200.0 L 661.8,200.9 L 665.7,201.8 L 669.6,202.6 L 673.6,203.5 L 677.5,204.4 L 681.4,205.2 L 685.3,206.0 L 689.2,206.9 L 693.2,207.7 L 697.1,208.5 L 701.0,209.3 L 704.9,210.1 L 708.8,210.9 L 712.7,211.7 L 716.7,212.5 L 720.6,213.2 L 724.5,214.0 L 728.4,214.8 L 732.3,215.5 L 736.3,216.2 L 740.2,217.0 L 744.1,217.7 L 748.0,218.4 L 751.9,219.1 L 755.8,219.8 L 759.8,220.5 L 763.7,221.2 L 767.6,221.9 L 771.5,222.6 L 775.4,223.3 L 779.4,224.0 L 783.3,224.6 L 787.2,225.3 L 791.1,225.9 L 795.0,226.6 L 798.9,227.2 L 802.9,227.9 L 806.8,228.5 L 810.7,229.1 L 814.6,229.7 L 818.5,230.3 L 822.5,230.9 L 826.4,231.5 L 830.3,232.1 L 834.2,232.7 L 838.1,233.3 L 842.0,233.9 L 846.0,234.5 L 849.9,235.1 L 853.8,235.6 L 857.7,236.2 L 861.6,236.8 L 865.6,237.3 L 869.5,237.9 L 873.4,238.4 L 877.3,239.0 L 881.2,239.5 L 885.1,240.0 L 889.1,240.6 L 893.0,241.1 L 896.9,241.6 L 900.8,242.1 L 904.7,242.6 L 908.7,243.1 L 912.6,243.6 L 916.5,244.1 L 920.4,244.6 L 924.3,245.1 L 928.2,245.6 L 932.2,246.1 L 936.1,246.6 L 940.0,247.1 L 940.0,374.0 Z" class="pf-p"/>
+<path d="M 78.0,44.0 L 81.9,44.0 L 85.8,44.0 L 89.8,44.0 L 93.7,44.0 L 97.6,44.0 L 101.5,44.0 L 105.4,44.0 L 109.3,44.0 L 113.3,44.0 L 117.2,44.0 L 121.1,44.0 L 125.0,44.0 L 128.9,44.0 L 132.9,44.0 L 136.8,44.0 L 140.7,44.0 L 144.6,44.0 L 148.5,44.0 L 152.4,44.0 L 156.4,44.0 L 160.3,44.0 L 164.2,44.0 L 168.1,44.0 L 172.0,44.0 L 176.0,44.0 L 179.9,44.0 L 183.8,44.0 L 187.7,44.0 L 191.6,44.0 L 195.5,44.0 L 199.5,44.0 L 203.4,44.0 L 207.3,44.0 L 211.2,44.0 L 215.1,44.0 L 219.1,44.0 L 223.0,44.0 L 226.9,44.0 L 230.8,44.0 L 234.7,44.0 L 238.6,44.0 L 242.6,44.0 L 246.5,44.0 L 250.4,44.0 L 254.3,44.0 L 258.2,44.0 L 262.2,44.0 L 266.1,44.0 L 270.0,44.0 L 273.9,44.0 L 277.8,44.0 L 281.7,44.0 L 285.7,44.0 L 289.6,44.0 L 293.5,44.0 L 297.4,44.0 L 301.3,46.3 L 305.3,49.5 L 309.2,52.5 L 313.1,55.6 L 317.0,58.6 L 320.9,61.5 L 324.8,64.3 L 328.8,67.2 L 332.7,69.9 L 336.6,72.6 L 340.5,75.3 L 344.4,77.9 L 348.4,80.5 L 352.3,83.0 L 356.2,85.5 L 360.1,87.9 L 364.0,90.4 L 367.9,92.7 L 371.9,95.0 L 375.8,97.3 L 379.7,99.6 L 383.6,101.8 L 387.5,104.0 L 391.5,106.1 L 395.4,108.2 L 399.3,110.3 L 403.2,112.3 L 407.1,114.3 L 411.0,116.3 L 415.0,118.3 L 418.9,120.2 L 422.8,122.1 L 426.7,124.0 L 430.6,125.8 L 434.6,127.6 L 438.5,129.4 L 442.4,131.2 L 446.3,132.9 L 450.2,134.6 L 454.1,136.3 L 458.1,137.9 L 462.0,139.6 L 465.9,141.2 L 469.8,142.8 L 473.7,144.4 L 477.7,145.9 L 481.6,147.4 L 485.5,149.0 L 489.4,150.4 L 493.3,151.9 L 497.2,153.4 L 501.2,154.8 L 505.1,156.2 L 509.0,157.6 L 512.9,159.0 L 516.8,160.3 L 520.8,161.7 L 524.7,163.0 L 528.6,164.3 L 532.5,165.6 L 536.4,166.9 L 540.3,168.2 L 544.3,169.4 L 548.2,170.6 L 552.1,171.9 L 556.0,173.1 L 559.9,174.2 L 563.9,175.4 L 567.8,176.6 L 571.7,177.7 L 575.6,178.9 L 579.5,180.0 L 583.4,181.1 L 587.4,182.2 L 591.3,183.3 L 595.2,184.3 L 599.1,185.4 L 603.0,186.5 L 607.0,187.5 L 610.9,188.5 L 614.8,189.5 L 618.7,190.5 L 622.6,191.5 L 626.5,192.5 L 630.5,193.5 L 634.4,194.4 L 638.3,195.4 L 642.2,196.3 L 646.1,197.3 L 650.1,198.2 L 654.0,199.1 L 657.9,200.0 L 661.8,200.9 L 665.7,201.8 L 669.6,202.6 L 673.6,203.5 L 677.5,204.4 L 681.4,205.2 L 685.3,206.0 L 689.2,206.9 L 693.2,207.7 L 697.1,208.5 L 701.0,209.3 L 704.9,210.1 L 708.8,210.9 L 712.7,211.7 L 716.7,212.5 L 720.6,213.2 L 724.5,214.0 L 728.4,214.8 L 732.3,215.5 L 736.3,216.2 L 740.2,217.0 L 744.1,217.7 L 748.0,218.4 L 751.9,219.1 L 755.8,219.8 L 759.8,220.5 L 763.7,221.2 L 767.6,221.9 L 771.5,222.6 L 775.4,223.3 L 779.4,224.0 L 783.3,224.6 L 787.2,225.3 L 791.1,225.9 L 795.0,226.6 L 798.9,227.2 L 802.9,227.9 L 806.8,228.5 L 810.7,229.1 L 814.6,229.7 L 818.5,230.3 L 822.5,230.9 L 826.4,231.5 L 830.3,232.1 L 834.2,232.7 L 838.1,233.3 L 842.0,233.9 L 846.0,234.5 L 849.9,235.1 L 853.8,235.6 L 857.7,236.2 L 861.6,236.8 L 865.6,237.3 L 869.5,237.9 L 873.4,238.4 L 877.3,239.0 L 881.2,239.5 L 885.1,240.0 L 889.1,240.6 L 893.0,241.1 L 896.9,241.6 L 900.8,242.1 L 904.7,242.6 L 908.7,243.1 L 912.6,243.6 L 916.5,244.1 L 920.4,244.6 L 924.3,245.1 L 928.2,245.6 L 932.2,246.1 L 936.1,246.6 L 940.0,247.1" class="pf-pline"/>
+<line x1="78" y1="44.0" x2="940" y2="44.0" class="pf-sum"/>
+<line x1="298.5" y1="44" x2="298.5" y2="374" class="pf-strike"/>
+</g>
+<text x="306.5" y="362.0" class="pf-lab pf-lab-s">strike S</text>
+<text x="164.2" y="228.8" class="pf-lab pf-lab-p">P — Protected</text>
+<text x="560.7" y="77.0" class="pf-lab pf-lab-n">N — Amplified</text>
+<text x="78.0" y="28.0" class="pf-lab pf-lab-sum">P + N = 1.00 collateral, at every price</text>
+<text x="940.0" y="408" class="pf-tick" text-anchor="end">reference price x at maturity →</text>
+<text x="78" y="408" class="pf-tick">x below S</text>
+</svg></div>
+  </div>
+  <div class="film-foot"><span>Medici — Proprietary &amp; Confidential</span><span class="sc">7 / 8</span></div>
+</section>
+
+<!-- s8 · cadence · 13s -->
+<section class="scene" data-dur="13" data-id="s8">
+  <div class="film-mark"><i></i><span>Medici</span></div>
+  <div class="grid2">
+    <div>
+      <p class="big" style="max-width:18ch" data-anim="fade-up">Bring us the thing you can't sell in a hurry.</p>
+      <p class="mid mt-l frost" data-anim="fade-up" data-at="4.0">There is no liquidation price. The math doesn't permit it.</p>
+      <p class="cap faint mt-m" data-anim="fade-up" data-at="6.4">Medici &mdash; on Canton, where your collateral already lives.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div style="display:flex;gap:36px" data-anim="rise-in" data-at="0.6">
+        <div class="homel mo" style="width:132px;height:280px;border-radius:18px;background:var(--frost)"></div>
+        <div class="homer mo" style="width:132px;height:280px;border-radius:18px;background:var(--plum)"></div>
+      </div>
+      <p class="cap faint" style="margin-top:38px;letter-spacing:.14em;text-transform:uppercase">the same asset &mdash; split, and still held</p>
+    </div>
+  </div>
+  <div class="film-foot"><span>Medici — Proprietary &amp; Confidential</span><span class="sc">8 / 8</span></div>
+</section>
+
+<div class="pbar"><i></i></div>
+</div>
+</div>
+<script>
+/* ---- timeline player ------------------------------------------------------
+ * Auto-plays scenes at their contract vo_seconds. Scene-entry effects are the
+ * html-ppt skill's data-anim classes (assets/animations/animations.css); the
+ * clock, the ?scene= override and window.__player are ours.
+ * -------------------------------------------------------------------------- */
+(function(){
+  var film = document.querySelector('.film');
+  var scenes = Array.prototype.slice.call(document.querySelectorAll('.scene'));
+  var durs = scenes.map(function(s){ return parseFloat(s.getAttribute('data-dur')) || 5; });
+  var total = durs.reduce(function(a,b){return a+b;},0);
+  var starts = []; (function(){ var a=0; durs.forEach(function(d){ starts.push(a); a+=d; }); })();
+  var idx = 0, t0 = 0, elapsed = 0, running = true, done = false;
+
+  function fit(){
+    var s = Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    film.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit); fit();
+
+  /* progress bar + scene ticks */
+  var bar = document.querySelector('.pbar'), fill = bar.querySelector('i');
+  starts.slice(1).forEach(function(st){
+    var b = document.createElement('b'); b.style.left = (st/total*100)+'%'; bar.appendChild(b);
+  });
+
+  function enter(n){
+    n = Math.max(0, Math.min(scenes.length-1, n));
+    scenes.forEach(function(s,j){ s.classList.toggle('is-live', j===n); });
+    var s = scenes[n];
+    /* restart the skill's entry animations, honouring per-element data-at delays */
+    s.querySelectorAll('[data-anim]').forEach(function(el){
+      var a = el.getAttribute('data-anim');
+      el.classList.remove('anim-'+a);
+      el.style.animationDelay = (el.getAttribute('data-at')||0) + 's';
+      void el.offsetWidth;
+      el.classList.add('anim-'+a);
+    });
+    /* restart bespoke scene motion (CSS keyframes keyed on .is-live) */
+    s.querySelectorAll('.mo').forEach(function(el){
+      var c = el.className; el.className = c.replace(/\bmo\b/, 'mo-off');
+      void el.offsetWidth; el.className = c;
+    });
+    idx = n; t0 = performance.now(); elapsed = starts[n]; done = false;
+    var sc = document.querySelector('.film-foot .sc');
+    if (sc) sc.textContent = (n+1) + ' / ' + scenes.length;
+    if (location.hash !== '#s'+(n+1)) history.replaceState(null,'','#s'+(n+1));
+  }
+
+  function tick(now){
+    var local = (now - t0)/1000;
+    elapsed = starts[idx] + Math.min(local, durs[idx]);
+    fill.style.width = (elapsed/total*100) + '%';
+    if (running && local >= durs[idx]) {
+      if (idx < scenes.length-1) enter(idx+1);
+      else { done = true; running = false; film.classList.add('is-done'); }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === ' ' || e.key === 'ArrowRight' || e.key === 'PageDown') {
+      running = true; film.classList.remove('is-done'); enter(idx+1); e.preventDefault();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      running = true; film.classList.remove('is-done'); enter(idx-1); e.preventDefault();
+    } else if (e.key === 'Home') { running = true; enter(0); }
+    else if (e.key === 'p' || e.key === 'P') { running = !running; if (running) t0 = performance.now(); }
+  });
+
+  window.__player = {
+    get scene(){ return idx + 1; },
+    get t(){ return Math.round(elapsed*100)/100; },
+    total: total,
+    seek: function(n){ running = true; film.classList.remove('is-done'); enter((n|0) - 1); return this.scene; }
+  };
+
+  /* ---- freeze(t): render the exact frame t seconds into the current scene.
+   * Headless screenshotters advance performance.now() (virtual time) but NOT the
+   * CSS animation clock, so mid-animation capture is done by shifting every
+   * animation-delay by -t and pausing. Also handy for stills. ?at=<sec> uses it. */
+  function freeze(at){
+    running = false;
+    scenes[idx].querySelectorAll('*').forEach(function(el){
+      var cs = getComputedStyle(el);
+      if (!cs.animationName || cs.animationName === 'none') return;
+      var d = cs.animationDelay.split(',').map(function(v){
+        return (parseFloat(v) - at).toFixed(3) + 's';
+      }).join(',');
+      el.style.animationDelay = d;
+      el.style.animationPlayState = 'paused';
+    });
+    var cs2 = getComputedStyle(scenes[idx]);
+    if (cs2.animationName && cs2.animationName !== 'none') {
+      scenes[idx].style.animationDelay = cs2.animationDelay.split(',').map(function(v){
+        return (parseFloat(v) - at).toFixed(3) + 's'; }).join(',');
+      scenes[idx].style.animationPlayState = 'paused';
+    }
+    elapsed = starts[idx] + Math.min(at, durs[idx]);
+    fill.style.width = (elapsed/total*100) + '%';
+  }
+  window.__player.freeze = freeze;
+
+  var m = /[?&]scene=(\d+)/.exec(location.search||'');
+  var start = m ? parseInt(m[1],10) - 1 : 0;
+  enter(start);
+  var fm = /[?&]at=([\d.]+)/.exec(location.search||'');
+  if (fm) { requestAnimationFrame(function(){ freeze(parseFloat(fm[1])); }); }
+  else { requestAnimationFrame(function(now){ t0 = now; requestAnimationFrame(tick); }); }
+})();
+</script>
+</body>
+</html>
