@@ -1,0 +1,15 @@
+# Python deps for the Manim renderer adapter. This renderer keeps its OWN venv,
+# separate from the parent tool's (tools/explainer-video/.venv) — Manim pulls a
+# large scientific stack (numpy/scipy/pycairo/manimpango/moderngl) that the TTS
+# engine has no reason to carry.
+#
+#   cd tools/explainer-video/renderers/manim
+#   python3.12 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
+#
+# Python 3.12 is the tested interpreter. Manim 0.20 does not yet publish wheels
+# for 3.14 (the current Homebrew `python3` on this machine), so pin the venv to
+# 3.12 or 3.13 explicitly.
+#
+# System deps (macOS / Apple Silicon), see README §Setup:
+#   brew install cairo pango pkgconf ffmpeg
+manim==0.20.1

@@ -1,0 +1,269 @@
+#!/usr/bin/env python3
+"""explainer-video — render a branded explainer video from a product deck's
+`video/` dir (a SCRIPT.md + a self-contained explainer.html) using a named
+voice profile.
+
+This repo (medici-platform) holds the TOOLING/ENGINE ONLY. The product script
+and branded slides live in the product deck repos and are passed in as paths:
+  medici -> medici-decks/video/   plumb -> reconciler-decks/video/
+  assay  -> assay-decks/video/
+
+Pipeline (thin wrapper over pipeline/*):
+  gen per-scene audio (voice profile) -> concat + loudnorm -> measure durations
+  -> inject window.SCENE_DURATIONS into a copy of the slides -> Playwright record
+  -> subtitles -> hardware-encode -> <out>/<name>.mp4
+  (+ .vtt alongside, and a .description.txt when SCRIPT.md has a ## Description)
+
+  The delivered artifacts are named by <name> alone — the voice/profile is NOT
+  in the filename (only the internal <out>/.work-<name>-<profile>/ scratch dir
+  carries the voice, to disambiguate concurrent renders).
+
+Example:
+  explainer-video \\
+    --script ../medici-decks/video/SCRIPT.md \\
+    --slides ../medici-decks/video/explainer.html \\
+    --profile australian-medici \\
+    --out ./out
+
+  # or a US-accent Orpheus built-in voice, no registry entry:
+  explainer-video --script ... --slides ... --us-voice leo
+"""
+from __future__ import annotations
+
+import argparse
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+TOOL_ROOT = Path(__file__).resolve().parent
+PIPELINE = TOOL_ROOT / "pipeline"
+GSAP_BUNDLE = TOOL_ROOT / "renderers" / "gsap" / "bundle.mjs"
+sys.path.insert(0, str(PIPELINE))
+
+from lib import build_context, RunContext, us_orpheus_profile, ORPHEUS_US_VOICES  # noqa: E402
+import gen_tts  # noqa: E402
+import assemble_audio  # noqa: E402
+import gen_subs  # noqa: E402
+
+_SD_RE = re.compile(r"window\.SCENE_DURATIONS\s*=\s*\[[^\]]*\]\s*;?")
+
+# A deck that adopts the GSAP renderer authors against inline slots that
+# `renderers/gsap/bundle.mjs` fills with the vendored GSAP core + runtime:
+#   <!-- gsap-explainer:inline gsap -->    <script>…gsap…</script>    <!-- /… -->
+# A *filled* slot holds tens-to-hundreds of KB of real script; an unfilled one
+# is the template's placeholder comment (a few dozen bytes). `_INLINE_BLOCK_RE`
+# captures each slot's body so `_has_unbundled_slots` can tell the two apart
+# statically — no dependency on the bundler's node_modules to make the decision,
+# which keeps an already-bundled (self-contained) deck renderable on a machine
+# that never installed the gsap sources.
+_INLINE_BLOCK_RE = re.compile(
+    r"<!--\s*gsap-explainer:inline\s+[a-zA-Z0-9_-]+\s*-->"
+    r"(.*?)"
+    r"<!--\s*/gsap-explainer:inline\s*-->",
+    re.DOTALL,
+)
+_INLINE_SCRIPT_RE = re.compile(r"<script[^>]*>(.*?)</script>", re.DOTALL)
+# A real inlined source (gsap core ~70KB, DrawSVGPlugin ~10KB, runtime ~20KB) is
+# far larger than any placeholder; 500 bytes cleanly separates the two.
+_FILLED_SLOT_MIN_BYTES = 500
+
+
+def _has_unbundled_slots(html: str) -> bool:
+    """True when the slides carry gsap-explainer inline slots the bundler has
+    not yet filled.
+
+    Returns False for a hand-rolled deck (no inline slots at all) and for an
+    already-bundled deck (every slot holds real source), so both are left
+    untouched. Returns True only when at least one slot is still a placeholder —
+    the un-bundled deck that would otherwise leave `window.GsapExplainer`
+    undefined, never raise `data-done`, and burn the recorder's full timeout.
+    """
+    for body in _INLINE_BLOCK_RE.findall(html):
+        m = _INLINE_SCRIPT_RE.search(body)
+        payload = m.group(1) if m else ""
+        if len(payload.strip()) < _FILLED_SLOT_MIN_BYTES:
+            return True
+    return False
+
+
+def maybe_bundle_slides(ctx: RunContext) -> None:
+    """Auto-bundle the WORK COPY of the slides when it is an un-bundled GSAP deck.
+
+    The pipeline copies the slides to a work dir before recording
+    (`RunContext.slides_rendered`, `<out>/.work-*/slides.html`), so an
+    explainer.html whose `<!-- gsap-explainer:inline … -->` slots were never
+    filled has no GSAP runtime on the page: nothing animates, `data-done` is
+    never set, and `record.mjs` waits out its whole timeout before failing.
+    Bundling here — on the work copy only, never the author's source deck — makes
+    a deck render whether or not the author pre-bundled, which is the intended UX.
+
+    `renderers/gsap/bundle.mjs` inlines in place and is idempotent, and it
+    asserts exactly one `window.SCENE_DURATIONS` literal survives, so this cannot
+    double-bundle or corrupt the injected durations. Already-bundled and
+    hand-rolled decks are detected up front and skipped, so this never shells out
+    (and never needs the gsap node_modules) for them.
+    """
+    html = ctx.slides_rendered.read_text()
+    if not _has_unbundled_slots(html):
+        return
+    print("[3b/6] un-bundled GSAP deck — inlining the runtime into the work copy ...",
+          file=sys.stderr)
+    # The work copy is a '.work-*' child of --out (see assert_safe_work_dir); the
+    # author's ctx.slides is never passed to the bundler.
+    subprocess.run(["node", str(GSAP_BUNDLE), str(ctx.slides_rendered)], check=True)
+
+
+def inject_durations(ctx: RunContext, durations: list[float]) -> None:
+    html = ctx.slides.read_text()
+    payload = "window.SCENE_DURATIONS=[" + ", ".join(str(d) for d in durations) + "];"
+    if _SD_RE.search(html):
+        html = _SD_RE.sub(payload, html, count=1)
+    else:
+        # inject just before </body> if the slides don't already declare it
+        html = html.replace("</body>", f"<script>{payload}</script>\n</body>", 1)
+    ctx.slides_rendered.write_text(html)
+
+
+def run(ctx: RunContext) -> None:
+    # Prove the target is our own '.work-*' dir under --out before deleting it
+    # recursively; never rmtree a path we only assume is safe.
+    ctx.assert_safe_work_dir()
+    if ctx.work.exists():
+        shutil.rmtree(ctx.work)
+    ctx.work.mkdir(parents=True, exist_ok=True)
+    ctx.out_dir.mkdir(parents=True, exist_ok=True)
+
+    print("[1/6] generating narration clips ...", file=sys.stderr)
+    gen_tts.generate(ctx)
+
+    print("[2/6] assembling + normalizing audio ...", file=sys.stderr)
+    durations = assemble_audio.assemble(ctx)
+    if len(durations) != len(ctx.scenes):
+        raise SystemExit("internal: duration/scene count mismatch")
+
+    print("[3/6] injecting SCENE_DURATIONS into slides ...", file=sys.stderr)
+    inject_durations(ctx, durations)
+    # If the deck adopted the GSAP renderer but was handed to --slides un-bundled,
+    # inline the runtime into the work copy now — otherwise record.mjs waits out
+    # its whole timeout on a page that can never raise data-done. No-op for
+    # already-bundled and hand-rolled decks.
+    maybe_bundle_slides(ctx)
+
+    print("[4/6] recording slides -> webm (Playwright) ...", file=sys.stderr)
+    subprocess.run(
+        ["node", str(PIPELINE / "record.mjs"), str(ctx.slides_rendered), str(ctx.rec_dir)],
+        check=True,
+    )
+    webms = sorted(ctx.rec_dir.glob("*.webm"))
+    if not webms:
+        raise SystemExit(f"no webm produced in {ctx.rec_dir}")
+    webm = webms[-1]
+
+    print("[5/6] writing subtitles ...", file=sys.stderr)
+    gen_subs.write_subs(ctx)
+
+    print("[6/6] hardware-encoding final mp4 ...", file=sys.stderr)
+    encode_cmd = [
+        "bash", str(PIPELINE / "encode.sh"),
+        str(webm), str(ctx.narration_wav), str(ctx.subtitles_srt), str(ctx.out_mp4),
+    ]
+    # Insert after the script path (index 2), not before it — bash rejects
+    # flags placed between 'bash' and the script argument (R1).
+    if ctx.title_raw:
+        encode_cmd[2:2] = ["--title", ctx.title_raw]
+    if ctx.url:
+        encode_cmd[2:2] = ["--url", ctx.url]
+    if ctx.generated_at:
+        encode_cmd[2:2] = ["--date", ctx.generated_at]
+    if ctx.description:
+        # best-effort mp4 metadata; the .description.txt below is the contract
+        encode_cmd[2:2] = ["--description", ctx.description]
+    subprocess.run(encode_cmd, check=True)
+    # encode succeeded (check=True) — publish the external .vtt next to the mp4
+    out_vtt = gen_subs.publish_vtt(ctx)
+    # ... and the YouTube-ready description, when the script carries one
+    out_desc = None
+    if ctx.description:
+        ctx.out_description.write_text(ctx.description + "\n")
+        out_desc = ctx.out_description
+    else:
+        print("SCRIPT.md has no ## Description — no description emitted", file=sys.stderr)
+        # drop a stale .description.txt from a prior render of the same stem
+        ctx.out_description.unlink(missing_ok=True)
+    print(f"\nDONE: {ctx.out_mp4}")
+    print(f"      {out_vtt}")
+    if out_desc:
+        print(f"      {out_desc}")
+
+
+def dry_run(ctx: RunContext) -> None:
+    p = ctx.profile
+    print("=== explainer-video (dry run) ===")
+    print(f"script    : {ctx.script}")
+    print(f"slides    : {ctx.slides}")
+    print(f"profile   : {p.name}  (engine={p.engine}, model={p.model or '-'})")
+    if p.engine == "qwen":
+        print(f"ref_audio : {p.ref_audio}")
+        print(f"max_tokens: {p.params.get('max_tokens', 4096)}")
+    elif p.voice:
+        print(f"voice     : {p.voice}")
+    print(f"scenes    : {len(ctx.scenes)}")
+    for s in ctx.scenes:
+        print(f"  - {s.id:16s} narration={len(s.narration):3d}c  subtitle={s.subtitle[:48]!r}")
+    print(f"work      : {ctx.work}")
+    print(f"output    : {ctx.out_mp4}")
+    print(f"subtitles : {ctx.out_vtt}")
+    if ctx.description:
+        print(f"descr.txt : {ctx.out_description}  ({len(ctx.description)} chars)")
+    else:
+        print("descr.txt : (none — SCRIPT.md has no ## Description)")
+    if ctx.title_raw:
+        print(f"mp4 title : {ctx.title_raw}")
+    if ctx.url:
+        print(f"mp4 url   : {ctx.url}")
+    if ctx.generated_at:
+        print(f"mp4 date  : {ctx.generated_at}")
+    if not shutil.which("ffmpeg"):
+        print("WARN: ffmpeg not on PATH")
+    if not shutil.which("node"):
+        print("WARN: node not on PATH (needed for Playwright recording)")
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(prog="explainer-video", description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--script", required=True, help="path to the product's video/SCRIPT.md")
+    ap.add_argument("--slides", required=True, help="path to the product's video/explainer.html")
+    voice_sel = ap.add_mutually_exclusive_group(required=True)
+    voice_sel.add_argument("--profile",
+                           help="voice profile from voices/registry.yaml, e.g. australian-medici")
+    voice_sel.add_argument("--us-voice", nargs="?", const="leo", default=None, metavar="NAME",
+                           help="US-accent Orpheus built-in voice (" +
+                                ", ".join(ORPHEUS_US_VOICES) + ") — bypasses the registry, "
+                                "no reference clip needed; bare --us-voice selects leo")
+    ap.add_argument("--out", default="./out", help="output directory (default ./out)")
+    ap.add_argument("--name", default=None,
+                    help="output basename (default: the script's slugified H1 title; "
+                         "must be a single filename component, no '/' or '..')")
+    ap.add_argument("--url", default="",
+                    help="product URL to embed as MP4 metadata (e.g. https://assay.finance)")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="resolve + parse everything and print the plan, run nothing")
+    args = ap.parse_args()
+
+    profile_override = None
+    if args.us_voice is not None:
+        profile_override = us_orpheus_profile(args.us_voice)
+    ctx = build_context(Path(args.script), Path(args.slides), args.profile,
+                        Path(args.out), args.name, url=args.url,
+                        profile_override=profile_override)
+    if args.dry_run:
+        dry_run(ctx)
+    else:
+        run(ctx)
+
+
+if __name__ == "__main__":
+    main()

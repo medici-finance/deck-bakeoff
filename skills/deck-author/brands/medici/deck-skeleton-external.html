@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EXTERNAL deck skeleton — copy me</title>
+<meta name="deck-footer" content="Medici — Proprietary &amp; Confidential">
+<!--
+  deck-skeleton-external.html — the DARK house skeleton for EXTERNAL decks
+  (prospect/partner decks, reports that leave the building). Brand-guide §10.6:
+  the external footer is the authoritative class marker; the dark surface is the
+  convention that goes with it. Internal decks keep the light skeleton.
+
+  Derived 2026-08-18 from deck-skeleton-internal.html + house-brand-guide.md
+  during the loom-bakeoff deck round (tracks/deck/inhouse, the control cell),
+  and packaged into skills/deck-author. The derivation cost six undocumented
+  decisions plus one silent-failure trap in the font metadata; ALL of them are
+  written up in the deck-author SKILL.md ("The six skeleton decisions") — read
+  that before changing anything here, so nobody re-derives them.
+  Packaging deltas (2026-08-18): example slides carry data-layout /
+  data-question / data-nn attributes so the skill's linter (tools/check_deck.py)
+  can see the contract; nothing visual changed.
+  Deltas from the internal skeleton, all brand-guide-driven:
+    - dark surface (#000 canvas, #0A0A0A cards, #1A1A1A hairlines) per §2.1/§10.3
+    - IBM Plex Sans + IBM Plex Mono, self-hosted woff2 via @font-face (§3.1:
+      "self-host, never a CDN"). The internal skeleton still carries the legacy
+      EB Garamond / Inter / JetBrains Mono CDN trio (§3.2 legacy note).
+    - headings are IBM Plex Sans SemiBold, sentence case — no serif display face
+    - external footer wording, stamped on EVERY slide (screen and print)
+    - true 16:9 stage: a fixed 1280x720 board scaled to fit the viewport, so a
+      slide looks identical on any screen and matches the PDF page
+    - assay octagonal mark + App-avatar glyphs available as <use> symbols
+
+  Copy this file into <deck-dir>/index.html, replace the example slides, and
+  fix the @font-face URLs if the deck sits one directory deeper (../fonts/).
+  PDF (house renderer, footer comes from the <meta> above):
+      node tools/render-deck-pdf.cjs <deck-dir>/index.html <deck-dir>/deck.pdf
+-->
+<style>
+/* ── Typography: self-hosted IBM Plex (brand-guide §3.1) ─────────────── */
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans.woff2') format('woff2');font-weight:100 700;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Sans';src:url('fonts/ipx-sans-italic.woff2') format('woff2');font-weight:100 700;font-style:italic;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('fonts/ipx-mono-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* brand-guide §2.1 / §2.4 — dark surface tokens */
+  --black:#000000; --surface:#0A0A0A; --line:#1A1A1A; --line-2:#252525;
+  --white:#FFFFFF; --text:#AAAAAA; --muted:#666666;
+  --blue:#3366FF; --blue-light:#5C85FF; --blue-dark:#1A4DCC; --gold:#D4A843;
+  --green:#00CC66; --red:#FF4444; --amber:#FFCC00;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+html,body{height:100%;background:var(--black);overflow:hidden}
+body{font-family:var(--sans);color:var(--text);-webkit-font-smoothing:antialiased}
+
+/* ── The 16:9 stage: a 1280x720 board, scaled to fit ──────────────────── */
+.stage{position:fixed;left:50%;top:50%;width:1280px;height:720px;
+  transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:50% 50%;
+  background:var(--black);overflow:hidden}
+.slide{position:absolute;inset:0;padding:52px 72px 58px;display:flex;flex-direction:column;
+  justify-content:center;opacity:0;transition:opacity .28s ease-out;pointer-events:none}
+.slide.active{opacity:1;pointer-events:auto;z-index:1}
+.slide.top{justify-content:flex-start}
+/* Footer on EVERY slide (brand-guide §10.6 rule 1) */
+.slide::after{content:"Medici — Proprietary & Confidential";position:absolute;left:0;right:0;bottom:20px;
+  text-align:center;font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:.08em;color:var(--muted)}
+.slide-no{position:absolute;right:26px;bottom:18px;font-family:var(--mono);font-size:12px;color:#3A3A3A;
+  font-variant-numeric:tabular-nums}
+
+/* ── Type scale (brand-guide §3.3, deck sizes §10.3) ──────────────────── */
+h1{font-size:48px;font-weight:600;line-height:1.1;letter-spacing:-.015em;color:var(--white)}
+h2{font-size:34px;font-weight:600;line-height:1.15;letter-spacing:-.01em;color:var(--white)}
+h3{font-size:19px;font-weight:600;line-height:1.3;color:var(--white)}
+h4{font-size:15px;font-weight:600;line-height:1.3;color:var(--white)}
+p,li{font-size:17px;line-height:1.55}
+.lede{font-size:21px;line-height:1.5;color:var(--text)}
+.sm{font-size:15px;line-height:1.5}
+.xs{font-size:13.5px;line-height:1.5}
+strong,b{color:var(--white);font-weight:600}
+em{font-style:italic}
+ul{list-style:none}
+ul.dash>li{position:relative;padding-left:18px;margin-bottom:9px}
+ul.dash>li::before{content:"—";position:absolute;left:0;color:var(--muted)}
+.kicker{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+.kicker.mute{color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.blue{color:var(--blue-light)}.gold{color:var(--gold)}.green{color:var(--green)}.red{color:var(--red)}
+.white{color:var(--white)}.dim{color:var(--muted)}
+.rule{height:1px;background:var(--line);border:0}
+
+/* ── Layout helpers ──────────────────────────────────────────────────── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:start}
+.mt1{margin-top:10px}.mt2{margin-top:18px}.mt3{margin-top:28px}.mt4{margin-top:38px}
+.mb1{margin-bottom:10px}.mb2{margin-bottom:18px}.mb3{margin-bottom:26px}
+.center{text-align:center}
+
+/* ── Components (brand-guide §4.4 card, §5.1 badges) ──────────────────── */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+.card.accent{border-left:3px solid var(--blue)}
+.card h3{margin-bottom:7px}
+.card .n{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--blue);letter-spacing:.06em}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 14px}
+.stat .num{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--white);line-height:1.1}
+.stat .cap{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.35}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;
+  font-size:12px;font-weight:500;letter-spacing:.02em}
+.badge.b-blue{background:rgba(51,102,255,.10);color:var(--blue-light);border:1px solid rgba(51,102,255,.30)}
+.badge.b-mute{background:rgba(102,102,102,.10);color:#8A8A8A;border:1px solid rgba(102,102,102,.30)}
+.badge.b-green{background:rgba(0,204,102,.10);color:var(--green);border:1px solid rgba(0,204,102,.30)}
+.badge.b-red{background:rgba(255,68,68,.10);color:var(--red);border:1px solid rgba(255,68,68,.30)}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+  text-align:left;padding:8px 12px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--text);vertical-align:top}
+td:first-child{color:var(--white);font-weight:500}
+tr:last-child td{border-bottom:0}
+pre{background:#060606;border:1px solid var(--line);border-radius:8px;padding:16px 18px;overflow:hidden}
+code{font-family:var(--mono);font-size:13.5px;line-height:1.6;color:var(--text);white-space:pre}
+code .k{color:var(--blue-light)}code .c{color:#4A4A4A}code .s{color:var(--white)}code .g{color:var(--gold)}
+.quote{border-left:3px solid var(--blue);padding-left:20px}
+
+/* ── Brand marks (assay octagonal stamp + App-avatar glyphs) ──────────── */
+.mark{display:block}
+.watermark{position:absolute;right:-90px;bottom:-90px;width:420px;height:420px;opacity:.05;pointer-events:none}
+
+/* ── Chrome ──────────────────────────────────────────────────────────── */
+.progress{position:absolute;top:0;left:0;height:2px;background:var(--blue);width:0;
+  transition:width .28s ease-out;z-index:20}
+.hint{position:absolute;left:26px;bottom:18px;font-size:11px;color:#2E2E2E;letter-spacing:.04em}
+
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{overflow:visible;background:#000}
+  .stage{position:static;transform:none;width:1280px;height:auto;left:auto;top:auto}
+  .slide{position:relative;inset:auto;width:1280px;height:720px;opacity:1;pointer-events:auto;
+    page-break-after:always;break-after:page}
+  .slide:last-child{page-break-after:auto}
+  .progress,.hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+<div class="progress" id="progress"></div>
+
+<!-- ── Brand mark symbol library (assay octagonal stamp, App avatars) ──── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="oct" viewBox="0 0 512 512">
+    <polygon points="450,176 336,62 176,62 62,176 62,336 176,450 336,450 450,336"
+      fill="#10141B" stroke="#3366FF" stroke-width="10" stroke-linejoin="round"/>
+    <polygon points="433,183 330,79 183,79 79,183 79,330 183,433 330,433 433,330"
+      fill="none" stroke="#3366FF" stroke-width="2" stroke-linejoin="round" opacity=".45"/>
+  </symbol>
+  <!-- watermark line form of the assay mark: same house-blue outline treatment -->
+  <symbol id="oct-line" viewBox="0 0 512 512">
+    <path d="M256 56 L420 138 V286 C420 384 352 442 256 470 C160 442 92 384 92 286 V138 Z"
+      fill="none" stroke="#3366FF" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M176 258 L232 310 L340 194"
+      fill="none" stroke="#3366FF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <!-- the assay mark: gold shield with tick (brand/assay-mark-correct.svg) -->
+  <symbol id="assay-mark" viewBox="0 0 512 512">
+    <path d="M256 56 L420 138 V286 C420 384 352 442 256 470 C160 442 92 384 92 286 V138 Z"
+      fill="#D4A843" fill-opacity="0.10" stroke="#D4A843" stroke-width="22" stroke-linejoin="round"/>
+    <path d="M176 258 L232 310 L340 194"
+      fill="none" stroke="#D4A843" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <!-- App-avatar glyphs: one per role -->
+  <symbol id="app-desk" viewBox="0 0 512 512"><use href="#oct"/>
+    <path d="M256,164 L283,212 L340,232 L283,252 L256,300 L229,252 L172,232 L229,212 Z" fill="#3366FF"/>
+    <path d="M256,164 L283,212 L256,232 Z" fill="#5C85FF"/>
+    <circle cx="256" cy="232" r="11" fill="#D4A843"/></symbol>
+  <symbol id="app-worker" viewBox="0 0 512 512"><use href="#oct"/>
+    <g transform="rotate(-42 256 250)" fill="#3366FF">
+      <rect x="247" y="196" width="18" height="132" rx="8"/>
+      <rect x="206" y="156" width="100" height="46" rx="11"/>
+      <rect x="206" y="156" width="100" height="12" rx="6" fill="#5C85FF"/></g></symbol>
+  <symbol id="app-reviewer" viewBox="0 0 512 512"><use href="#oct"/>
+    <path d="M194,238 L238,288 L330,176" fill="none" stroke="#00CC66" stroke-width="28"
+      stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="app-verifier" viewBox="0 0 512 512"><use href="#oct"/>
+    <circle cx="256" cy="232" r="64" fill="none" stroke="#3366FF" stroke-width="9"/>
+    <path d="M224,234 L248,260 L294,202" fill="none" stroke="#FFFFFF" stroke-width="17"
+      stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+
+<!-- ══ SLIDE 1 — TITLE (example, replace) ═══════════════════════════════ -->
+<section class="slide active" data-layout="L-COVER">
+  <svg class="watermark"><use href="#oct-line"/></svg>
+  <svg class="mark mb3" width="66" height="66"><use href="#assay-mark"/></svg>
+  <p class="kicker mb2">Assay by Medici · External briefing</p>
+  <h1>Deck title goes here</h1>
+  <p class="lede mt2" style="max-width:760px">One-line standfirst saying what this deck argues,
+  in the house voice: evidence-first, no hype.</p>
+  <div class="mt4"><span class="badge b-blue">August 2026</span>
+    <span class="badge b-mute" style="margin-left:8px">v0.1 · design draft</span></div>
+  <span class="slide-no mono">01</span>
+</section>
+
+<!-- ══ SLIDE 2 — CONTENT (example, replace) ═════════════════════════════ -->
+<section class="slide top" data-layout="L-TWO-COL"
+  data-question="What does a house content slide owe the reader?">
+  <p class="kicker mute mb1">Section label</p>
+  <h2 class="mb3">Example content slide</h2>
+  <div class="g3 mb3">
+    <div class="stat"><div class="num">42</div><div class="cap">Example figure</div></div>
+    <div class="stat"><div class="num green">9/9</div><div class="cap">Functional colour, sparingly</div></div>
+    <div class="stat"><div class="num blue">3</div><div class="cap">Electric Blue is the accent</div></div>
+  </div>
+  <div class="g2">
+    <div class="card accent"><h3>Card title</h3>
+      <p class="sm">Cards sit on <span class="mono">#0A0A0A</span> with a <span class="mono">#1A1A1A</span>
+      hairline. Depth comes from border contrast, never from shadow (§4.4).</p></div>
+    <pre><code><span class="c"># mono for data, code, and object ids</span>
+<span class="k">object</span>: brief
+<span class="k">id</span>: <span class="s">018f3c2a-…</span></code></pre>
+  </div>
+  <span class="slide-no mono">02</span>
+</section>
+
+</div><!-- /stage -->
+<span class="hint">← →  ·  scroll  ·  click</span>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide')),
+      total=slides.length,cur=0,
+      stage=document.getElementById('stage'),bar=document.getElementById('progress');
+  function fit(){
+    var s=Math.min(window.innerWidth/1280,window.innerHeight/720);
+    stage.style.setProperty('--s',s);
+  }
+  function show(n){
+    cur=Math.max(0,Math.min(total-1,n));
+    slides.forEach(function(s,i){s.classList.toggle('active',i===cur);});
+    bar.style.width=((cur+1)/total*100)+'%';
+    location.hash=cur+1;
+  }
+  function next(){show(cur+1);} function prev(){show(cur-1);}
+  window.addEventListener('resize',fit);
+  document.addEventListener('keydown',function(e){
+    if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].indexOf(e.key)>-1){e.preventDefault();next();}
+    else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].indexOf(e.key)>-1){e.preventDefault();prev();}
+    else if(e.key==='Home'){e.preventDefault();show(0);}
+    else if(e.key==='End'){e.preventDefault();show(total-1);}
+  });
+  var lock=0;
+  document.addEventListener('wheel',function(e){
+    var t=Date.now(); if(t-lock<420) return;
+    if(Math.abs(e.deltaY)<8&&Math.abs(e.deltaX)<8) return;
+    lock=t; (e.deltaY>0||e.deltaX>0)?next():prev();
+  },{passive:true});
+  document.addEventListener('click',function(e){
+    if(e.target.closest('a,button')) return;
+    (e.clientX>window.innerWidth*.35)?next():prev();
+  });
+  var tx=0,ty=0;
+  document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',function(e){
+    var t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;
+    if(Math.abs(dx)>44&&Math.abs(dx)>Math.abs(dy)){dx<0?next():prev();}
+  },{passive:true});
+  fit();
+  var h=parseInt((location.hash||'').replace('#',''),10);
+  show(isFinite(h)&&h>0?h-1:0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "explainer-renderer-gsap",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "GSAP renderer adapter for the explainer-video pipeline: one timeline per scene, scaled to the measured narration, with first-class SVG draw-on.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "bundle": "node bundle.mjs demo/demo.html",
+    "bundle:check": "node bundle.mjs --check demo/demo.html",
+    "verify": "node verify.mjs",
+    "verify:bundle": "node verify-bundle.mjs",
+    "qa": "node qa.mjs",
+    "test": "node bundle.mjs --check demo/demo.html && node verify-bundle.mjs && node verify.mjs",
+    "record": "node ../../pipeline/record.mjs demo/demo.html /tmp/gsap-demo-out"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0"
+  }
+}

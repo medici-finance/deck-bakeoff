@@ -1,0 +1,9 @@
+{
+  "leadIn": 0.35,
+  "fps": 30,
+  "scenes": [
+    {"id": "title", "duration": 5.912},
+    {"id": "flow", "duration": 11.204},
+    {"id": "closing", "duration": 6.331}
+  ]
+}

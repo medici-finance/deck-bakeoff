@@ -1,0 +1,463 @@
+#!/usr/bin/env python3
+"""fetch-and-render — pull the video-generation bits out of one or more PRs and
+fire off the explainer render for each, forwarding extra CLI args verbatim.
+
+This is the *orchestration* half of the explainer-video tool: `explainer-video`
+(the sibling entrypoint) is the render engine and takes an already-checked-out
+`SCRIPT.md` + `explainer.html` on disk. `fetch-and-render` does the step before
+that — it reads a PR (there can be several, and a PR can carry more than one
+explainer bundle), extracts every bundle's `SCRIPT.md`, `explainer.html`,
+`index.html` and `cover.png` (the latter two when present), name and URL into a
+staging area, and then calls `explainer-video` once per bundle. Unless the
+caller forwards its own `--out`, renders default to `~/Downloads/videos/`.
+
+A "bundle" is any directory in the PR that holds both a `SCRIPT.md` and an
+`explainer.html` — the shape an assay-site blog article ships in
+(`public/blog/<category>/<slug>/{SCRIPT.md,explainer.html,index.html,...}`). The
+name and URL come from the sibling `index.html`'s
+`<script type="application/json" id="assay-article">` metadata block (slug/title
+for the name; a url-ish field for the URL), falling back to the directory name
+and the PR URL respectively.
+
+The engine boundary is respected: this tool ORCHESTRATES the render, exactly as a
+human would by running `explainer-video` by hand. It does not itself publish or
+upload the resulting mp4 — whatever `explainer-video` does (write the mp4 + vtt +
+description into --out) is all that happens. It never writes to the PRs; the
+GitHub access is read-only (`gh pr view` / `gh api .../contents`).
+
+CLI:
+  fetch-and-render <PR> [<PR> ...] [options] [-- <extra render args>]
+
+  <PR>        a PR number (resolved against --repo) or a full PR URL
+              (https://github.com/OWNER/REPO/pull/N — self-describing, so it can
+              name a different repo than --repo).
+  --          everything after a literal `--` is forwarded VERBATIM to
+              `explainer-video`. This is where the voice selection goes
+              (explainer-video requires --profile or --us-voice), plus any of
+              its other flags (--out, --dry-run, --url override, ...).
+
+Examples:
+  # Render every bundle in assay-site PR #412 with an Australian Assay voice:
+  ./fetch-and-render 412 --repo medici-finance/assay-site -- --profile australian-assay
+
+  # Two PRs at once, by URL, US built-in voice, custom output dir:
+  ./fetch-and-render \
+      https://github.com/medici-finance/assay-site/pull/412 \
+      https://github.com/medici-finance/assay-site/pull/431 \
+      -- --us-voice leo --out ./out
+
+  # See exactly what it found and the render command it WOULD run, without
+  # invoking the engine (still fetches, so it is a real self-check of the fetch):
+  ./fetch-and-render 412 --repo medici-finance/assay-site --dry-run -- --profile english-assay
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import subprocess
+import sys
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Optional
+
+TOOL_ROOT = Path(__file__).resolve().parent
+RENDER_ENTRYPOINT = TOOL_ROOT / "explainer-video"
+
+# The two files that together mark a directory as an explainer bundle.
+SCRIPT_NAME = "SCRIPT.md"
+SLIDES_NAME = "explainer.html"
+META_NAME = "index.html"
+COVER_NAME = "cover.png"
+
+# The article metadata block the assay-site bundles carry in index.html.
+_META_RE = re.compile(
+    r'<script[^>]*\bid=["\']assay-article["\'][^>]*>(.*?)</script>',
+    re.DOTALL | re.IGNORECASE,
+)
+# Metadata keys we accept as the article's public URL, in priority order. The
+# assay-article block does not currently carry one, so in practice the PR URL is
+# the fallback — but if a bundle ever adds a canonical link, we honour it.
+_URL_KEYS = ("url", "canonical", "permalink", "link", "page")
+
+# https://github.com/OWNER/REPO/pull/NUMBER
+_PR_URL_RE = re.compile(
+    r"github\.com/(?P<owner>[^/]+)/(?P<repo>[^/]+)/pull/(?P<number>\d+)"
+)
+
+
+# --------------------------------------------------------------------------- #
+# small data holders
+# --------------------------------------------------------------------------- #
+@dataclass
+class PRRef:
+    """A resolved PR: which repo, which number, and its canonical URL."""
+    repo: str          # "owner/name" of the BASE repo (where the PR lives)
+    number: int
+    url: str
+
+    @property
+    def slug(self) -> str:
+        return f"{self.repo}#{self.number}"
+
+
+@dataclass
+class Bundle:
+    """One explainer bundle discovered in a PR, staged to disk."""
+    pr: PRRef
+    src_dir: str                 # the bundle's path within the PR's repo tree
+    name: str                    # slug/title for --name (single path component)
+    url: str                     # article URL, or the PR URL as fallback
+    script: Path                 # staged SCRIPT.md
+    slides: Path                 # staged explainer.html
+    meta: Optional[Path] = None  # staged index.html, when present
+    cover: Optional[Path] = None  # staged cover.png, when present
+
+
+@dataclass
+class RunResult:
+    bundles: list = field(default_factory=list)
+    rendered: int = 0
+    failed: int = 0
+
+
+# --------------------------------------------------------------------------- #
+# PR resolution + gh plumbing
+# --------------------------------------------------------------------------- #
+def _gh_json(args: list[str]) -> object:
+    """Run a `gh` command that emits JSON and parse it. gh must be on PATH and
+    authenticated; a clear message otherwise."""
+    try:
+        out = subprocess.run(
+            ["gh", *args], check=True, capture_output=True, text=True
+        ).stdout
+    except FileNotFoundError:
+        raise SystemExit("fetch-and-render: `gh` (GitHub CLI) not found on PATH")
+    except subprocess.CalledProcessError as e:
+        raise SystemExit(
+            f"fetch-and-render: gh {' '.join(args)} failed:\n{e.stderr.strip()}"
+        )
+    return json.loads(out) if out.strip() else None
+
+
+def resolve_pr(token: str, default_repo: Optional[str]) -> PRRef:
+    """Resolve a PR token (bare number or full URL) to a PRRef. A URL is
+    self-describing; a bare number needs --repo (or a gh default repo)."""
+    m = _PR_URL_RE.search(token)
+    if m:
+        repo = f"{m.group('owner')}/{m.group('repo')}"
+        number = int(m.group("number"))
+    elif token.isdigit():
+        if not default_repo:
+            raise SystemExit(
+                f"fetch-and-render: PR '{token}' is a bare number but no --repo "
+                "was given (and no gh default repo is set)"
+            )
+        repo, number = default_repo, int(token)
+    else:
+        raise SystemExit(
+            f"fetch-and-render: '{token}' is neither a PR number nor a PR URL"
+        )
+    # Canonicalise via gh so the stored URL is the real one.
+    data = _gh_json(["pr", "view", str(number), "--repo", repo, "--json", "url"])
+    url = data.get("url") if isinstance(data, dict) else None
+    return PRRef(repo=repo, number=number, url=url or token)
+
+
+def _pr_head(pr: PRRef) -> tuple[str, str]:
+    """Return (head_repo, head_sha) for a PR — the repo+commit the bundle files
+    actually live at (handles fork PRs: files are fetched from the head repo)."""
+    data = _gh_json([
+        "pr", "view", str(pr.number), "--repo", pr.repo,
+        "--json", "headRefOid,headRepository,headRepositoryOwner",
+    ])
+    sha = data.get("headRefOid")
+    head_repo = pr.repo
+    hr, ho = data.get("headRepository"), data.get("headRepositoryOwner")
+    if isinstance(hr, dict) and hr.get("name") and isinstance(ho, dict) and ho.get("login"):
+        head_repo = f"{ho['login']}/{hr['name']}"
+    if not sha:
+        raise SystemExit(f"fetch-and-render: could not resolve head SHA for {pr.slug}")
+    return head_repo, sha
+
+
+def _pr_changed_files(pr: PRRef) -> list[str]:
+    """Paths of files changed in the PR (across all pages)."""
+    data = _gh_json([
+        "pr", "view", str(pr.number), "--repo", pr.repo, "--json", "files",
+    ])
+    files = data.get("files") if isinstance(data, dict) else None
+    return [f["path"] for f in (files or []) if f.get("path")]
+
+
+def _content_exists(repo: str, path: str, ref: str) -> bool:
+    """True if `path` exists in `repo` at `ref` (a cheap contents HEAD-ish check)."""
+    try:
+        subprocess.run(
+            ["gh", "api", f"repos/{repo}/contents/{path}?ref={ref}",
+             "--jq", ".name"],
+            check=True, capture_output=True, text=True,
+        )
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
+def _fetch_raw(repo: str, path: str, ref: str, dest: Path) -> None:
+    """Download the raw bytes of `repo:path@ref` to `dest`."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        raw = subprocess.run(
+            ["gh", "api", f"repos/{repo}/contents/{path}?ref={ref}",
+             "-H", "Accept: application/vnd.github.raw"],
+            check=True, capture_output=True,
+        ).stdout
+    except subprocess.CalledProcessError as e:
+        raise SystemExit(
+            f"fetch-and-render: could not fetch {repo}:{path}@{ref[:8]}:\n"
+            f"{e.stderr.decode(errors='replace').strip()}"
+        )
+    dest.write_bytes(raw)
+
+
+# --------------------------------------------------------------------------- #
+# bundle discovery + metadata extraction
+# --------------------------------------------------------------------------- #
+def _candidate_dirs(changed: list[str]) -> list[str]:
+    """Directories that a changed file lives in — the places a bundle might be.
+    De-duplicated, order preserved."""
+    seen, dirs = set(), []
+    for p in changed:
+        d = str(Path(p).parent)
+        d = "" if d == "." else d
+        if d not in seen:
+            seen.add(d)
+            dirs.append(d)
+    return dirs
+
+
+def discover_bundles(pr: PRRef, head_repo: str, head_sha: str) -> list[str]:
+    """Every directory touched by the PR that holds BOTH SCRIPT.md and
+    explainer.html at the PR head — checked against the tree, not just the diff,
+    so a PR that edits only one file of an existing bundle is still found."""
+    found = []
+    for d in _candidate_dirs(_pr_changed_files(pr)):
+        script_path = f"{d}/{SCRIPT_NAME}" if d else SCRIPT_NAME
+        slides_path = f"{d}/{SLIDES_NAME}" if d else SLIDES_NAME
+        if _content_exists(head_repo, script_path, head_sha) and \
+           _content_exists(head_repo, slides_path, head_sha):
+            found.append(d)
+    return found
+
+
+def _parse_meta(meta_html: str) -> dict:
+    """Pull the assay-article JSON block out of an index.html, or {}."""
+    m = _META_RE.search(meta_html)
+    if not m:
+        return {}
+    try:
+        obj = json.loads(m.group(1).strip())
+        return obj if isinstance(obj, dict) else {}
+    except json.JSONDecodeError:
+        return {}
+
+
+def _name_from_meta(meta: dict, fallback_dir: str) -> str:
+    """A single-path-component name for --name: slug > slugified title > dir."""
+    slug = meta.get("slug")
+    if isinstance(slug, str) and slug.strip():
+        return _slug(slug)
+    title = meta.get("title")
+    if isinstance(title, str) and title.strip():
+        return _slug(title)
+    return _slug(Path(fallback_dir).name or "explainer")
+
+
+def _url_from_meta(meta: dict, fallback_url: str) -> str:
+    for k in _URL_KEYS:
+        v = meta.get(k)
+        if isinstance(v, str) and v.strip():
+            return v.strip()
+    return fallback_url
+
+
+def _slug(raw: str, cap: int = 100) -> str:
+    """Lower-case, hyphen-separated, single path component (no '/' or '..'),
+    capped — mirrors the engine's own naming constraints for --name."""
+    s = re.sub(r"[^a-z0-9]+", "-", raw.lower()).strip("-")
+    s = s[:cap].rstrip("-")
+    return s or "explainer"
+
+
+def stage_bundle(pr: PRRef, head_repo: str, head_sha: str,
+                 src_dir: str, workdir: Path) -> Bundle:
+    """Fetch a single bundle's files into workdir/<pr>/<slug>/ and read its
+    name + URL from the metadata block."""
+    # Read metadata first (if present) so the staging dir is named by the slug.
+    meta_obj: dict = {}
+    meta_src = f"{src_dir}/{META_NAME}" if src_dir else META_NAME
+    have_meta = _content_exists(head_repo, meta_src, head_sha)
+    if have_meta:
+        tmp_meta = workdir / ".meta-probe.html"
+        _fetch_raw(head_repo, meta_src, head_sha, tmp_meta)
+        meta_obj = _parse_meta(tmp_meta.read_text(errors="replace"))
+        tmp_meta.unlink(missing_ok=True)
+
+    name = _name_from_meta(meta_obj, src_dir)
+    url = _url_from_meta(meta_obj, pr.url)
+
+    stage = workdir / f"pr-{pr.repo.replace('/', '_')}-{pr.number}" / name
+    stage.mkdir(parents=True, exist_ok=True)
+
+    script_src = f"{src_dir}/{SCRIPT_NAME}" if src_dir else SCRIPT_NAME
+    slides_src = f"{src_dir}/{SLIDES_NAME}" if src_dir else SLIDES_NAME
+    script_dst = stage / SCRIPT_NAME
+    slides_dst = stage / SLIDES_NAME
+    _fetch_raw(head_repo, script_src, head_sha, script_dst)
+    _fetch_raw(head_repo, slides_src, head_sha, slides_dst)
+    meta_dst = None
+    if have_meta:
+        meta_dst = stage / META_NAME
+        _fetch_raw(head_repo, meta_src, head_sha, meta_dst)
+
+    # cover.png is BINARY and optional — stage it only when the bundle carries
+    # one, like index.html. _fetch_raw captures bytes (no text=True) and writes
+    # via write_bytes(), so the PNG round-trips unchanged.
+    cover_dst = None
+    cover_src = f"{src_dir}/{COVER_NAME}" if src_dir else COVER_NAME
+    if _content_exists(head_repo, cover_src, head_sha):
+        cover_dst = stage / COVER_NAME
+        _fetch_raw(head_repo, cover_src, head_sha, cover_dst)
+
+    return Bundle(
+        pr=pr, src_dir=src_dir or "(repo root)", name=name, url=url,
+        script=script_dst, slides=slides_dst, meta=meta_dst, cover=cover_dst,
+    )
+
+
+# --------------------------------------------------------------------------- #
+# fire off the render
+# --------------------------------------------------------------------------- #
+def render_command(b: Bundle, forwarded: list[str]) -> list[str]:
+    """The exact `explainer-video` invocation for a bundle.
+
+    We supply --script/--slides (the extracted bundle) plus sensible
+    --name/--url/--out defaults derived from the bundle, THEN append the
+    forwarded args verbatim. Because argparse takes the last value for a repeated
+    option, anything the caller forwards (a --name, a --url, --profile/--us-voice,
+    --out, --dry-run) overrides our default — so the pass-through is honoured
+    exactly. The engine's --out is a single-value directory arg
+    (`ap.add_argument("--out", default="./out")`), so a forwarded --out placed
+    after ours wins.
+    """
+    default_out = Path.home() / "Downloads" / "videos"
+    default_out.mkdir(parents=True, exist_ok=True)
+    cmd = [
+        str(RENDER_ENTRYPOINT),
+        "--script", str(b.script),
+        "--slides", str(b.slides),
+        "--name", b.name,
+        "--url", b.url,
+        "--out", str(default_out),
+    ]
+    cmd += forwarded
+    return cmd
+
+
+def fire_off(b: Bundle, forwarded: list[str], dry_run: bool) -> bool:
+    cmd = render_command(b, forwarded)
+    printable = " ".join(_shquote(c) for c in cmd)
+    if dry_run:
+        print(f"    would run: {printable}")
+        return True
+    print(f"    running: {printable}", file=sys.stderr)
+    try:
+        subprocess.run(cmd, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"    render FAILED for {b.name} ({b.pr.slug}): exit {e.returncode}",
+              file=sys.stderr)
+        return False
+
+
+def _shquote(s: str) -> str:
+    if s and re.fullmatch(r"[A-Za-z0-9_./:@=-]+", s):
+        return s
+    return "'" + s.replace("'", "'\\''") + "'"
+
+
+# --------------------------------------------------------------------------- #
+# CLI
+# --------------------------------------------------------------------------- #
+def _split_forwarded(argv: list[str]) -> tuple[list[str], list[str]]:
+    """Split argv on the first literal `--`: (mine, forwarded)."""
+    if "--" in argv:
+        i = argv.index("--")
+        return argv[:i], argv[i + 1:]
+    return argv, []
+
+
+def main() -> None:
+    mine, forwarded = _split_forwarded(sys.argv[1:])
+    ap = argparse.ArgumentParser(
+        prog="fetch-and-render",
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    ap.add_argument("prs", nargs="+", metavar="PR",
+                    help="one or more PR numbers and/or PR URLs")
+    ap.add_argument("--repo", default=None, metavar="OWNER/REPO",
+                    help="repo for bare PR numbers (URLs are self-describing); "
+                         "bundles typically live in medici-finance/assay-site")
+    ap.add_argument("--workdir", default=None, metavar="DIR",
+                    help="where to stage fetched bundles "
+                         "(default: ./out/.fetched under this tool)")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="fetch + discover as normal, print the render command "
+                         "for each bundle, but do NOT invoke the renderer")
+    args = ap.parse_args(mine)
+
+    workdir = Path(args.workdir).resolve() if args.workdir \
+        else (TOOL_ROOT / "out" / ".fetched")
+    workdir.mkdir(parents=True, exist_ok=True)
+
+    if not RENDER_ENTRYPOINT.exists():
+        raise SystemExit(f"fetch-and-render: render entrypoint missing: {RENDER_ENTRYPOINT}")
+
+    result = RunResult()
+    for token in args.prs:
+        pr = resolve_pr(token, args.repo)
+        head_repo, head_sha = _pr_head(pr)
+        dirs = discover_bundles(pr, head_repo, head_sha)
+        print(f"PR {pr.slug}  ({pr.url})")
+        print(f"  head: {head_repo}@{head_sha[:8]}")
+        if not dirs:
+            print("  no explainer bundles (no dir with SCRIPT.md + explainer.html)")
+            continue
+        print(f"  found {len(dirs)} bundle(s): " + ", ".join(dirs))
+        for d in dirs:
+            b = stage_bundle(pr, head_repo, head_sha, d, workdir)
+            result.bundles.append(b)
+            print(f"  - {b.name}")
+            print(f"      from : {b.pr.repo} :: {b.src_dir}")
+            print(f"      url  : {b.url}")
+            print(f"      staged: {b.script.parent}")
+            ok = fire_off(b, forwarded, args.dry_run)
+            if args.dry_run:
+                pass
+            elif ok:
+                result.rendered += 1
+            else:
+                result.failed += 1
+
+    print()
+    verb = "would render" if args.dry_run else "rendered"
+    print(f"SUMMARY: {len(result.bundles)} bundle(s) across {len(args.prs)} PR ref(s); "
+          f"{verb} {result.rendered if not args.dry_run else len(result.bundles)}"
+          + (f", {result.failed} failed" if result.failed else ""))
+    if result.failed:
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

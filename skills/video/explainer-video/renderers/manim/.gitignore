@@ -1,0 +1,12 @@
+# Local venv (this renderer keeps its own — see requirements.txt)
+.venv/
+__pycache__/
+*.pyc
+
+# Render output + Manim's media tree (generated, never committed)
+out/
+media/
+
+# The live durations file is written per run from the pipeline's measurements.
+# The committed reference is scene-durations.example.json.
+scene-durations.json

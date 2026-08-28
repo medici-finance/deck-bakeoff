@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PRODUCT — explainer</title>
+<!--
+  Starting point for a deck repo's `video/explainer.html`.
+
+  Copy this file to <deck-repo>/video/explainer.html, replace the palette and
+  the scene bodies, then inline the runtime:
+
+      cd tools/explainer-video/renderers/gsap
+      npm install
+      node bundle.mjs ../../../<deck-repo>/video/explainer.html
+
+  The bundler rewrites the three `gsap-explainer:inline` blocks below with the
+  real code, and fails if the file does not contain exactly one
+  SCENE_DURATIONS assignment. The result is self-contained — which it must be,
+  because the pipeline copies the slides to a work dir before recording.
+
+  Scene count MUST equal the row count of the deck's SCRIPT.md.
+-->
+<style>
+  /* Swap for the product palette. Brand rule: one accent, used sparingly;
+     docs/explainer surfaces are white; motion stays minimal and functional. */
+  :root {
+    --bg: #FFFFFF;
+    --ink: #14161A;
+    --muted: #5A6270;
+    --rule: #D7DCE4;
+    --accent: #3366FF;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  /* The recorder's viewport is exactly 1920x1080 — author at that size. */
+  .stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+
+  /* The runtime drives opacity/visibility. Scenes stay in the layout tree the
+     whole time (never display:none) so SVG geometry can be measured up front. */
+  .scene {
+    position: absolute; inset: 0;
+    opacity: 0; visibility: hidden;
+    padding: 140px 160px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+
+  h1 { font-size: 104px; line-height: 1.04; letter-spacing: -.02em; font-weight: 600; margin: 0; }
+  .lede { font-size: 38px; line-height: 1.4; color: var(--muted); margin: 34px 0 0; max-width: 1100px; }
+  .rule { display: block; margin: 44px 0 0; }
+  .node { fill: none; stroke: var(--rule); stroke-width: 2; }
+  .flow { fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .label { font-family: var(--mono); font-size: 26px; fill: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- One <section data-scene="…"> per SCRIPT.md row, in order.
+       [data-enter] = fade + 8px rise.   [data-draw] = SVG draw-on.
+       data-exit="cut|fade|push|zoom" on a scene names its handoff to the NEXT
+       scene (default fade). Storyboard choice — use sparingly. -->
+
+  <section class="scene" data-scene="scene-1">
+    <h1 data-enter>Headline for scene one.</h1>
+    <svg class="rule" width="380" height="8" viewBox="0 0 380 8" data-draw aria-hidden="true">
+      <line x1="3" y1="4" x2="377" y2="4" stroke="#3366FF" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+    <p class="lede" data-enter>Supporting line. Keep it to the narration's claim.</p>
+  </section>
+
+  <section class="scene" data-scene="scene-2">
+    <!-- Draw order is document order. Override only where you need to, with
+         data-draw-order="N" — here the caption is authored first but drawn last. -->
+    <svg width="1000" height="300" viewBox="0 0 1000 300" data-draw aria-hidden="true">
+      <text class="label" x="500" y="270" text-anchor="middle" data-draw-order="99">caption drawn last</text>
+      <rect class="node" x="1" y="20" width="338" height="140" rx="6"/>
+      <text class="label" x="170" y="98" text-anchor="middle">A</text>
+      <line class="flow" x1="352" y1="90" x2="380" y2="90"/>
+      <polyline class="flow" points="380,83 388,90 380,97"/>
+      <rect class="node" x="401" y="20" width="338" height="140" rx="6"/>
+      <text class="label" x="570" y="98" text-anchor="middle">B</text>
+    </svg>
+  </section>
+
+</div>
+
+<!-- gsap-explainer:inline gsap -->
+<script>/* `node bundle.mjs <this file>` inlines gsap core here */</script>
+<!-- /gsap-explainer:inline -->
+<!-- gsap-explainer:inline drawsvg -->
+<script>/* `node bundle.mjs <this file>` inlines DrawSVGPlugin here */</script>
+<!-- /gsap-explainer:inline -->
+<!-- gsap-explainer:inline runtime -->
+<script>/* `node bundle.mjs <this file>` inlines gsap-explainer.js here */</script>
+<!-- /gsap-explainer:inline -->
+
+<!-- PIPELINE CONTRACT: `inject_durations` rewrites the literal below with the
+     measured per-scene narration lengths. It replaces the FIRST match in the
+     file, so exactly one assignment may exist anywhere in it (comments and JS
+     strings included) — `bundle.mjs` enforces that. -->
+<script>window.SCENE_DURATIONS = [];</script>
+
+<script>
+// Declarative mode: with no `scenes` array, every [data-scene] is discovered in
+// document order and gets the default build — enter all [data-enter], then draw
+// all [data-draw], with the draw absorbing the rest of the scene.
+GsapExplainer.boot({
+  fallback: [5, 9],   // preview timings only; the pipeline overrides these
+});
+
+// Imperative mode — pass `scenes` when a scene needs its own choreography:
+//
+// GsapExplainer.boot({
+//   fallback: [5, 9],
+//   scenes: [
+//     { id: 'scene-1', build: function (tl, ctx) {
+//         ctx.enter('h1');
+//         ctx.draw('.rule', { duration: 0.6 });   // fixed: draws, then holds
+//         ctx.enter('.lede', { at: '-=0.3' });
+//       } },
+//     { id: 'scene-2', build: function (tl, ctx) {
+//         ctx.draw('svg');                        // flexible: fills the scene
+//       } },
+//   ],
+// });
+</script>
+</body>
+</html>

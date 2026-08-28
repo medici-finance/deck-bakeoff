@@ -1,0 +1,7 @@
+{
+  "_comment": "Reference shape only. The live scene-durations.json is generated per run from the pipeline's measured narration — see README §Scene-duration contract. Copy it, or write it with `python contract.py --from-log ...`. NOTE: 'scenes' here is an array of Manim Scene class NAMES; the Motion Canvas adapter's file of the same name uses an array of {id, duration} objects and the two are not interchangeable.",
+  "scene_durations": [3.412, 11.874, 4.905],
+  "scenes": ["TitleCard", "SplitMaths", "ClosingCard"],
+  "lead_in": 0.35,
+  "fps": 30
+}

@@ -1,0 +1,9 @@
+{
+  "name": "explainer-video",
+  "private": true,
+  "type": "module",
+  "description": "Playwright recorder for the explainer-video pipeline (record.mjs).",
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}

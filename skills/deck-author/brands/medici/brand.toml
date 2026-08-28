@@ -1,0 +1,59 @@
+# brand.toml — the Medici house instance of the deck-author brand contract.
+# This is the skill's SHIPPED DEFAULT: the resolution order (see SKILL.md) falls
+# back to this file when the caller gives no contract and the consuming repo's
+# root carries none. Schema + annotated reference: ../../references/brand-contract.md.
+# Values here are the house brand guide's pins (dark external surface, §2/§3/§10).
+
+[identity]
+org = "Medici"
+# The confidentiality footer strings — the linter's footer enum. The footer
+# wording is the authoritative deck-class marker on this brand.
+footer_internal = "Medici — Internal · Confidential"
+footer_external = "Medici — Proprietary & Confidential"
+
+[type]
+# Font FAMILY names as they appear in font-family declarations (the linter's
+# allowlist, alongside the generic fallback stack).
+sans = "IBM Plex Sans"
+mono = "IBM Plex Mono"
+# Font files, relative to this brand directory. ipx-sans.woff2 is a VARIABLE
+# font (declare `font-weight: 100 700`); the mono files are STATIC 400/500
+# instances — see fonts/NOTICE.md for the silent-failure trap.
+sans_files = ["fonts/ipx-sans.woff2", "fonts/ipx-sans-italic.woff2"]
+mono_files = ["fonts/ipx-mono-400.woff2", "fonts/ipx-mono-500.woff2"]
+licence = "IBM Plex, © IBM Corp., SIL Open Font License 1.1 — notice kept at fonts/NOTICE.md; self-host always, never a CDN."
+
+[palette]
+# Named hex values. The dark external surface: true-black canvas is a pin
+# (brand guide §2.1), not dark-theme drift — the stock .deckcheck.json ignores
+# reason it.
+canvas = "#000000"
+surface = "#0A0A0A"
+code_surface = "#060606"     # invented during the bake-off; now standard
+hairline = "#1A1A1A"
+hairline_2 = "#252525"
+text_primary = "#FFFFFF"
+text_secondary = "#AAAAAA"
+text_muted = "#666666"
+accent = "#3366FF"           # Electric Blue — the one frequent colour
+accent_light = "#5C85FF"
+accent_dark = "#1A4DCC"
+# Functional colours — used only functionally (pass/fail/warn), never decoration.
+good = "#00CC66"
+bad = "#FF4444"
+warn = "#FFCC00"
+
+[marks]
+# This brand ships its marks as a plate-stripped inline <symbol> library in the
+# skeleton (deck-skeleton-external.html): #assay-mark (the gold shield-tick),
+# #oct-line (stroke-only watermark), and the app-role glyphs. The raw brand SVGs
+# are app avatars with a baked-in near-black plate — never place them on a slide.
+symbols = "deck-skeleton-external.html"
+usage = "Gold appears ONLY inside the mark; the watermark runs at opacity .05."
+# Mark-own colours exempt from the accent rule (the mark may carry them; slides may not).
+exempt_colors = ["#D4A843"]
+
+[rules]
+accent_budget = 2            # max visible accent uses per slide (linter notice above this)
+gradients = false            # no gradient text; depth from border contrast, not shadow
+no_remote_assets = true      # fonts and images self-hosted; url(http…) is an error

@@ -1,0 +1,23 @@
+# Python venv + caches
+.venv/
+__pycache__/
+*.pyc
+
+# Node / Playwright
+node_modules/
+
+# Hugging Face model weights / MLX cache (never commit model weights)
+.cache/
+hf_cache/
+models/
+
+# Generated render output + intermediates (uploaded, never committed)
+out/
+.work-*/
+rec/
+*.mp4
+*.webm
+
+# OS cruft
+.DS_Store
+package-lock.json

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["DOM", "ESNext"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "types": ["vite/client", "node"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "@motion-canvas/2d/lib"
+  },
+  "include": ["src", "vite.config.ts", "env.d.ts"]
+}

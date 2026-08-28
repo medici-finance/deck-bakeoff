@@ -1,0 +1,19 @@
+{
+  "_comment": "Default scoped ignores for tools/check_deck.py — copy this file beside your deck (or its parent dir) and extend it there. Shape copied VERBATIM from the house impeccable config (assay-toolkit brand/impeccable/config.seed.json): entries nest under a top-level `detector` key, and every ignoreValues entry carries a written `reason`. An entry without a reason is discarded by the linter — an ignore without a reason is a bug being hidden, not a decision.",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "C-PURE-BLACK",
+        "value": "#000000",
+        "reason": "Brand guide §2.1 pins True Black as the page canvas for external surfaces. Universal dark-theme craft advice prefers #0f0f0f; the house pin wins and is deliberate, not AI convergence."
+      },
+      {
+        "rule": "C-PURE-WHITE",
+        "value": "#ffffff",
+        "reason": "Brand guide §2.4 pins #FFFFFF as Text Primary on dark surfaces. Same reasoning as C-PURE-BLACK; softening it would break the pinned contrast pair."
+      }
+    ]
+  }
+}

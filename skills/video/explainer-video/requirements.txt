@@ -1,0 +1,6 @@
+# Python deps for the explainer-video tool. Install into a local venv:
+#   python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
+#
+# mlx-audio is Apple-Silicon (MLX) only; the tool runs on an M-series Mac.
+PyYAML>=6.0
+mlx-audio>=0.2.0
