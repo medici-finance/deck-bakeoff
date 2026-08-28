@@ -1,0 +1,36 @@
+# rwa-bakeoff — keep deliverables (BRIEF, PROTOCOL, messaging/, tracks/*/<mode>/<m>/{deck,explainer}, NOTES,
+# reviews/, bakeoff/, report.pdf, video/), drop build scaffolding and vendored bulk.
+
+# build / generator scaffolding left by design agents
+_build/
+build/
+_src/
+.impeccable/
+__pycache__/
+*.pyc
+
+# vendored runtimes fetched during the run (p5, mermaid) — re-fetchable
+tracks/*/vendor/
+
+# vendored third-party skills/tools (368 MB, own repos — see bakeoff/CONTENDERS.md for URLs)
+skills/
+
+# screenshot bulk (98 MB) — contact sheets + INDEX kept for the report
+shots/**/slide-*.png
+shots/**/scene-*.png
+shots/_reviewer-frames/
+shots/_probe.json
+shots/*.png
+
+# render pipeline output
+out/
+*.mp4
+*.webm
+*.wav
+
+# interesting, but not relevant for the bakeoff
+source/
+
+# OS / editor
+.DS_Store
+Thumbs.db
