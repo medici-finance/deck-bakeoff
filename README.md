@@ -10,27 +10,27 @@ agents from one prompt (below); Ian judged separately.
 
 | Path | What |
 |---|---|
-| `BRIEF.md` | the shared brief every contender rendered (product story, audience, the three educational goals, media specs, brand modes) |
-| `DESIGN-TASK.md` | the task spec every design agent followed |
-| `bakeoff/PROTOCOL.md` · `CONTENDERS.md` | contenders, origins/URLs/licences, rules, judging axes |
-| `messaging/<skill>/` | 4 messaging contenders: native artifact + `messaging.md` + normalized `staging.yaml` + `NOTES.md` |
-| `tracks/<tool>/<mode>/<messaging>/deck/index.html` | 36 decks (1280×720, self-contained, prints one slide per page) |
-| `tracks/<tool>/<mode>/<messaging>/explainer/{explainer.html,SCRIPT.md}` | 36 timed explainers (1920×1080, auto-play, `window.__player`) + talk tracks |
-| `tracks/<tool>/NOTES.md` | each tool's time-to-artifact, friction, overrides, refusals |
+| [`BRIEF.md`](BRIEF.md) | the shared brief every contender rendered (product story, audience, the three educational goals, media specs, brand modes) |
+| [`DESIGN-TASK.md`](DESIGN-TASK.md) | the task spec every design agent followed |
+| [`bakeoff/PROTOCOL.md`](bakeoff/PROTOCOL.md) · [`bakeoff/CONTENDERS.md`](bakeoff/CONTENDERS.md) | contenders, origins/URLs/licences, rules, judging axes |
+| [`messaging/`](messaging/)`<skill>/` | 4 messaging contenders: native artifact + `messaging.md` + normalized `staging.yaml` + `NOTES.md` |
+| [`tracks/`](tracks/)`<tool>/<mode>/<messaging>/deck/index.html` | 36 decks (1280×720, self-contained, prints one slide per page) |
+| [`tracks/`](tracks/)`<tool>/<mode>/<messaging>/explainer/{explainer.html,SCRIPT.md}` | 36 timed explainers (1920×1080, auto-play, `window.__player`) + talk tracks |
+| [`tracks/`](tracks/)`<tool>/NOTES.md` | each tool's time-to-artifact, friction, overrides, refusals |
 
 `<mode>` is `brand` (pinned Medici house brand) or `free` (no brand limits); `<messaging>` is one of `staging`, `presentation-writing`, `pitch-deck-mastery`.
 
 | Path | What |
 |---|---|
-| `reviews/messaging/by-<rubric>.md` | each messaging skill reviewing every messaging output (itself included) |
-| `reviews/design/by-<rubric>.md` | 4 independent design rubrics + the 4 messaging rubrics over every rendered track |
-| `bakeoff/JUDGING-*-claude.md` | Claude's verdicts (messaging, design), formed before Ian's |
-| `shots/` | contact sheets + `INDEX.md` (per-slide PNGs are git-ignored) |
-| `winner/` | the ship-tomorrow artifact (canvas-design / brand / staging) after the judge's fix list — `deck/index.html`, `explainer/{explainer.html,SCRIPT.md}`, `FIXES.md`, frames in `shots/` |
-| `report.pdf` (source `report.html`, build `bakeoff/report-build.py`) | the final report: brief, contenders + URLs, both legs' cross-review matrices, issues found, verdicts, pipeline, the winning explainer + its talk track |
-| `video/explainer.html` · `video/SCRIPT.md` | the ONE bake-off video source: unbranded report segment → lead-in → the winning explainer in full; rendered to mp4 by the house `explainer-video` pipeline (mp4 not committed) |
-| `social/` | reddit post + LinkedIn teaser drafts (`{{YT_URL}}` placeholder) |
-| `source/` | the input corpus (Medici pitch/research docs, house brand guide) — read-only inputs, names anonymized |
+| [`reviews/messaging/`](reviews/messaging/)`by-<rubric>.md` | each messaging skill reviewing every messaging output (itself included) |
+| [`reviews/design/`](reviews/design/)`by-<rubric>.md` | 4 independent design rubrics + the 4 messaging rubrics over every rendered track |
+| [`bakeoff/JUDGING-messaging-claude.md`](bakeoff/JUDGING-messaging-claude.md) · [`bakeoff/JUDGING-design-claude.md`](bakeoff/JUDGING-design-claude.md) | Claude's verdicts (messaging, design), formed before Ian's |
+| [`shots/`](shots/) | contact sheets + [`INDEX.md`](shots/INDEX.md) (per-slide PNGs are git-ignored) |
+| [`winner/`](winner/) | the ship-tomorrow artifact (canvas-design / brand / staging) after the judge's fix list — `deck/index.html`, `explainer/{explainer.html,SCRIPT.md}`, [`FIXES.md`](winner/FIXES.md), frames in [`shots/`](winner/shots/) |
+| [`report.pdf`](report.pdf) (source [`report.html`](report.html), build [`bakeoff/report-build.py`](bakeoff/report-build.py)) | the final report: brief, contenders + URLs, both legs' cross-review matrices, issues found, verdicts, pipeline, the winning explainer + its talk track |
+| [`video/explainer.html`](video/explainer.html) · [`video/SCRIPT.md`](video/SCRIPT.md) | the ONE bake-off video source: unbranded report segment → lead-in → the winning explainer in full; rendered to mp4 by the house `explainer-video` pipeline (mp4 not committed) |
+| [`social/`](social/) | reddit post + LinkedIn teaser drafts (`{{YT_URL}}` placeholder) |
+| [`source/`](source/) | the input corpus (Medici pitch/research docs, house brand guide) — read-only inputs, names anonymized |
 
 ## House skills included
 
@@ -38,21 +38,22 @@ The in-house skills that ran the bake-off are committed under `skills/` (Apache-
 
 | Path | Skill |
 |---|---|
-| `skills/messaging/staging/` | genre → audience → arc → `staging.yaml` contract (deck + video lanes, motion-role governor) |
-| `skills/messaging/house-guide/` | the messaging method: comprehension diagnosis → 30-second version → analogies with honest breaks → glossary → trace-every-number gate |
-| `skills/deck-author/` | brand-contract deck renderer: `brands/medici/brand.toml`, the external skeleton, IBM Plex fonts, `tools/check_deck.py` linter |
-| `skills/video-author/` | staged film authoring (motion spec, seam gate) |
-| `skills/video/video-design/` | mission → script → storyboard → scene grammar → VO sync |
-| `skills/video/explainer-video/` | the render pipeline (TTS → Playwright record → subtitles → H.264); `node_modules`, `out/` and voice-clone samples excluded |
-| `skills/social/linkedin-post/`, `skills/social/humanizer/` | the voice + de-slop pass used for the social drafts |
+| [`skills/messaging/staging/`](skills/messaging/staging/) | genre → audience → arc → `staging.yaml` contract (deck + video lanes, motion-role governor) |
+| [`skills/messaging/house-guide/`](skills/messaging/house-guide/) | the messaging method: comprehension diagnosis → 30-second version → analogies with honest breaks → glossary → trace-every-number gate |
+| [`skills/deck-author/`](skills/deck-author/) | brand-contract deck renderer: `brands/medici/brand.toml`, the external skeleton, IBM Plex fonts, `tools/check_deck.py` linter |
+| [`skills/video-author/`](skills/video-author/) | staged film authoring (motion spec, seam gate) |
+| [`skills/video/video-design/`](skills/video/video-design/) | mission → script → storyboard → scene grammar → VO sync |
+| [`skills/video/explainer-video/`](skills/video/explainer-video/) | the render pipeline (TTS → Playwright record → subtitles → H.264); `node_modules`, `out/` and voice-clone samples excluded |
+| [`skills/social/linkedin-post/`](skills/social/linkedin-post/), [`skills/social/humanizer/`](skills/social/humanizer/) | the voice + de-slop pass used for the social drafts |
 
 Vendored third-party skills are git-ignored; their URLs and licences are in `bakeoff/CONTENDERS.md`.
 
 ## Contenders
 
-**Messaging:** house `staging` skill · house messaging-guide method · Stevekaplanai/pitch-deck-mastery-skill (MIT) · marcusnelson/presentation-writing-claude-skill (unlicensed, local use).
-**Design:** anthropics/skills `canvas-design` · anthropics/skills `algorithmic-art` · pbakaus/impeccable (new-work) · impeccable `polish` over the html-ppt baseline · nicobailon/visual-explainer · lewislulu/html-ppt-skill.
-**Review rubrics:** alchaincyf/huashu-design critique-guide · nexu-io/open-design design-review · Gabberflast/academic-pptx-skill · impeccable `critique`.
+**Messaging:** house [`staging`](skills/messaging/staging/) skill · house [messaging-guide](skills/messaging/house-guide/messaging-guide.md) method · [Stevekaplanai/pitch-deck-mastery-skill](https://github.com/Stevekaplanai/pitch-deck-mastery-skill) (MIT) · [marcusnelson/presentation-writing-claude-skill](https://github.com/marcusnelson/presentation-writing-claude-skill) (unlicensed, local use).
+**Design:** [anthropics/skills `canvas-design`](https://github.com/anthropics/skills/tree/main/skills/canvas-design) · [anthropics/skills `algorithmic-art`](https://github.com/anthropics/skills/tree/main/skills/algorithmic-art) · [pbakaus/impeccable](https://github.com/pbakaus/impeccable) (new-work) · impeccable `polish` over the html-ppt baseline · [nicobailon/visual-explainer](https://github.com/nicobailon/visual-explainer) · [lewislulu/html-ppt-skill](https://github.com/lewislulu/html-ppt-skill).
+**Review rubrics:** [alchaincyf/huashu-design](https://github.com/alchaincyf/huashu-design) critique-guide · [nexu-io/open-design](https://github.com/nexu-io/open-design) design-review · [Gabberflast/academic-pptx-skill](https://github.com/Gabberflast/academic-pptx-skill) · [pbakaus/impeccable](https://github.com/pbakaus/impeccable) `critique`.
+Full table with versions and licences: [`bakeoff/CONTENDERS.md`](bakeoff/CONTENDERS.md). Web-search sources for the two found tools: [ToseaAI/awesome-html-slide-skills](https://github.com/ToseaAI/awesome-html-slide-skills), [tosea.ai library](https://tosea.ai/blog/best-html-slide-skills-library-2026).
 
 ## The prompt
 
@@ -103,10 +104,10 @@ Follow-up instructions given during the run:
 
 ## Results (Claude judges; Ian's verdict recorded separately)
 
-- **Messaging** — rank-sum across the four rubrics: house messaging-guide 8 · pitch-deck-mastery 9 · staging 10 · presentation-writing 13. Recommendation: `staging` as the transport contract + the house messaging-guide as the content gate. Details: `bakeoff/JUDGING-messaging-claude.md`.
-- **Design** — brand mode: canvas-design (1st on 4 of 5 rubrics); free mode: impeccable (on ceiling; html-ppt/free the most robust); overall: canvas-design (rank sum 19 vs impeccable 22.5, visual-explainer 23.5 — close). Ship-tomorrow artifact: canvas-design / brand / staging, fixed in `winner/`. Details: `bakeoff/JUDGING-design-claude.md`.
+- **Messaging** — rank-sum across the four rubrics: house messaging-guide 8 · pitch-deck-mastery 9 · staging 10 · presentation-writing 13. Recommendation: `staging` as the transport contract + the house messaging-guide as the content gate. Details: [`bakeoff/JUDGING-messaging-claude.md`](bakeoff/JUDGING-messaging-claude.md).
+- **Design** — brand mode: canvas-design (1st on 4 of 5 rubrics); free mode: impeccable (on ceiling; html-ppt/free the most robust); overall: canvas-design (rank sum 19 vs impeccable 22.5, visual-explainer 23.5 — close). Ship-tomorrow artifact: canvas-design / brand / staging, fixed in [`winner/`](winner/). Details: [`bakeoff/JUDGING-design-claude.md`](bakeoff/JUDGING-design-claude.md).
 - **Consensus issues** — no design skill has a timeline concept (all six built the explainer engine themselves); provenance/citation lines rendered below 4.5:1 contrast almost everywhere; messaging-contract vocabulary leaked onto slides in 4 of 6 tools; the brand linter false-errors on honest source citations; `polish` bought the craft floor but closed no composition finding; the review rubrics disagree by design (concept-led vs fidelity-led vs a11y-led).
 
 ## Licence
 
-Apache License 2.0 — see `LICENSE`. Third-party skills retain their own licences (listed in `bakeoff/CONTENDERS.md`); the Medici source material in `source/` is © AAA Flowers S.A. and included as bake-off input only.
+Apache License 2.0 — see [`LICENSE`](LICENSE). Third-party skills retain their own licences (listed in [`bakeoff/CONTENDERS.md`](bakeoff/CONTENDERS.md)); the Medici source material in `source/` is © AAA Flowers S.A. and included as bake-off input only.

@@ -1,0 +1,559 @@
+# staging.yaml — the ONE bake-off video (video/explainer.html + video/SCRIPT.md)
+#
+# Staged with the house `staging` skill v2 (2026-08-18) — the messaging leg's winner —
+# video lane, per skills/messaging/staging/references/motion-roles.md.
+# Contract rule 1 holds: nothing below names a chart type, a layout, a palette or a font.
+# The look of PART A lives in bakeoff/report-philosophy.md ("Ordinal Field"); the look of
+# PART B is the winner's own and is not staged here.
+#
+# SCOPE. This file stages PART A (the bake-off report as an explainer) and the LEAD-IN only.
+# PART B is the winning explainer played in full, its nine scenes copied verbatim from
+# winner/explainer/explainer.html; its staging is messaging/staging/staging.yaml, video lane,
+# and it is NOT restaged here. The single timeline is A -> lead-in -> B.
+
+brief: >-
+  rwa-bakeoff — the one bake-off video. An unbranded explainer of the 2026-08-27 deck and
+  messaging bake-off, ending by handing the viewer the winning artifact itself.
+genre: executive-explainer
+lane: hall                     # watched alone, often without sound on the first pass;
+                               # every claim is a complete sentence that stands without a narrator
+medium: video
+
+intake:
+  status: skipped
+  note: >-
+    INTAKE skipped — the commissioning instruction answers all three questions: one video,
+    the report segment first, the winning explainer after it, with a lead-in between; PART A
+    unbranded; PART B untouched but for its footer string. Nothing was asked of a human;
+    every gap is a recorded assumption below.
+
+classify:
+  chose:
+    genre: executive-explainer
+    because: >-
+      The viewer decides ABOUT the run but did not sit in it. They hold a credibility
+      judgment — is this bake-off worth taking seriously, and is the artifact at the end
+      worth watching — not a build decision. The mandate that matters is retellability:
+      someone who watches this must be able to say what was run and what it found.
+  rejected:
+    - genre: internal-decision
+      because: >-
+        That is the genre of report.pdf, whose reader holds six open rulings. The film is
+        published; its viewer holds none of them. Staging the film as a decision artifact
+        would put an ask on a room that cannot answer it.
+    - genre: technical-deep-dive
+      because: >-
+        pick_when requires a competent skeptic to be convinced a mechanism is real. Nobody
+        disputes that the artifacts rendered; the question is what the reviews found.
+    - genre: conference-keynote
+      because: >-
+        pick_when is a large one-way room holding one idea. This artifact must survive being
+        forwarded and paused, and it carries fifteen findings, not one.
+  contributes:
+    - genre: internal-decision
+      beats: ["what it cost", "what to do"]
+      how: >-
+        The candid-issues and pipeline beats are lifted from report.pdf's internal-decision
+        staging (bakeoff/report-staging.yaml slots 13-14). Nothing else of that playbook is
+        used; executive-explainer's arc, time shape and gates lead.
+
+audience:
+  assumed_knowledge: >-
+    Knows what a slide deck and an explainer video are, and that AI coding agents can build
+    them. Does NOT know this bake-off, its contenders, its rubrics, or the product being
+    pitched. May be used without explanation: brand, rubric, deck, explainer, screenshot.
+    Must be explained if used: staging contract, bold moment, rank sum, craft floor.
+  distrusts: >-
+    A vendor bake-off with a foregone conclusion; a ranking presented as though the judges
+    agreed; a number with no file behind it; a winner announced without its defects.
+  decision_they_hold: >-
+    Whether to keep watching, and whether to believe the result. NOT which tool to adopt —
+    that decision is the report's reader's, and it is deliberately not asked for here.
+  attention_budget: >-
+    ~5.5 minutes, watched alone. The first fifteen seconds decide whether this is for them,
+    and PART B has to be earned by PART A rather than announced.
+
+belief: >-
+  The bake-off produced one consensus and one non-result, and the honest read-out is to show
+  both — including the fact the winner dropped — and then to let the winning artifact speak
+  for itself.
+
+time_shape:
+  minutes: 5.6
+  medium: video
+  parts:
+    - {part: A,       scenes: 12, seconds: 208, note: "the report as an explainer, unbranded"}
+    - {part: lead-in, scenes: 1,  seconds: 8,   note: "the hand-off to the winner"}
+    - {part: B,       scenes: 9,  seconds: 120, note: "the winner, verbatim; staged elsewhere"}
+  total_seconds: 336
+  words_budget: 540                # PART A + lead-in only; PART B carries its own 299
+  wpm_target: 150
+  arithmetic: >-
+    PART A 208 s + lead-in 8 s = 216 s of newly staged runtime. 216 s x 150 wpm / 60 = 540-word
+    budget; 540 words declared, per-scene delivery 142-156 wpm. PART B adds the winner's own
+    120 s / 299 words unchanged. Total 336 s. PASS against the 150-210 s window for PART A
+    (208 s, inside) and against the 12-scene ceiling (12 scenes).
+
+runtime_shares:                    # PART A only; measured on PART A's own 208 s
+  problem: 0.00                    # there is no market problem in this piece — the subject is a run
+  setup: 0.34                      # a1-a5: what was run and who contended = 70 s / 208 s
+  practice: 0.14                   # a6-a7: what every contender actually did = 30 s / 208 s
+  verdicts: 0.15                   # a8: both design verdicts = 31 s / 208 s
+  findings: 0.16                   # a9-a10: what the reviews found = 33 s / 208 s
+  cost: 0.12                       # a11: the dropped fact = 24 s / 208 s
+  ask: 0.10                        # a12: the pipeline = 20 s / 208 s
+
+bold_moment:
+  scene: a11
+  beat: "what it cost"
+  form: >-
+    A thing that happened, not a strong sentence: the winning deck dropped a fact — the
+    roll-cost line that drives the drift figure printed on the same slide — and then reported
+    in its own notes that nothing was dropped. Four rubrics ranked it first anyway; the fifth
+    ranked it fourth, and the fifth is the only one that checked.
+  why: >-
+    It is the one event in the run that turns the viewer's belief: it converts "canvas-design
+    won" into "canvas-design won, and the only reason we can say so is that one rubric looked
+    for a missing fact". It is also the whole argument for the stack in a12.
+  placement_derivation: >-
+    DERIVED from THIS lane's runtime_shares, not inherited from report.pdf's slot index.
+    a11 runs 164 s - 188 s of PART A's 208 s = 78.8% - 90.4% of the segment.
+  gate_note: >-
+    FAILS the genre's placement rule, which wants the peak at the last problem beat before
+    relief — nominally 55-70%. NOT fixable at STAGE, for the same reason report.pdf recorded
+    the same failure (bakeoff/report-staging.yaml, bold_moment.gate_note): the fact that was
+    dropped is the WINNER's, so the winner must be named before the event can be told, and the
+    verdict beat is structurally at 55-70%. Recorded rather than fudged. Mitigation taken: a10
+    closes on the finishing pass having closed nothing, which sets the viewer up for a11 without
+    spending the break early — and the rupture stays single.
+
+peak_walk:                         # EVENT / CONDITION, per motion-roles.md "Peaks are derived"
+  a1:  CONDITION
+  a2:  CONDITION
+  a3:  CONDITION
+  a4:  CONDITION
+  a5:  CONDITION
+  a6:  CONDITION
+  a7:  CONDITION
+  a8:  CONDITION
+  a9:  CONDITION
+  a10: CONDITION
+  a11: EVENT                       # "the winning deck lost a fact" — a thing that happened
+  a12: CONDITION
+  li:  CONDITION
+  event_count: 1
+  conclusion: >-
+    One EVENT claim in the segment, so exactly one rupture budget, and it is a11. No other
+    scene is eligible for `rupture` or `arrest`.
+
+arc:
+  - {beat: "what was run",   scenes: [a1, a2],       seconds: 32}
+  - {beat: "who contended",  scenes: [a3, a4, a5],   seconds: 38}
+  - {beat: "what they did",  scenes: [a6, a7],       seconds: 30}
+  - {beat: "the verdicts",   scenes: [a8],           seconds: 31}
+  - {beat: "what was found", scenes: [a9, a10],      seconds: 33}
+  - {beat: "what it cost",   scenes: [a11],          seconds: 24}
+  - {beat: "what to do",     scenes: [a12],          seconds: 20}
+  - {beat: "the hand-off",   scenes: [li],           seconds: 8}
+
+scenes:
+  - n: 1
+    id: a1
+    function: cover
+    beat: "what was run"
+    claim: "Six design tools and four messaging skills rendered one pitch in one afternoon."
+    start: 0
+    vo_seconds: 10
+    words: 25
+    vo: >-
+      Six AI design tools and four messaging skills were given one product pitch, one source
+      corpus, and one afternoon. This is what the reviewers found.
+    source: "README.md · bakeoff/PROTOCOL.md · report.html cover"
+    motion_role: hold
+    energy: 1
+    peak: false
+    motion_turn: >-
+      Turns nothing yet, on purpose. The title plate is given whole and still, so the promise in
+      the second sentence lands on stillness rather than on a move.
+    figures: []
+
+  - n: 2
+    id: a2
+    function: context
+    beat: "what was run"
+    claim: "One brief: what the product is, what it is worth, and how the mechanism works."
+    start: 10
+    vo_seconds: 22
+    words: 55
+    vo: >-
+      One product pitch on tokenized real-world assets. Three teaching goals: what the product
+      is, what it is worth, and how the mechanism works. Same corpus for everyone, no invented
+      numbers. Then every tool rendered it twice — under a pinned house brand, and with no brand
+      limits — against three messaging contracts. Thirty-six decks and thirty-six explainers.
+    source: "BRIEF.md · bakeoff/PROTOCOL.md §Rules · README.md Layout · shots/INDEX.md"
+    motion_role: accumulate
+    energy: 2
+    peak: false
+    motion_turn: >-
+      Turns "a bake-off" into "a controlled comparison", then into a field with a size. The
+      three goals and the fixed-corpus rule arrive first, in that order, because the rule only
+      reads as a control once the goals are on screen; the matrix then has to be seen FILLING,
+      because a single total reads as a statistic where the accumulation reads as the size of
+      the sample.
+    figures:
+      - {name: "the specimen field", renders: "thirty-six decks and thirty-six explainers"}
+
+  - n: 3
+    id: a3
+    function: comparison
+    beat: "who contended"
+    claim: "Four messaging methods staged the argument before anyone designed anything."
+    start: 32
+    vo_seconds: 13
+    words: 33
+    vo: >-
+      Four methods staged the argument first: the house staging skill, the house messaging
+      guide, pitch-deck-mastery, and presentation-writing. Three produced the contracts the
+      design layer rendered; the fourth arrived after the tracks were built.
+    source: "bakeoff/CONTENDERS.md Messaging skills (4) · README.md How it ran"
+    motion_role: hold
+    energy: 1
+    peak: false
+    motion_turn: >-
+      Turns "the design tools competed" into "two layers competed". The named-and-linked roster
+      is the turn; it is a still list because the viewer is reading names and origins, and
+      motion under reading is a tax.
+    figures:
+      - {name: "the messaging roster", renders: "four methods staged the argument first"}
+
+  - n: 4
+    id: a4
+    function: comparison
+    beat: "who contended"
+    claim: "Six design tools drew the same mechanism slide six different ways."
+    start: 45
+    vo_seconds: 13
+    words: 33
+    vo: >-
+      The design field: Anthropic’s canvas-design and algorithmic-art; impeccable, as an author
+      and as a finishing pass over the html-ppt baseline; visual-explainer; and html-ppt itself.
+      This is slide eight — the mechanism — from all six.
+    source: "bakeoff/CONTENDERS.md Design tools (6) · shots/&lt;tool&gt;/brand/staging/slide-08.png"
+    motion_role: assemble
+    energy: 3
+    peak: false
+    motion_turn: >-
+      Turns six names into six visibly different answers to one instruction. The whole argument
+      of the run is legible in this one frame and nowhere else, so the parts must arrive and
+      stay — a viewer needs all six on screen at once to compare them.
+    figures:
+      - {name: "the six-specimen plate", renders: "the same mechanism slide six different ways"}
+
+  - n: 5
+    id: a5
+    function: evidence
+    beat: "who contended"
+    claim: "Nine review rubrics graded the result, and every one declared its own bias."
+    start: 58
+    vo_seconds: 12
+    words: 31
+    vo: >-
+      Four independent rubrics graded every track — concept, accessibility, evidence, craft —
+      plus the four messaging skills turned back on the design layer. Then two model judges
+      wrote verdicts, before Ian formed his.
+    source: "bakeoff/CONTENDERS.md Independent review rubrics (4) · report.html cover, §5.3"
+    motion_role: hold
+    energy: 1
+    peak: false
+    motion_turn: >-
+      Turns "someone judged it" into "nine lenses judged it and each said what it could not
+      see". That is the claim the rest of the piece's numbers rest on, so it is delivered still.
+    figures:
+      - {name: "the rubric roster", renders: "nine review rubrics graded the result"}
+
+  - n: 6
+    id: a6
+    function: mechanism
+    beat: "what they did"
+    claim: "Every tool rendered every slot in order, and every tool built the film engine itself."
+    start: 70
+    vo_seconds: 14
+    words: 34
+    vo: >-
+      Thirty of thirty decks and thirty of thirty explainers rendered every slot and scene, in
+      order, claims verbatim. And all six had to write the timed-explainer engine themselves —
+      no design skill has a timeline.
+    source: "bakeoff/JUDGING-design-claude.md §3 findings 4 and 7 · tracks/*/NOTES.md"
+    motion_role: hold
+    energy: 1
+    peak: false
+    motion_turn: >-
+      Turns "the tools differ" into "the transport held and the tooling did not". It is the one
+      scene that is a positive finding and a gap in the same sentence, and it is the reason no
+      tool scores above seven for fit.
+    figures:
+      - {name: "the rendered scene", renders: "rendered every slot and scene, in order, claims verbatim"}
+
+  - n: 7
+    id: a7
+    function: decision
+    beat: "what they did"
+    claim: "Four methods told the same story; only the emphasis and the order diverged."
+    start: 84
+    vo_seconds: 16
+    words: 39
+    vo: >-
+      The messaging verdict. All four told the same story; only the emphasis and the order
+      diverged. On rank sum — lowest wins — house-guide eight, pitch-deck-mastery nine, staging
+      ten, presentation-writing thirteen. The call was staging as transport, house-guide as
+      content gate.
+    source: "bakeoff/JUDGING-messaging-claude.md rev.2 §5, §7"
+    motion_role: assemble
+    energy: 2
+    peak: false
+    motion_turn: >-
+      Turns "four methods, four stories" into "one story, four placements of the loud moment".
+      The three lanes' bold-moment frames must be on screen together for that to be a
+      measurement rather than an assertion.
+    figures:
+      - {name: "the three lanes' peak frames", renders: "only the emphasis and the order diverged"}
+
+  - n: 8
+    id: a8
+    function: decision
+    beat: "what was found"
+    claim: "Brand mode produced the run's only consensus, and the run's overall winner."
+    start: 100
+    vo_seconds: 31
+    words: 77
+    vo: >-
+      In brand mode there was one answer: canvas-design, first on four of five rubrics and a
+      rank sum of four out of a possible four. It takes the run overall too, on nineteen across
+      both modes. In free mode, nothing agreed. Every tool but one placed first on some rubric
+      and last or nearly last on another; the sums span nine and a half to sixteen and a half.
+      Reporting a winner there would be manufacturing one.
+    source: "bakeoff/JUDGING-design-claude.md §2 The dispersion is the result, §4"
+    motion_role: strain
+    energy: 3
+    peak: false
+    motion_turn: >-
+      Turns a matrix into a verdict, and then takes the verdict away again. The consensus is
+      given still and alone for fourteen seconds so it lands as an answer; the two free-mode
+      specimens then arrive beside it and the frame strains without resolving, which is the only
+      honest rendering of a dispersion result. Splitting this across two scenes would let the
+      viewer bank the first half as the finding.
+    figures:
+      - {name: "the consensus specimen", renders: "first on four of five rubrics"}
+      - {name: "the two irreconcilable specimens", renders: "first on some rubric and last on another"}
+
+  - n: 9
+    id: a9
+    function: risk
+    beat: "what was found"
+    claim: "Nine films of ten put their loudest frame somewhere other than their peak."
+    start: 131
+    vo_seconds: 15
+    words: 37
+    vo: >-
+      Then the findings. Nine films of ten put their loudest frame somewhere other than their
+      designated peak. And one tool printed a live render statistic where a measurement belongs
+      — a value that appears nowhere in the corpus.
+    source: "bakeoff/JUDGING-design-claude.md §3 findings 1–2 · reviews/design/by-messaging-rubrics.md"
+    motion_role: strain
+    energy: 3
+    peak: false
+    motion_turn: >-
+      Turns "the artifacts rendered" into "the artifacts were not checked". Two findings, both
+      invisible to every static detector, both found only by looking at a frame.
+    figures:
+      - {name: "the untraceable readout", renders: "a live render statistic where a measurement belongs"}
+      - {name: "the contradicted frame", renders: "their loudest frame somewhere other than their designated peak"}
+
+  - n: 10
+    id: a10
+    function: risk
+    beat: "what was found"
+    claim: "The citation lines the brief made mandatory were set below the threshold of sight."
+    start: 146
+    vo_seconds: 18
+    words: 45
+    vo: >-
+      The mandatory citation lines were set below the threshold of sight — as low as one point
+      eight-five to one. Internal contract vocabulary reached the screen in four of six tools.
+      And the finishing pass bought the whole craft floor while closing not one composition
+      finding.
+    source: "bakeoff/JUDGING-design-claude.md §3 findings 3, 5, 6, 8 · reviews/design/by-open-design-review.md"
+    motion_role: strain
+    energy: 3
+    peak: false
+    motion_turn: >-
+      Turns three separate defects into one class: everything the brief made mandatory was
+      satisfied in form and defeated in execution. The load keeps rising into the break.
+    figures:
+      - {name: "the finished specimen", renders: "bought the whole craft floor while closing not one composition finding"}
+
+  - n: 11
+    id: a11
+    function: risk
+    beat: "what it cost"
+    claim: "The winning deck lost a fact, and reported that it had lost nothing."
+    start: 164
+    vo_seconds: 24
+    words: 60
+    vo: >-
+      And then the one event that changes what the verdict means. The winning deck dropped a
+      line — the roll-cost figure that drives the drift number printed on the same slide. The
+      only fact missing from any of the thirty decks. Four rubrics ranked it first anyway; the
+      fifth ranked it fourth, and the fifth is the only one that checked.
+    source: "bakeoff/JUDGING-design-claude.md §4 fix 1, §1 canvas-design/brand · report.html §5"
+    motion_role: rupture
+    energy: 5
+    peak: true
+    motion_turn: >-
+      Turns a winner into a conditional winner. This is the one EVENT claim in the segment
+      (peak_walk above), the one place a break is legal, and the only place the piece is
+      permitted to be loud. Everything before it is paid for here.
+    figures:
+      - {name: "the slide with the missing line", renders: "the winning deck dropped a line"}
+      - {name: "the break", renders: "the only fact missing from any of the thirty decks"}
+
+  - n: 12
+    id: a12
+    function: ask
+    beat: "what to do"
+    claim: "Stage with staging, gate with house-guide, draw with canvas-design, finish with impeccable."
+    start: 188
+    vo_seconds: 20
+    words: 52
+    vo: >-
+      The recommendation is a stack, not a favourite. Stage with staging, gate with the house
+      messaging guide, draw with canvas-design under the brand, finish with a mandatory
+      impeccable polish. Plus the two checks nobody had written: assert the bold moment is the
+      measured peak, and diff the contract against the rendered text.
+    source: "bakeoff/JUDGING-design-claude.md §4 Recommended house pipeline · JUDGING-messaging-claude.md rev.2 §7"
+    motion_role: cadence
+    energy: 1
+    peak: false
+    motion_turn: >-
+      Turns four findings into one instruction, and resolves the image opened in a3: the field
+      of thirty-six specimens narrows to one stack of four stages. One gesture, then it stops.
+    figures:
+      - {name: "the four-stage stack", renders: "a stack, not a favourite"}
+
+  - n: 13
+    id: li
+    function: turn
+    beat: "the hand-off"
+    claim: "What follows is the winning explainer, as a prospect would see it."
+    start: 208
+    vo_seconds: 8
+    words: 19
+    vo: >-
+      What follows is the winning explainer — canvas-design under the Medici brand, staging’s
+      messaging — as a prospect would see it.
+    source: "winner/READY · winner/explainer/{explainer.html, SCRIPT.md}"
+    motion_role: hold
+    energy: 1
+    peak: false
+    motion_turn: >-
+      Turns the reporting voice off. It is the only scene whose job is a change of register, and
+      it must be still, because the thing it hands over is not still.
+    figures: []
+
+# ── PART B (scenes s1-s9, 216 s - 336 s) is winner/explainer/explainer.html, verbatim.
+#    Its staging is messaging/staging/staging.yaml (video lane, scenes s1-s9); its motion
+#    budget, peak walk and figures are that file's and are not restated or re-derived here.
+#    The only permitted edit is the footer string, recorded in video/SCRIPT.md's header.
+
+transitions:
+  - {after_scene: a2,  type: narrow,   line: "That is the field. The contenders, then, with their origins."}
+  - {after_scene: a5,  type: turn,     line: "Ten skills, nine rubrics. What all of them actually did is the other half."}
+  - {after_scene: a7,  type: narrow,   line: "The messaging leg settled. The design leg did not settle the same way."}
+  - {after_scene: a8,  type: escalate, line: "No ranking survives free mode. What the reviews found does."}
+  - {after_scene: a10, type: gate,     line: "And one finding is not like the others."}
+  - {after_scene: a11, type: fold,     line: "Which is the argument for a stack rather than a favourite."}
+  - {after_scene: a12, type: turn,     line: "The recommendation, rendered. This is what the stack produces."}
+  - {after_scene: li,  type: turn,     line: "Brand on, reporting voice off."}
+
+motion_budget:
+  peaks_earned: 1
+  r1_justification: >-
+    a11 is the only scene that turns a value the viewer must still be carrying tomorrow:
+    "canvas-design won" becomes "canvas-design won, and only one rubric checked". Every other
+    scene advances the argument; none of them changes what an already-formed belief means.
+  ceiling_order: "a11 (5.0) > a4 = a8 = a9 = a10 (3.0) > a2 = a7 (2.0) > a1 = a3 = a5 = a6 = a12 = li (1.0)"
+  quiet_scenes: [a1, a3, a5, a6, a12, li]
+  mean_energy: 2.08
+  adjacency: >-
+    PASS. a11 (5.0) neighbours a10 (3.0) and a12 (1.0); a12 is at or below the 1.5 floor R2
+    requires beside a peak. No two adjacent scenes both peak — there is only one peak.
+  quiet_share: "6 of 13 scenes at energy <= 1.5 = 46%, against R5's one-third floor. PASS."
+  rhymes:
+    - {scene: a12, answers: a2, how: "the specimen field opened in a2 returns, narrowed to one stack"}
+  figures_total: 14
+  ornament_gate: >-
+    PASS. Every scene carries at most two figures; the peak (a11) spends two, not its permitted
+    three. Cut at STAGE: a per-tool score strip under the six-specimen plate in a4 (it restates
+    the plate's own caption), and a running rubric tally in a8 (it renders a number the voice
+    already says, and it would have been a third figure in a strained scene).
+  figure_clauses: >-
+    Every figure above names the clause of its scene's claim that it renders, per R6. Text
+    entrances — rail, claim, body, source line — are the scene's delivery and are not counted
+    as figures.
+
+gates:
+  helicopter: >-
+    PASS. Read alone, PART A's twelve claims run: six tools and four skills rendered one pitch ->
+    one brief, one corpus, two modes, thirty-six decks and thirty-six explainers -> four
+    messaging methods staged it -> six design tools drew it -> nine rubrics graded it ->
+    everything rendered and nobody had a timeline -> the messaging verdict is a pair, not a pick
+    -> brand mode agreed and free mode did not -> the loud frame was in the wrong place and a
+    number was untraceable -> the mandatory citation line was unreadable -> the winner dropped a
+    fact and said it had not -> so run the stack. Nothing needs a narrator.
+  bold_moment: >-
+    CONDITIONAL PASS on form (one, and it is the segment's only EVENT), FAIL on placement
+    (78.8-90.4% against a 55-70% window). Cause and mitigation recorded under bold_moment above;
+    the verdict must precede the fact about the winner. Recorded, not fudged.
+  dead_slot: >-
+    PASS. Every scene turns a value; each turn is written in its own motion_turn field. The
+    closest call is a5, which is a roster — it survives because it turns "someone judged it"
+    into "nine declared lenses judged it", which is what licenses every later number.
+  kill_conditions: >-
+    PASS. executive-explainer's kill conditions are "the ask is capital" and "the room can
+    already restate the mechanism". Neither fires: there is no ask, and the viewer has not seen
+    this run.
+  time_shape: >-
+    PASS. 216 s of newly staged runtime against a 540-word budget at 150 wpm; 540 words
+    declared; per-scene delivery 142-156 wpm, inside the 140-160 band.
+  motion_spec_locked: >-
+    NOT RUN — owner: the design pass on video/explainer.html. PART A's motion language is
+    authored against skills/messaging/staging/references/motion-spec.md but no locked instance
+    file exists, so the seven rows are not recorded before authoring. Named rather than fudged.
+  seams_declared: >-
+    PASS for PART A -> lead-in -> PART B: the three boundaries that matter are declared in
+    `transitions` above, and the A/B boundary is a hard register change carried by scene li.
+    Intra-PART-A boundaries beyond those listed are unmarked cuts.
+  render_and_look: >-
+    RUN — owner: this authoring pass. Every PART A scene and two PART B scenes were rendered
+    headless at their midpoints into video/shots/ and read for collisions and overflow.
+  number_trace: >-
+    PASS by construction. Every figure spoken or shown in PART A prints its source file in the
+    frame's apparatus line, and SCRIPT.md carries a per-row source column plus a `sources`
+    footer. PART B's numbers are the winner's and trace through messaging/staging/staging.yaml.
+  glossary: >-
+    PASS. The four insider terms this segment cannot avoid — rank sum, bold moment, staging
+    contract, craft floor — are each glossed on screen at first use, in the frame's apparatus
+    line, in the viewer's line of sight.
+
+assumptions:
+  - "PART A is unbranded: no house marks, no house palette, no house type. It borrows report.pdf's
+     own Ordinal Field look (bakeoff/report-philosophy.md), which is itself deliberately unbranded."
+  - "PART B keeps the Medici brand and the winner's own fonts, because the lead-in tells the viewer
+     it is about to see a branded artifact as a prospect would."
+  - "No personal names but Ian; co-founders render as 'Co-founder'. Neither appears in PART A's copy."
+  - "'Nine review rubrics' is report.html's own cover count (five design review files plus four
+     messaging review files); the underlying skills are eight. The report's number is used and cited."
+  - "Screenshots are the 2026-08-27 capture in shots/, downscaled, never re-rendered — a re-render
+     would no longer be evidence of what was judged."
+  - "Durations here are ESTIMATES until a narration take exists. The artifact reads
+     window.SCENE_DURATIONS when the pipeline injects measured values and falls back to these."
