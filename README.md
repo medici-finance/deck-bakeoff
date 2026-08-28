@@ -1,5 +1,9 @@
 # deck-bakeoff — presentation-tool bake-off on "Medici for RWA tokens"
 
+**Watch the bake-off video:** https://youtu.be/oqGS-tqy2I4 · **Read the report:** [`report.pdf`](report.pdf)
+
+[![The Deck Bake-Off — video](https://img.youtube.com/vi/oqGS-tqy2I4/maxresdefault.jpg)](https://youtu.be/oqGS-tqy2I4)
+
 A local bake-off (2026-08-27/28) of AI presentation-design skills and messaging
 skills, all rendering the same product pitch — **Medici for RWA tokens** — as a
 slide deck and as an animated HTML explainer, in two modes: the pinned Medici
@@ -28,8 +32,8 @@ agents from one prompt (below); Ian judged separately.
 | [`shots/`](shots/) | contact sheets + [`INDEX.md`](shots/INDEX.md) (per-slide PNGs are git-ignored) |
 | [`winner/`](winner/) | the ship-tomorrow artifact (canvas-design / brand / staging) after the judge's fix list — `deck/index.html`, `explainer/{explainer.html,SCRIPT.md}`, [`FIXES.md`](winner/FIXES.md), frames in [`shots/`](winner/shots/) |
 | [`report.pdf`](report.pdf) (source [`report.html`](report.html), build [`bakeoff/report-build.py`](bakeoff/report-build.py)) | the final report: brief, contenders + URLs, both legs' cross-review matrices, issues found, verdicts, pipeline, the winning explainer + its talk track |
-| [`video/explainer.html`](video/explainer.html) · [`video/SCRIPT.md`](video/SCRIPT.md) | the ONE bake-off video source: unbranded report segment → lead-in → the winning explainer in full; rendered to mp4 by the house `explainer-video` pipeline (mp4 not committed) |
-| [`social/`](social/) | reddit post + LinkedIn teaser drafts (`{{YT_URL}}` placeholder) |
+| [`video/explainer.html`](video/explainer.html) · [`video/SCRIPT.md`](video/SCRIPT.md) | the ONE bake-off video source: unbranded report segment → lead-in → the winning explainer in full; rendered to mp4 by the house `explainer-video` pipeline (mp4 not committed); published at https://youtu.be/oqGS-tqy2I4 |
+| [`social/`](social/) | reddit post + LinkedIn teaser drafts (video: https://youtu.be/oqGS-tqy2I4) |
 | [`source/`](source/) | the input corpus (Medici pitch/research docs, house brand guide) — read-only inputs, names anonymized |
 
 ## House skills included
