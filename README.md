@@ -32,7 +32,21 @@ agents from one prompt (below); Ian judged separately.
 | `social/` | reddit post + LinkedIn teaser drafts (`{{YT_URL}}` placeholder) |
 | `source/` | the input corpus (Medici pitch/research docs, house brand guide) — read-only inputs, names anonymized |
 
-The house skills used in the run are committed under `skills/` — `messaging/staging`, `messaging/house-guide`, `deck-author` (with the Medici `brand.toml` contract and linter), `video-author`, `video/video-design`, `video/explainer-video` (the render pipeline; its `node_modules`, `out/` and voice-clone samples are excluded), `social/linkedin-post`, `social/humanizer`. Vendored third-party skills are git-ignored; their URLs and licences are in `bakeoff/CONTENDERS.md`.
+## House skills included
+
+The in-house skills that ran the bake-off are committed under `skills/` (Apache-2.0, same as the repo) so the run can be reproduced or the pipeline reused:
+
+| Path | Skill |
+|---|---|
+| `skills/messaging/staging/` | genre → audience → arc → `staging.yaml` contract (deck + video lanes, motion-role governor) |
+| `skills/messaging/house-guide/` | the messaging method: comprehension diagnosis → 30-second version → analogies with honest breaks → glossary → trace-every-number gate |
+| `skills/deck-author/` | brand-contract deck renderer: `brands/medici/brand.toml`, the external skeleton, IBM Plex fonts, `tools/check_deck.py` linter |
+| `skills/video-author/` | staged film authoring (motion spec, seam gate) |
+| `skills/video/video-design/` | mission → script → storyboard → scene grammar → VO sync |
+| `skills/video/explainer-video/` | the render pipeline (TTS → Playwright record → subtitles → H.264); `node_modules`, `out/` and voice-clone samples excluded |
+| `skills/social/linkedin-post/`, `skills/social/humanizer/` | the voice + de-slop pass used for the social drafts |
+
+Vendored third-party skills are git-ignored; their URLs and licences are in `bakeoff/CONTENDERS.md`.
 
 ## Contenders
 
