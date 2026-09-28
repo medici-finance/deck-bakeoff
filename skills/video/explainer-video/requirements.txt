@@ -3,4 +3,4 @@
 #
 # mlx-audio is Apple-Silicon (MLX) only; the tool runs on an M-series Mac.
 PyYAML>=6.0
-mlx-audio>=0.2.0
+mlx-audio>=0.3.0

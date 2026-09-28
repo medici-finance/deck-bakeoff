@@ -28,7 +28,8 @@ the pipeline mechanics; the skill covers the direction.
 `pipeline/*`:
 
 1. **gen_tts** — one narration clip per scene via MLX-Audio, using the chosen
-   voice profile (Qwen3-TTS voice-clone / Orpheus / Kokoro).
+   voice profile (Qwen3-TTS voice-clone or steered CustomVoice / Orpheus /
+   Kokoro).
 2. **assemble_audio** — concat with lead-in + inter-scene gaps + tail, then
    loudness-normalize to 48kHz stereo / −16 LUFS; emits `SCENE_DURATIONS`.
 3. **inject** — writes `window.SCENE_DURATIONS` into a copy of the slides so the
@@ -130,6 +131,18 @@ selects `leo`):
   --out ./out
 ```
 
+For stock US narration without an Orpheus personality, use the steered Qwen
+**CustomVoice** path (`aiden` or `ryan`; bare `--steered-us-voice` selects
+`aiden`). It keeps the preset speaker's timbre and adds a fixed
+neutral-explainer instruction:
+```bash
+./explainer-video \
+  --script ../../../medici-decks/video/SCRIPT.md \
+  --slides ../../../medici-decks/video/explainer.html \
+  --steered-us-voice aiden \
+  --out ./out
+```
+
 ### The exact hardware-encode
 
 The final mux uses the Apple-Silicon hardware encoder — **seconds**, not the
@@ -164,9 +177,29 @@ and params.
 All 7 profiles are populated Qwen3-TTS voice clones: MLX-Audio + Qwen3-TTS-12Hz-1.7B
 (`mlx-community/Qwen3-TTS-12Hz-1.7B-Base-bf16`), each cloned from a committed
 reference `.wav` + transcript, `--max_tokens 4096`. `gen_tts.py` also supports
-`orpheus` and `kokoro` engines (built-in presets, no reference clip needed);
-none of the current profiles use them, but they remain available for future
-no-reference profiles — see `pipeline/alternates/README.md`.
+`qwen_custom`, `orpheus`, and `kokoro` engines (preset voices, no reference
+clip needed); none of the registry profiles use them, but they remain available
+for future no-reference profiles — see `pipeline/alternates/README.md`.
+
+A `qwen_custom` registry profile uses the 1.7B **CustomVoice** model, a preset
+`voice`, `params.lang_code`, and an optional `params.instruct` steering string:
+
+```yaml
+us-steered:
+  engine: qwen_custom
+  model: mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-bf16
+  voice: aiden
+  params:
+    lang_code: english
+    instruct: >
+      Neutral General American male. Calm, confident, measured narrator.
+    max_tokens: 4096
+```
+
+The `--steered-us-voice <name>` flag synthesizes that same reproducible
+Aiden/Ryan configuration in memory. Use a registry profile when you want to
+tune the instruction for a particular product; use the flag for the standard
+neutral explainer.
 
 The `--us-voice <name>` flag renders via the Orpheus-3b built-in voices with
 **no registry entry** — the profile is synthesized in memory as

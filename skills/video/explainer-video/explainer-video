@@ -42,7 +42,14 @@ PIPELINE = TOOL_ROOT / "pipeline"
 GSAP_BUNDLE = TOOL_ROOT / "renderers" / "gsap" / "bundle.mjs"
 sys.path.insert(0, str(PIPELINE))
 
-from lib import build_context, RunContext, us_orpheus_profile, ORPHEUS_US_VOICES  # noqa: E402
+from lib import (  # noqa: E402
+    QWEN_US_VOICES,
+    RunContext,
+    build_context,
+    us_orpheus_profile,
+    us_qwen_steered_profile,
+    ORPHEUS_US_VOICES,
+)
 import gen_tts  # noqa: E402
 import assemble_audio  # noqa: E402
 import gen_subs  # noqa: E402
@@ -207,8 +214,13 @@ def dry_run(ctx: RunContext) -> None:
     if p.engine == "qwen":
         print(f"ref_audio : {p.ref_audio}")
         print(f"max_tokens: {p.params.get('max_tokens', 4096)}")
-    elif p.voice:
-        print(f"voice     : {p.voice}")
+    else:
+        if p.voice:
+            print(f"voice     : {p.voice}")
+        if p.engine == "qwen_custom":
+            print(f"language  : {p.params.get('lang_code', 'english')}")
+            print(f"instruct  : {p.params.get('instruct', '(natural style)')}")
+            print(f"max_tokens: {p.params.get('max_tokens', 4096)}")
     print(f"scenes    : {len(ctx.scenes)}")
     for s in ctx.scenes:
         print(f"  - {s.id:16s} narration={len(s.narration):3d}c  subtitle={s.subtitle[:48]!r}")
@@ -243,6 +255,12 @@ def main() -> None:
                            help="US-accent Orpheus built-in voice (" +
                                 ", ".join(ORPHEUS_US_VOICES) + ") — bypasses the registry, "
                                 "no reference clip needed; bare --us-voice selects leo")
+    voice_sel.add_argument("--steered-us-voice", nargs="?", const="aiden", default=None,
+                           metavar="NAME",
+                           help="US-accent Qwen CustomVoice speaker (" +
+                                ", ".join(QWEN_US_VOICES) + ") with neutral explainer "
+                                "steering — bypasses the registry; bare "
+                                "--steered-us-voice selects aiden")
     ap.add_argument("--out", default="./out", help="output directory (default ./out)")
     ap.add_argument("--name", default=None,
                     help="output basename (default: the script's slugified H1 title; "
@@ -256,6 +274,8 @@ def main() -> None:
     profile_override = None
     if args.us_voice is not None:
         profile_override = us_orpheus_profile(args.us_voice)
+    elif args.steered_us_voice is not None:
+        profile_override = us_qwen_steered_profile(args.steered_us_voice)
     ctx = build_context(Path(args.script), Path(args.slides), args.profile,
                         Path(args.out), args.name, url=args.url,
                         profile_override=profile_override)
