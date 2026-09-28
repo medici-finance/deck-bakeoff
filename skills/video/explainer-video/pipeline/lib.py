@@ -77,6 +77,10 @@ def load_profile(name: str, registry: Path = REGISTRY) -> Profile:
             f"profile '{name}' is engine=qwen but has no ref_audio "
             "(it is a scaffold — add a reference clip, see voices/<profile>/README.md)."
         )
+    if engine == "qwen_custom" and not p.get("voice"):
+        raise SystemExit(
+            f"profile '{name}' is engine=qwen_custom but has no preset voice"
+        )
 
     return Profile(
         name=name,
@@ -93,6 +97,43 @@ ORPHEUS_US_MODEL = "mlx-community/orpheus-3b-0.1-ft-bf16"
 # Orpheus-3b built-in voice presets (US accents). In-repo corroboration:
 # pipeline/alternates/gen_orpheus.py renders with voice "leo".
 ORPHEUS_US_VOICES = ("tara", "leah", "jess", "leo", "dan", "mia", "zac", "zoe")
+
+
+QWEN_CUSTOMVOICE_MODEL = "mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-bf16"
+# Native-English CustomVoice speakers. Aiden is the calmer explainer default;
+# Ryan is more dynamic and useful for higher-energy delivery.
+QWEN_US_VOICES = ("aiden", "ryan")
+STEERED_US_INSTRUCT = (
+    "Neutral General American male. Calm, confident, measured narrator. "
+    "Clear midrange. Explain rather than perform; natural pace, "
+    "no broadcast hype."
+)
+
+
+def us_qwen_steered_profile(voice: str = "aiden") -> Profile:
+    """Synthesize a steered US-accent Qwen CustomVoice profile in memory.
+
+    CustomVoice keeps the preset speaker's timbre while `instruct` controls
+    delivery, so this is the no-reference alternative to `--us-voice` when a
+    neutral explainer (rather than an Orpheus personality) is wanted. As with
+    the Qwen clone path, max_tokens 4096 avoids MLX-Audio's truncating default.
+    """
+    raw = voice
+    voice = voice.strip().lower()
+    if voice not in QWEN_US_VOICES:
+        known = ", ".join(QWEN_US_VOICES)
+        raise SystemExit(f"unknown Qwen US voice '{raw}'. Known: {known}")
+    return Profile(
+        name=f"us-qwen-steered-{voice}",
+        engine="qwen_custom",
+        model=QWEN_CUSTOMVOICE_MODEL,
+        voice=voice,
+        params={
+            "lang_code": "english",
+            "instruct": STEERED_US_INSTRUCT,
+            "max_tokens": 4096,
+        },
+    )
 
 
 def us_orpheus_profile(voice: str) -> Profile:

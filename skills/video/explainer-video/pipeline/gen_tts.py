@@ -10,6 +10,9 @@ by the profile:
           current profiles in voices/registry.yaml use this). CRITICAL:
           --max_tokens 4096 — the mlx_audio default (1200 ~= 14.6s) silently
           truncates long scenes.
+  qwen_custom
+          Qwen3-TTS CustomVoice preset speaker, optionally steered by a
+          natural-language `instruct`. No reference clip.
   orpheus built-in `voice` preset, no reference. Not used by any current
           profile; available for a future no-reference profile.
   kokoro  built-in neural `voice` preset, no reference. Not used by any
@@ -39,6 +42,15 @@ def _mlx_cmd(ctx: RunContext, scene: Scene, prefix: str) -> list[str]:
     ]
     if p.engine == "qwen":
         cmd += ["--ref_audio", str(p.ref_audio), "--ref_text", p.ref_text or ""]
+        cmd += ["--max_tokens", str(p.params.get("max_tokens", 4096))]
+    elif p.engine == "qwen_custom":
+        if not p.voice:
+            raise SystemExit("engine=qwen_custom requires a preset voice")
+        cmd += ["--voice", p.voice]
+        cmd += ["--lang_code", p.params.get("lang_code", "english")]
+        instruct = p.params.get("instruct")
+        if instruct:
+            cmd += ["--instruct", instruct]
         cmd += ["--max_tokens", str(p.params.get("max_tokens", 4096))]
     elif p.engine in ("orpheus", "kokoro"):
         if p.voice:
